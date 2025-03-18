@@ -1,19 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Lists } from './interfaces/interfaces';
+import { useListsContext } from './context/ListsContext';
 import { Sidebar } from './components/Sidebar';
 import { CustomLists } from './components/CustomLists';
 
 export default function HomePage() {
-  const [lists, setLists] = useState<Lists>(() => {
-    const storedLists = localStorage.getItem("lists");
-    return storedLists ? JSON.parse(storedLists) : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("lists", JSON.stringify(lists));
-  }, [lists]);
+  const { lists, setLists } = useListsContext();
 
   return (
     <div>

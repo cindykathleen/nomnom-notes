@@ -1,5 +1,5 @@
-// import { useState } from 'react';
 import Link  from 'next/link';
+import { useListsContext } from '../context/ListsContext';
 import { List, Restaurant } from "../interfaces/interfaces";
 
 interface Props {
@@ -7,12 +7,16 @@ interface Props {
 }
 
 export const CustomList: React.FC<Props> = ({ list }) => {
-  // const [haveVisited, setHaveVisited] = useState(false);
+  const { setLists } = useListsContext();
 
   const handleClick = (restaurant: Restaurant) => {
-    // setHaveVisited(!haveVisited);
-    // restaurant.visited = !restaurant.visited;
-    console.log("clicked");
+    restaurant.visited = !restaurant.visited;
+
+    setLists((prev) => {
+      const updatedLists = [...prev];
+      updatedLists.find((l) => l.uuid === list.uuid)!.restaurants.find((r) => r.id === restaurant.id)!.visited = !restaurant.visited;
+      return updatedLists;
+    });
   };
 
   return (
