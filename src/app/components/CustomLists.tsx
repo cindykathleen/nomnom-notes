@@ -75,7 +75,7 @@ export const CustomLists: React.FC<Props> = ({ lists, setLists }) => {
           return (
             <Link key={lists[index].uuid} href={`/list/${lists[index].uuid}`}>
               <div className="flex flex-col gap-2 rounded-sm cursor-pointer">
-                <img className="rounded-lg mb-2" src={lists[index].imageUrl} alt={lists[index].name} />
+                <img className="aspect-square rounded-lg mb-2" src={lists[index].imageUrl} alt={lists[index].name} />
                 <h3 className="text-2xl font-semibold">{lists[index].name}</h3>
                 {lists[index].description !== '' && (<p className="text-lg">{lists[index].description}</p>)}
               </div>

@@ -1,6 +1,7 @@
 import Link  from 'next/link';
 import { useListsContext } from '../context/ListsContext';
 import { List, Restaurant } from "../interfaces/interfaces";
+import { RatingDisplay } from "./RatingDisplay";
 
 interface Props {
   list: List;
@@ -44,7 +45,7 @@ export const CustomList: React.FC<Props> = ({ list }) => {
                 <img className="rounded-lg mr-8" src={restaurant.imageUrl} alt={restaurant.name} width={200} height={200} />
                 <div className="flex-1">
                   <h3 className="text-2xl font-semibold">{restaurant.name}</h3>
-                  <p className="text-lg text-gray-600">{restaurant.rating}</p>
+                  <RatingDisplay rating={restaurant.rating} />
                   <p className="text-lg text-gray-600">{restaurant.location}</p>
                   <p className="text-lg text-gray-600">{restaurant.description}</p>
                 </div>
