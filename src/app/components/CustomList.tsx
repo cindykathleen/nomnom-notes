@@ -1,6 +1,6 @@
-import Link  from 'next/link';
+import Link from 'next/link';
 import { useListsContext } from '../context/ListsContext';
-import { List, Restaurant } from "../interfaces/interfaces";
+import { List } from "../interfaces/interfaces";
 import { RatingDisplay } from "./RatingDisplay";
 
 interface Props {
@@ -10,12 +10,22 @@ interface Props {
 export const CustomList: React.FC<Props> = ({ list }) => {
   const { setLists } = useListsContext();
 
-  const handleClick = (restaurant: Restaurant) => {
-    restaurant.visited = !restaurant.visited;
-
+  const handleClick = (id: string) => {
     setLists((prev) => {
-      const updatedLists = [...prev];
-      updatedLists.find((l) => l.uuid === list.uuid)!.restaurants.find((r) => r.id === restaurant.id)!.visited = !restaurant.visited;
+      const updatedLists = prev.map((l) => {
+        if (l.uuid === list.uuid) {
+          return {...l, restaurants: l.restaurants.map((r) => {
+            if (r.id === id) {
+              return {...r, visited: !r.visited};
+            } else {
+              return {...r};
+            }
+          })}
+        } else {
+          return {...l};
+        }
+      });
+
       return updatedLists;
     });
   };
@@ -35,6 +45,9 @@ export const CustomList: React.FC<Props> = ({ list }) => {
             <option value="recently-added">Recently added</option>
             <option value="name">Name</option>
           </select>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+          </svg>
         </form>
       </div>
       <div className="flex flex-col gap-8">
@@ -43,15 +56,15 @@ export const CustomList: React.FC<Props> = ({ list }) => {
             <Link key={restaurant.id} href={`/restaurant/${restaurant.id}`}>
               <div className="flex p-8 border border-gray-200 rounded-3xl cursor-pointer">
                 <img className="rounded-lg mr-8" src={restaurant.imageUrl} alt={restaurant.name} width={200} height={200} />
-                <div className="flex-1">
+                <div className="flex flex-col flex-1 gap-2">
                   <h3 className="text-2xl font-semibold">{restaurant.name}</h3>
                   <RatingDisplay rating={restaurant.rating} />
                   <p className="text-lg text-gray-600">{restaurant.location}</p>
                   <p className="text-lg text-gray-600">{restaurant.description}</p>
                 </div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
                   className={`size-12 ${restaurant.visited ? 'opacity-100 text-blue-900' : 'opacity-80 text-gray-200 hover:opacity-100 hover:text-blue-900'}`}
-                  onClick={(e) => {e.preventDefault(); e.stopPropagation(); handleClick(restaurant);}}>
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleClick(restaurant.id); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
               </div>

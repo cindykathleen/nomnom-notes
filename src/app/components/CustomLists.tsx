@@ -17,12 +17,12 @@ export const CustomLists: React.FC<Props> = ({ lists, setLists }) => {
 
   // const handleClick2 = () => {
   //   const newRestaurant: Restaurant = {
-  //       id: "3",
-  //       name: "HEYTEA",
+  //       id: "1",
+  //       name: "TP TEA",
   //       rating: 0,
   //       location: "Cupertino, CA",
   //       description: "TBD",
-  //       visited: false,
+  //       visited: true,
   //       imageUrl: "https://placehold.co/200",
   //       dishes: []
   //   };

@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
-import { Restaurant } from "../interfaces/interfaces";
+import { useListsContext } from '../context/ListsContext';
+import { Dish, Restaurant } from "../interfaces/interfaces";
 import { DishCard } from "./DishCard";
 import { RatingDisplay } from "./RatingDisplay";
 
@@ -8,18 +9,57 @@ interface Props {
 }
 
 export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
+  const { setLists } = useListsContext();
   const [showModal, setShowModal] = useState(false);
 
   const dishName = useRef<HTMLInputElement | null>(null);
   const dishRating = useRef<HTMLInputElement | null>(null);
-  const dishDescription = useRef<HTMLInputElement | null>(null);
+  const dishNote = useRef<HTMLInputElement | null>(null);
   const dishImage = useRef<HTMLInputElement | null>(null);
 
   const handleClick = () => {
     if (dishName.current!.value === '') {
       alert("Please enter a dish name");
+    } else if (Number(dishRating.current!.value) < 0.5 || Number(dishRating.current!.value) > 5) {
+      alert("Please enter a rating between 0.5 and 5");
     } else {
+      const newDish: Dish = {
+        name: dishName.current!.value,
+        note: dishNote.current!.value,
+        rating: Number(dishRating.current!.value)
+      };
+  
+      // Add image only if it is provided
+      if (dishImage.current!.value !== '') {
+        newDish.imageUrl = dishImage.current!.value;
+      }
+  
+      setLists((prev) => {
+        return prev.map((list) => {
+          const updatedRestaurants = list.restaurants.map((r) => {
+            if (r.id === restaurant.id) {
+              return {
+                ...r,
+                dishes: [...r.dishes, newDish],
+              };
+            }
+            return r;
+          });
+  
+          return {
+            ...list,
+            restaurants: updatedRestaurants,
+          };
+        });
+      });
     }
+
+    // Reset input fields 
+    dishName.current!.value = '';
+    dishRating.current!.value = '';
+    dishNote.current!.value = '';
+    dishImage.current!.value = '';
+    setShowModal(false);
   };
 
   return (
@@ -63,8 +103,10 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
               <div className="p-4 flex flex-col">
                 <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
                 <input id="dish-name" type="text" ref={dishName} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
-                <label htmlFor="dish-description" className="pb-1 font-semibold">Description</label>
-                <input id="dish-description" type="text" ref={dishDescription} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
+                <label htmlFor="dish-name" className="pb-1 font-semibold">Rating</label>
+                <input id="dish-name" type="text" ref={dishRating} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
+                <label htmlFor="dish-note" className="pb-1 font-semibold">Note</label>
+                <input id="dish-note" type="text" ref={dishNote} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
                 <label htmlFor="dish-image" className="pb-1 font-semibold">Image</label>
                 <input id="dish-image" type="text" ref={dishImage} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleClick}>Add</button>
