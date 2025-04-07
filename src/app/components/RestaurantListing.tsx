@@ -114,7 +114,7 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
             </div>
           </div>
         )
-      }
+      } 
     </div>
   );
 };
