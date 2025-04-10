@@ -1,40 +1,88 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { v4 as uuidv4 } from 'uuid';
+import { useDrag, useDrop } from 'react-dnd';
+import type { Identifier, XYCoord } from 'dnd-core';
 import { List, Lists } from "../interfaces/interfaces";
 
-interface Props {
+interface ListProps {
+  list: List;
+  index: number;
+  // function used to reorder the lists
+  moveList: (dragIndex: number, hoverIndex: number) => void;
+  setShowImageModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setLists: React.Dispatch<React.SetStateAction<Lists>>;
+}
+interface CustomListsProps {
   lists: Lists;
   setLists: React.Dispatch<React.SetStateAction<Lists>>;
 }
 
-export const CustomLists: React.FC<Props> = ({ lists, setLists }) => {
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showImageModal, setShowImageModal] = useState(false);
+interface DragItem {
+  index: number;
+}
 
-  const listName = useRef<HTMLInputElement | null>(null);
-  const listDescription = useRef<HTMLInputElement | null>(null);
-  const listImage = useRef<HTMLInputElement | null>(null);
+const ListComponent: React.FC<ListProps> = ({ list, index, moveList, setShowImageModal, setLists }) => {
+  const ref = useRef<HTMLDivElement>(null);
 
-  // const handleClick = () => {
-  //   const newRestaurant: Restaurant = {
-  //       id: "1",
-  //       name: "TP TEA",
-  //       rating: 0,
-  //       location: "Cupertino, CA",
-  //       description: "TBD",
-  //       visited: true,
-  //       imageUrl: "https://placehold.co/200",
-  //       dishes: []
-  //   };
+  const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
+    accept: "list",
+    // a collecting function that keeps track of the drop target/zone
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId()
+      }
+    },
+    hover(item: DragItem, monitor) {
+      // checking to make sure ref is not null
+      if (!ref.current) {
+        return;
+      }
+      
+      const dragIndex = item.index;
+      const hoverIndex = index;
 
-  //   setLists((prev) => {
-  //     const updatedLists = [...prev];
-  //     updatedLists[0].restaurants.push(newRestaurant);
-  //     return updatedLists;
-  //   }
-  //   );
-  // };
+      // don't call moveList if the item is hovering over itself
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      // get the bounding rect of the hovered item
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      // get the middle of the hovered item
+      const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+      // get the mouse position
+      const clientOffset = monitor.getClientOffset();
+      // get the pixels to the left
+      const hoverClientX = (clientOffset as XYCoord).x - hoverBoundingRect.left;
+
+      // don't call moveList if the item did not pass the middle while dragging to the right
+      if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
+        return;
+      }
+      // don't call moveList if the item did not pass the middle while dragging to the left
+      if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
+        return;
+      }
+
+      moveList(dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    }
+  })
+
+  const [{ isDragging }, drag] = useDrag({
+    type: "list",
+    item: () => {
+      return { id: list.uuid, index }
+    },
+    // a collecting function that keeps track of the dragging state
+    collect: (monitor: any) => ({
+      isDragging: monitor.isDragging()
+    }),
+  })
+
+  // setting ref to act as both a drag source and a drop target
+  drag(drop(ref));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number, key: string) => {
     const cleanText = e.target.value;
@@ -52,6 +100,51 @@ export const CustomLists: React.FC<Props> = ({ lists, setLists }) => {
     });
   };
 
+  return (
+    <div ref={ref} className="flex flex-col relative bg-white rounded-sm" data-handler-id={handlerId}>
+      <Link key={list.uuid} href={`/list/${list.uuid}`}>
+        <div className="group">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="hidden group-hover:block absolute top-2 right-2 size-9 z-99" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowImageModal(true); }}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+          </svg>
+          <img className="aspect-square rounded-lg mb-4" src={list.imageUrl} alt={list.name} />
+        </div>
+      </Link>
+      <input className="text-2xl font-semibold px-2 py-1 border border-transparent border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" value={list.name} onChange={(e) => handleChange(e, index, "name")}></input>
+      <textarea className="text-lg/6 resize-none px-2 py-1 border border-transparent border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" value={list.description} onChange={(e) => handleChange(e, index, "description")}></textarea>
+    </div>
+  );
+}
+
+export const CustomLists: React.FC<CustomListsProps> = ({ lists, setLists }) => {
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
+
+  const listName = useRef<HTMLInputElement | null>(null);
+  const listDescription = useRef<HTMLInputElement | null>(null);
+  const listImage = useRef<HTMLInputElement | null>(null);
+
+  const moveList = useCallback((dragIndex: number, hoverIndex: number) => {
+    setLists((prev) => {
+      const updatedLists = [...prev];
+      const dragCard = updatedLists[dragIndex];
+
+      updatedLists.splice(dragIndex, 1);
+      updatedLists.splice(hoverIndex, 0, dragCard);
+
+      return updatedLists;
+    })
+  }, [])
+
+  const renderList = useCallback(
+    (list: List, index: number) => {
+      return (
+        <ListComponent key={list.uuid} list={list} index={index} moveList={moveList} setShowImageModal={setShowImageModal} setLists={setLists} />
+      )
+    },
+    [],
+  )
+  
   const handleAddClick = () => {
     if (listName.current!.value === '') {
       alert("Please enter a list name");
@@ -88,22 +181,7 @@ export const CustomLists: React.FC<Props> = ({ lists, setLists }) => {
         <button className="self-start px-6 py-2 text-white font-bold bg-blue-900 rounded-lg cursor-pointer">Manage lists</button>
       </div>
       <div className="grid grid-cols-6 gap-16 mb-4">
-        {lists.map((list, index) => {
-          return (
-            <div className="flex flex-col gap-2 relative rounded-sm">
-              <Link key={lists[index].uuid} href={`/list/${lists[index].uuid}`}>
-                <div className="group">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="hidden group-hover:block absolute top-2 right-2 size-9 z-99" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowImageModal(true); }}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                  </svg>
-                  <img className="aspect-square rounded-lg mb-2" src={lists[index].imageUrl} alt={lists[index].name} />
-                </div>
-              </Link>
-              <input className="text-2xl font-semibold px-2 py-1 border border-transparent border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" value={lists[index].name} onChange={(e) => handleChange(e, index, "name")}></input>
-              <textarea className="text-lg/6 resize-none px-2 py-1 border border-transparent border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" value={lists[index].description} onChange={(e) => handleChange(e, index, "description")}></textarea>
-            </div>
-          );
-        })}
+        {lists.map((list, index) => renderList(list, index))}
         <div className="flex items-start h-full">
           <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => setShowAddModal(true)}>
             <p className="text-2xl text-gray-500">
