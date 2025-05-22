@@ -1,11 +1,16 @@
 import { useState, useRef } from 'react';
-import { Place } from '@/app/interfaces/interfaces';
+import { Place, Restaurant, Lists } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 
-export const Search = () => {
+interface Props {
+  lists: Lists;
+  setLists: React.Dispatch<React.SetStateAction<Lists>>;
+}
+
+export const Search: React.FC<Props> = ({ lists, setLists }) => {
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [results, setResults] = useState<Place[]>([]);
   const searchQuery = useRef<HTMLInputElement>(null);
-  const [showAddModal, setShowAddModal] = useState(false);
 
   const handleSearch = async () => {
     const query = searchQuery.current?.value.toLowerCase();
@@ -38,6 +43,62 @@ export const Search = () => {
     localStorage.setItem('places', JSON.stringify({ ...storedPlaces, [query]: places }));
   };
 
+  const handleAddToList = async (id: string, place: Place) => {
+    // Check if the restaurant is already in the list
+    const currentList = lists.find((list) => list.uuid === id);
+    if (currentList!.restaurants.find((restaurant) => restaurant.id === place.id)) {
+      alert("This restaurant is already in the list");
+      return;
+    }
+
+    // Get the restaurant cover photo from Google
+    if (place.photo !== '') {
+      const response = await fetch(`/api/photos?photoId=${place.photo}`, {
+        method: 'GET'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error(`HTTP ${response.status} - ${JSON.stringify(data)}`);
+        return;
+      }
+
+      place.photo = data.photo;
+    } else {
+      // Use a placeholder image if no photo is available from Google
+      place.photo = 'https://placehold.co/400';
+    }
+
+    const newRestaurant: Restaurant = {
+      id: place.id,
+      name: place.name,
+      mapsUri: place.mapsUri,
+      address: place.address,
+      photo: place.photo,
+      type: place.type,
+      rating: 0,
+      description: '',
+      visited: false,
+      dishes: []
+    }
+
+    setLists((prev) => {
+      const updatedLists = prev.map((list) => {
+        if (list.uuid === id) {
+          return {
+            ...list,
+            restaurants: [...list.restaurants, newRestaurant]
+          };
+        }
+        return list;
+      });
+
+      alert("The restaurant has been added to the list");
+      return updatedLists;
+    });
+  };
+
   return (
     <div className="relative h-screen p-16 sm:ml-64">
       <div className="mb-8">
@@ -47,11 +108,11 @@ export const Search = () => {
         <input id="search-query" type="text" ref={searchQuery} className="px-2 py-1 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off"></input>
         <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleSearch}>Search</button>
       </div>
-      <div className="flex flex-col pb-8">
-        {results.map((place) => {
-          return (
-            <div className="flex">
-              <div key={place.id} className="relative min-w-2xl mb-8 bg-white cursor-pointer" onClick={() => setShowAddModal(true)}>
+      <div className="flex pb-8">
+        <div className="flex flex-col min-w-3xl">
+          {results.map((place) => {
+            return (
+              <div key={place.id} className="relative mb-8 bg-white cursor-pointer" onClick={() => setSelectedPlace(place)}>
                 <p className="text-xl font-semibold pb-2">{place.name}</p>
                 <div className="flex gap-2 pb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -75,20 +136,36 @@ export const Search = () => {
                   </div>
                 </Link>
               </div>
-              {showAddModal && (
-                <div className="min-w-xl px-6 py-4 border border-gray-200 rounded-lg">
-                  <div className="p-4 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-blue-900">Add {place.name} to your list</h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={() => setShowAddModal(false)}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                  </div>
-                  <hr className="border-gray-300" />
-                </div>
-              )}
+            );
+          })}
+        </div>
+        {selectedPlace && (
+          <div className="min-w-xl px-6 py-4 border border-gray-200 rounded-lg">
+            <div className="p-4 flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-blue-900">Add {selectedPlace.name} to your list</h2>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={() => setSelectedPlace(null)}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
             </div>
-          );
-        })}
+            <hr className="border-gray-300" />
+            <div className="p-4 flex flex-col">
+              <p className="pb-4 text-lg font-bold">Select a list</p>
+              <div className="flex flex-col gap-4">
+                {lists.map((list) => {
+                  return (
+                    <div key={list.uuid} className="flex gap-4 cursor-pointer" onClick={() => handleAddToList(list.uuid, selectedPlace)}>
+                      <img className="max-w-24 aspect-square rounded-lg mb-4" src={list.imageUrl} alt={list.name} />
+                      <div>
+                        <p className="font-semibold">{list.name}</p>
+                        <p>{list.restaurants.length} places</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div >
   );

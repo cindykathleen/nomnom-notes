@@ -148,30 +148,31 @@ export const CustomLists: React.FC<CustomListsProps> = ({ lists, setLists }) => 
   const handleAddClick = () => {
     if (listName.current!.value === '') {
       alert("Please enter a list name");
-    } else {
-      // Use a placeholder image if no image is provided
-      listImage.current!.value === '' ? listImage.current!.value = 'https://placehold.co/400' : listImage.current!.value;
-
-      const newList: List = {
-        uuid: uuidv4(),
-        name: listName.current!.value,
-        description: listDescription.current!.value,
-        imageUrl: listImage.current!.value,
-        restaurants: []
-      };
-
-      setLists((prev) => {
-        const updatedLists = [...prev];
-        updatedLists.push(newList);
-        return updatedLists;
-      });
-
-      // Reset input fields 
-      listName.current!.value = '';
-      listDescription.current!.value = '';
-      listImage.current!.value = '';
-      setShowAddModal(false);
+      return;
     }
+    
+    // Use a placeholder image if no image is provided
+    listImage.current!.value === '' ? listImage.current!.value = 'https://placehold.co/400' : listImage.current!.value;
+
+    const newList: List = {
+      uuid: uuidv4(),
+      name: listName.current!.value,
+      description: listDescription.current!.value,
+      imageUrl: listImage.current!.value,
+      restaurants: []
+    };
+
+    setLists((prev) => {
+      const updatedLists = [...prev];
+      updatedLists.push(newList);
+      return updatedLists;
+    });
+
+    // Reset input fields 
+    listName.current!.value = '';
+    listDescription.current!.value = '';
+    listImage.current!.value = '';
+    setShowAddModal(false);
   };
 
   return (

@@ -55,7 +55,7 @@ export const CustomList: React.FC<Props> = ({ list }) => {
           return (
             <Link key={restaurant.id} href={`/restaurant/${restaurant.id}`}>
               <div className="flex p-8 border border-gray-200 rounded-3xl cursor-pointer">
-                <img className="rounded-lg mr-8" src="https://placehold.co/400" alt={restaurant.name} width={200} height={200} />
+                <img className="aspect-square object-cover rounded-lg mr-8" src={restaurant.photo} alt={restaurant.name} width={200} height={200} />
                 <div className="flex flex-col flex-1 gap-2">
                   <h3 className="text-2xl font-semibold">{restaurant.name}</h3>
                   <RatingDisplay rating={restaurant.rating} />

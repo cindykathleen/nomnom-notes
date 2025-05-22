@@ -1,6 +1,6 @@
 'use client';
-import { createContext, useContext, useState, useEffect } from 'react';
 
+import { useEffect } from 'react';
 import { useListsContext } from './context/ListsContext';
 import { Sidebar } from './components/Sidebar';
 import { CustomLists } from './components/CustomLists';
