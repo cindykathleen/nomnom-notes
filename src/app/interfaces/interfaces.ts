@@ -1,18 +1,22 @@
+export interface Place {
+  id: string;
+  name: string;
+  mapsUri: string;
+  address: string;
+  photo: string;
+  type: string;
+}
+
 export interface Dish {
   name: string;
   note: string;
   rating: number;
   imageUrl?: string;
 }
-
-export interface Restaurant {
-  id: string;
-  name: string;
+export interface Restaurant extends Place {
   rating: number;
-  location: string;
   description: string;
   visited: boolean;
-  imageUrl: string;
   dishes: Dish[];
 }
 

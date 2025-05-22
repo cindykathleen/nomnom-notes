@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import { useListsContext } from '../context/ListsContext';
-import { Dish, Restaurant } from "../interfaces/interfaces";
+import { useListsContext } from '@/app/context/ListsContext';
+import { Dish, Restaurant } from "@/app/interfaces/interfaces";
 import { DishCard } from "./DishCard";
 import { RatingDisplay } from "./RatingDisplay";
 

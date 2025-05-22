@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { Lists } from '../interfaces/interfaces';
+import { Lists } from '@/app/interfaces/interfaces';
 
 interface ListsContextType {
   lists: Lists;
@@ -15,14 +15,7 @@ interface Props {
 }
 
 export const ListsProvider: React.FC<Props> = ({ children }) => {
-  const [lists, setLists] = useState<Lists>(() => {
-    const storedLists = localStorage.getItem("lists");
-    return storedLists ? JSON.parse(storedLists) : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("lists", JSON.stringify(lists));
-  }, [lists]);
+  const [lists, setLists] = useState<Lists>([]);
 
   return (
     <ListsContext.Provider value={{ lists, setLists }}>

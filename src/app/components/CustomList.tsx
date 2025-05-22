@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { useListsContext } from '../context/ListsContext';
-import { List } from "../interfaces/interfaces";
+import { useListsContext } from '@/app/context/ListsContext';
+import { List } from "@/app/interfaces/interfaces";
 import { RatingDisplay } from "./RatingDisplay";
 
 interface Props {
@@ -55,11 +55,11 @@ export const CustomList: React.FC<Props> = ({ list }) => {
           return (
             <Link key={restaurant.id} href={`/restaurant/${restaurant.id}`}>
               <div className="flex p-8 border border-gray-200 rounded-3xl cursor-pointer">
-                <img className="rounded-lg mr-8" src={restaurant.imageUrl} alt={restaurant.name} width={200} height={200} />
+                <img className="rounded-lg mr-8" src="https://placehold.co/400" alt={restaurant.name} width={200} height={200} />
                 <div className="flex flex-col flex-1 gap-2">
                   <h3 className="text-2xl font-semibold">{restaurant.name}</h3>
                   <RatingDisplay rating={restaurant.rating} />
-                  <p className="text-lg text-gray-600">{restaurant.location}</p>
+                  <p className="text-lg text-gray-600">{restaurant.address}</p>
                   <p className="text-lg text-gray-600">{restaurant.description}</p>
                 </div>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"

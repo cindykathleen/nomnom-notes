@@ -1,4 +1,4 @@
-import { Dish } from "../interfaces/interfaces";
+import { Dish } from "@/app/interfaces/interfaces";
 import { RatingDisplay } from "./RatingDisplay";
 interface Props {
   dish: Dish;
