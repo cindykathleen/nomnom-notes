@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import { useListsContext } from '@/app/context/ListsContext';
 import Link from 'next/link';
 import { v4 as uuidv4 } from 'uuid';
 import { useDrag, useDrop } from 'react-dnd';
@@ -10,11 +11,8 @@ interface ListProps {
   index: number;
   // function used to reorder the lists
   moveList: (dragIndex: number, hoverIndex: number) => void;
-  setShowImageModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setLists: React.Dispatch<React.SetStateAction<Lists>>;
-}
-interface CustomListsProps {
-  lists: Lists;
+  setSelectedList: React.Dispatch<React.SetStateAction<List | null>>;
+  setInputImageUrl: React.Dispatch<React.SetStateAction<string>>;
   setLists: React.Dispatch<React.SetStateAction<Lists>>;
 }
 
@@ -22,7 +20,7 @@ interface DragItem {
   index: number;
 }
 
-const ListComponent: React.FC<ListProps> = ({ list, index, moveList, setShowImageModal, setLists }) => {
+const ListComponent: React.FC<ListProps> = ({ list, index, moveList, setSelectedList, setInputImageUrl, setLists }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
@@ -38,7 +36,7 @@ const ListComponent: React.FC<ListProps> = ({ list, index, moveList, setShowImag
       if (!ref.current) {
         return;
       }
-      
+
       const dragIndex = item.index;
       const hoverIndex = index;
 
@@ -104,7 +102,7 @@ const ListComponent: React.FC<ListProps> = ({ list, index, moveList, setShowImag
     <div ref={ref} key={list.uuid} className="flex flex-col relative bg-white rounded-sm" data-handler-id={handlerId}>
       <Link href={`/list/${list.uuid}`}>
         <div className="group">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="hidden group-hover:block absolute top-2 right-2 size-9 z-99" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowImageModal(true); }}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="hidden group-hover:block absolute top-2 right-2 size-9 z-99" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedList(list); setInputImageUrl(list.imageUrl); }}>
             <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
           </svg>
           <img className="aspect-square rounded-lg mb-4" src={list.imageUrl} alt={list.name} />
@@ -116,13 +114,17 @@ const ListComponent: React.FC<ListProps> = ({ list, index, moveList, setShowImag
   );
 }
 
-export const CustomLists: React.FC<CustomListsProps> = ({ lists, setLists }) => {
+export const CustomLists = () => {
+  const { lists, setLists } = useListsContext();
+
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedList, setSelectedList] = useState<List | null>(null);
 
   const listName = useRef<HTMLInputElement | null>(null);
   const listDescription = useRef<HTMLInputElement | null>(null);
   const listImage = useRef<HTMLInputElement | null>(null);
+
+  const [inputImageUrl, setInputImageUrl] = useState<string>('');
 
   const moveList = useCallback((dragIndex: number, hoverIndex: number) => {
     setLists((prev) => {
@@ -139,18 +141,18 @@ export const CustomLists: React.FC<CustomListsProps> = ({ lists, setLists }) => 
   const renderList = useCallback(
     (list: List, index: number) => {
       return (
-        <ListComponent key={list.uuid} list={list} index={index} moveList={moveList} setShowImageModal={setShowImageModal} setLists={setLists} />
+        <ListComponent key={list.uuid} list={list} index={index} moveList={moveList} setSelectedList={setSelectedList} setInputImageUrl={setInputImageUrl} setLists={setLists} />
       )
     },
     [],
   )
-  
+
   const handleAddClick = () => {
     if (listName.current!.value === '') {
       alert("Please enter a list name");
       return;
     }
-    
+
     // Use a placeholder image if no image is provided
     listImage.current!.value === '' ? listImage.current!.value = 'https://placehold.co/400' : listImage.current!.value;
 
@@ -173,6 +175,19 @@ export const CustomLists: React.FC<CustomListsProps> = ({ lists, setLists }) => 
     listDescription.current!.value = '';
     listImage.current!.value = '';
     setShowAddModal(false);
+  };
+
+  const handleUpdateImage = (id: string) => {
+    const newImageUrl = inputImageUrl === '' ? 'https://placehold.co/400' : inputImageUrl;
+
+    setLists((prev) => {
+      const updatedLists = [...prev];
+      const listIndex = updatedLists.findIndex((list) => list.uuid === id);
+      updatedLists[listIndex].imageUrl = newImageUrl;
+      return updatedLists;
+    });
+
+    setSelectedList(null);
   };
 
   return (
@@ -217,21 +232,23 @@ export const CustomLists: React.FC<CustomListsProps> = ({ lists, setLists }) => 
           </div>
         )
       }
-      {/* Modal for images */
-        showImageModal && (
+      {/* Modal for editing images */
+        selectedList && (
           <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div className="relative px-6 py-8 w-2/5 bg-white rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-blue-900">Edit image</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => setShowImageModal(false)}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => setSelectedList(null)}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
               <hr className="border-gray-300" />
               <div className="p-4 flex flex-col">
                 <label htmlFor="list-image" className="pb-1 font-semibold">Image</label>
-                <div>
-                  <input id="list-image" type="text" className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
+                <div className="flex gap-4 mb-6">
+                  <input id="list-image" type="text" placeholder="Add image URL here" value={inputImageUrl} onChange={(e) => setInputImageUrl(e.target.value)}
+                    className="w-full px-2 py-1 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
+                  <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleUpdateImage(selectedList.uuid)}>Update</button>
                 </div>
               </div>
             </div>

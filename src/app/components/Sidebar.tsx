@@ -3,13 +3,6 @@ export const Sidebar = () => {
     <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
       <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50">
         <a href="/" className="flex items-center ps-2.5 mb-5">
-          {/* <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="20" width="60" height="70" rx="8" stroke="#1E3A8A" strokeWidth="4" fill="none" />
-            <path d="M10 30 H70" stroke="#1E3A8A" strokeWidth="3" strokeLinecap="round" />
-            <path d="M20 40 H60" stroke="#1E3A8A" strokeWidth="3" strokeLinecap="round" />
-            <path d="M20 50 H50" stroke="#1E3A8A" strokeWidth="3" strokeLinecap="round" />
-            <path d="M65 80 C75 75, 85 85, 80 90 C75 95, 65 85, 65 80" fill="#1E3A8A" />
-          </svg> */}
           <span className="self-center text-xl font-semibold whitespace-nowrap">NomNom Notes</span>
         </a>
         <p className="p-2 font-semibold">Discover</p>

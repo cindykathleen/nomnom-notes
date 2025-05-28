@@ -1,13 +1,10 @@
 import { useState, useRef } from 'react';
-import { Place, Restaurant, Lists } from '@/app/interfaces/interfaces';
+import { useListsContext } from '@/app/context/ListsContext';
+import { Place, Restaurant } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 
-interface Props {
-  lists: Lists;
-  setLists: React.Dispatch<React.SetStateAction<Lists>>;
-}
-
-export const Search: React.FC<Props> = ({ lists, setLists }) => {
+export const Search = () => {
+  const { lists, setLists } = useListsContext();
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [results, setResults] = useState<Place[]>([]);
   const searchQuery = useRef<HTMLInputElement>(null);
@@ -104,8 +101,8 @@ export const Search: React.FC<Props> = ({ lists, setLists }) => {
       <div className="mb-8">
         <h1 className="text-4xl font-semibold">Search</h1>
       </div>
-      <div className="mb-8">
-        <input id="search-query" type="text" ref={searchQuery} className="px-2 py-1 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off"></input>
+      <div className="flex gap-4 mb-8">
+        <input id="search-query" type="text" ref={searchQuery} className="min-w-md px-2 py-1 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off"></input>
         <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleSearch}>Search</button>
       </div>
       <div className="flex pb-8">
@@ -140,7 +137,7 @@ export const Search: React.FC<Props> = ({ lists, setLists }) => {
           })}
         </div>
         {selectedPlace && (
-          <div className="min-w-xl px-6 py-4 border border-gray-200 rounded-lg">
+          <div className="min-w-xl h-full px-6 py-4 border border-gray-200 rounded-lg">
             <div className="p-4 flex items-center justify-between">
               <h2 className="text-xl font-semibold text-blue-900">Add {selectedPlace.name} to your list</h2>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={() => setSelectedPlace(null)}>

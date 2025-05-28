@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
 import { useListsContext } from '@/app/context/ListsContext';
-import { Dish, Restaurant } from "@/app/interfaces/interfaces";
-import { DishCard } from "./DishCard";
-import { RatingDisplay } from "./RatingDisplay";
+import { Dish, Restaurant } from '@/app/interfaces/interfaces';
+import { DishCard } from '@/app/components/DishCard';
+import { RatingDisplay } from '@/app/components/RatingDisplay';
 
 interface Props {
   restaurant: Restaurant;

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Lists } from '@/app/interfaces/interfaces';
 
 interface ListsContextType {
@@ -16,6 +16,24 @@ interface Props {
 
 export const ListsProvider: React.FC<Props> = ({ children }) => {
   const [lists, setLists] = useState<Lists>([]);
+
+  useEffect(() => {
+    const storedLists = localStorage.getItem("lists");
+    setLists(storedLists ? JSON.parse(storedLists) : []);
+  }, []);
+
+  const hasLoaded = useRef(false);
+
+  useEffect(() => {
+    // Skipping the initial mount effect
+    // Otherwise it will save an empty array to localStorage
+    if (!hasLoaded.current) {
+      hasLoaded.current = true;
+      return;
+    }
+    
+    localStorage.setItem("lists", JSON.stringify(lists));
+  }, [lists]);
 
   return (
     <ListsContext.Provider value={{ lists, setLists }}>
