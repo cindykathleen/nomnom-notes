@@ -7,12 +7,13 @@ import { List } from '@/app/interfaces/interfaces';
 
 export default function ListPage({ id }: { id: string }) {
   const { lists } = useListsContext();
-  const currentList = lists.find((list: List) => list.uuid === id);
+  
+  const list = lists.find((l: List) => l.uuid === id);
   
   return (
     <div>
       <Sidebar />
-      {currentList && <CustomList list={currentList} />}
+      {list && <CustomList list={list} />}
     </div>
   );
 }

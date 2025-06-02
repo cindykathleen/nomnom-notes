@@ -1,16 +1,12 @@
 import { useState } from 'react';
-import { useListsContext } from '@/app/context/ListsContext';
-import { List, Restaurant } from '@/app/interfaces/interfaces';
 
 interface Props {
-  list: List;
-  restaurant: Restaurant;
-  rating: number;
+  currRating: number;
+  setNewRating: (newRating: number) => void;
 }
 
-export const RatingSystem: React.FC<Props> = ({ list, restaurant, rating }) => {
-  const { setLists } = useListsContext();
-  const [updatedRating, setUpdatedRating] = useState<number>(rating);
+export const RatingSystem: React.FC<Props> = ({ currRating, setNewRating }) => {
+  const [updatedRating, setUpdatedRating] = useState<number>(currRating);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [hoverHalf, setHoverHalf] = useState<number | null>(null);
 
@@ -18,16 +14,9 @@ export const RatingSystem: React.FC<Props> = ({ list, restaurant, rating }) => {
     const { left, width } = e.currentTarget.getBoundingClientRect();
     const mouseX = e.clientX - left;
     const isHalf = mouseX < width / 2 ? 0 : 1; // Left half = 0, Right half = 1
-    const currRating = i + (isHalf ? 1 : 0.5);
-    setUpdatedRating(currRating);
-
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
-      const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((r) => r.id === restaurant.id);
-      updatedLists[listIndex].restaurants[restaurantIndex].rating = currRating;
-      return updatedLists;
-    });
+    const newRating = i + (isHalf ? 1 : 0.5);
+    setUpdatedRating(newRating);
+    setNewRating(newRating);
   };
 
   return (
