@@ -101,11 +101,11 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
               </div>
               <hr className="border-gray-300" />
               <div className="p-4 flex flex-col">
-                <label htmlFor="list-name" className="pb-1 font-semibold">Name</label>
-                <input id="list-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
+                <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
+                <input id="dish-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
                   className="w-full px-2 py-1 mb-6 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
-                <label htmlFor="restaurant-rating" className="pb-1 font-semibold">Rating</label>
-                <div id="restaurant-rating" className="w-fit mb-6" onMouseEnter={() => setRatingHover(true)} onMouseLeave={() => setRatingHover(false)}>
+                <label htmlFor="dish-rating" className="pb-1 font-semibold">Rating</label>
+                <div id="dish-rating" className="w-fit mb-6" onMouseEnter={() => setRatingHover(true)} onMouseLeave={() => setRatingHover(false)}>
                   {ratingHover
                     ? <RatingSystem currRating={dish.rating}
                       setNewRating={
@@ -123,12 +123,13 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
                     />
                     : <RatingDisplay rating={dish.rating} />}
                 </div>
-                <label htmlFor="list-description" className="pb-1 font-semibold">Note</label>
-                <textarea id="list-description" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
+                <label htmlFor="dish-note" className="pb-1 font-semibold">Note</label>
+                <textarea id="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
-                <label htmlFor="list-image" className="pb-1 font-semibold">Image</label>
-                <input id="list-image" type="text" placeholder="Add image URL here" value={inputImageUrl} onChange={(e) => setInputImageUrl(e.target.value)}
-                  className="w-full px-2 py-1 mb-6 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
+                <label htmlFor="dish-image" className="pb-1 font-semibold">Image</label>
+                <input type="file" accept="image/*" />
+                {/* <input id="dish-image" type="text" placeholder="Add image URL here" value={inputImageUrl} onChange={(e) => setInputImageUrl(e.target.value)}
+                  className="w-full px-2 py-1 mb-6 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" /> */}
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleUpdateClick}>Update</button>
               </div>
             </div>

@@ -20,9 +20,7 @@ export const ListsProvider: React.FC<Props> = ({ children }) => {
   // This is called AFTER the components mount
   // So lists is [] on initial render
   useEffect(() => {
-    console.log('useeffect triggered');
     const storedLists = localStorage.getItem("lists");
-    console.log('storedLists', storedLists?.length);
     setLists(storedLists ? JSON.parse(storedLists) : []);
   }, []);
 

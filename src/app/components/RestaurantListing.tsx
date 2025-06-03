@@ -17,13 +17,19 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
   const currentList = lists.find((list) => list.restaurants.some((r) => r.id === restaurant.id));
   if (!currentList) return;
 
-  // Refs for the input fields in the add modal
+  // Refs/states for the input fields in the add modal
   const dishName = useRef<HTMLInputElement | null>(null);
   const dishNote = useRef<HTMLTextAreaElement | null>(null);
-  const dishImage = useRef<HTMLInputElement | null>(null);
+  const [dishImage, setDishImage] = useState<File | null>(null);
   const [dishRating, setDishRating] = useState<number>(0);
 
-  const handleClick = () => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setDishImage(e.target.files[0]);
+    }
+  };
+
+  const handleClick = async () => {
     if (dishName.current!.value === '') {
       alert("Please enter a dish name");
     } else {
@@ -34,8 +40,23 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
       };
 
       // Add image only if it is provided
-      if (dishImage.current!.value !== '') {
-        newDish.imageUrl = dishImage.current!.value;
+      if (dishImage) {
+        const formData = new FormData();
+        formData.append('file', dishImage);
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error(`${response.status} - ${JSON.stringify(data)}`);
+          return;
+        }
+
+        newDish.imageUrl = `/uploads/${dishImage.name.replaceAll(" ", "_")}`;
       }
 
       setLists((prev) => {
@@ -61,7 +82,7 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
     // Reset input fields 
     dishName.current!.value = '';
     dishNote.current!.value = '';
-    dishImage.current!.value = '';
+    setDishImage(null);
     setDishRating(0);
     setShowModal(false);
   };
@@ -116,11 +137,14 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
                 <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
                 <input id="dish-name" type="text" ref={dishName} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
                 <label htmlFor="dish-name" className="pb-1 font-semibold">Rating</label>
-                <RatingSystem currRating={0} setNewRating={ (newRating) => { setDishRating(newRating) } } />
+                <RatingSystem currRating={0} setNewRating={(newRating) => { setDishRating(newRating) }} />
                 <label htmlFor="dish-note" className="pb-1 mt-6 font-semibold">Note</label>
                 <textarea id="dish-note" ref={dishNote} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
                 <label htmlFor="dish-image" className="pb-1 font-semibold">Image</label>
-                <input id="dish-image" type="text" ref={dishImage} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
+                <input id="dish-image" type="file" accept="image/*"
+                  className="mb-6 file:px-4 file:py-1 file:font-semibold file:border file:border-blue-900 file:rounded-lg file:cursor-pointer"
+                  onChange={handleImageChange} />
+                {/* <input id="dish-image" type="text" ref={dishImage} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" /> */}
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleClick}>Add</button>
               </div>
             </div>
