@@ -3,6 +3,8 @@ import { useListsContext } from '@/app/context/ListsContext';
 import { List, Restaurant, Dish } from '@/app/interfaces/interfaces';
 import { RatingDisplay } from '@/app/components/RatingDisplay';
 import { RatingSystem } from '@/app/components/RatingSystem';
+import { UploadImage } from '@/app/components/UploadImage';
+
 interface Props {
   list: List;
   restaurant: Restaurant;
@@ -11,37 +13,15 @@ interface Props {
 
 export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
   const { setLists } = useListsContext();
-  const [showMenuModal, setShowMenuModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showUploadInput, setShowUploadInput] = useState(false);
-  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [showMenuModal, setShowMenuModal] = useState<boolean>(false);
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
 
   // States for the input fields in the edit modal
   const [inputName, setInputName] = useState<string>(dish.name);
   const [inputNote, setInputNote] = useState<string>(dish.note);
   const [inputImageUrl, setInputImageUrl] = useState<string>(dish.imageUrl || '');
   const [ratingHover, setRatingHover] = useState<boolean>(false);
-
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const formData = new FormData();
-      formData.append('file', e.target.files[0]);
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        console.error(`${response.status} - ${JSON.stringify(data)}`);
-        return;
-      }
-
-      setInputImageUrl(`/uploads/${e.target.files[0].name.replaceAll(" ", "_")}`);
-    }
-  };
 
   const handleUpdateClick = () => {
     setLists((prev) => {
@@ -57,7 +37,6 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
     })
 
     setShowEditModal(false);
-    setShowUploadInput(false);
   };
 
   const handleDeleteClick = () => {
@@ -66,7 +45,6 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
       const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
       const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((r) => r.id === restaurant.id);
       const dishIndex = updatedLists[listIndex].restaurants[restaurantIndex].dishes.findIndex((d) => d.name === dish.name);
-
       updatedLists[listIndex].restaurants[restaurantIndex].dishes.splice(dishIndex, 1);
 
       return updatedLists;
@@ -76,15 +54,13 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
   };
 
   return (
-    <div className="flex flex-col px-6 py-4 border border-gray-200 rounded-lg">
+    <div className="flex flex-col border border-gray-200 rounded-lg">
       { // Check to make sure dish.imageUrl is not undefined, null or an empty string
         !!dish.imageUrl && (
-          <div>
-            <img src={dish.imageUrl} alt={dish.name} />
-          </div>
+          <img src={dish.imageUrl} alt={dish.name} className="rounded-t-lg" />
         )
       }
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 p-4">
         <div className="flex justify-between relative">
           <h3 className="text-xl font-semibold">{dish.name}</h3>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
@@ -149,18 +125,7 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
                 <label htmlFor="dish-note" className="pb-1 font-semibold">Note</label>
                 <textarea id="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
-                {showUploadInput
-                  ? <label className="pb-1 font-semibold">Image (<span className="underline cursor-pointer hover:text-blue-900" onClick={() => setShowUploadInput(false)}>use an existing image</span>)</label>
-                  : <label className="pb-1 font-semibold">Image (<span className="underline cursor-pointer hover:text-blue-900" onClick={() => setShowUploadInput(true)}>upload your own</span>)</label>
-                }
-                {showUploadInput
-                  ? <input key="file-input" type="file" accept="image/*"
-                    className="mb-6 file:px-3 file:py-1 file:mr-2 file:font-semibold file:border file:border-blue-900 file:rounded-lg file:cursor-pointer"
-                    onChange={handleImageChange} />
-                  : <input key="url-input" type="text" placeholder="Add image URL here"
-                    value={inputImageUrl} onChange={(e) => setInputImageUrl(e.target.value)}
-                    className="w-full px-2 py-1 mb-6 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
-                }
+                <UploadImage currImage={inputImageUrl} setNewImage={(newImage) => setInputImageUrl(newImage)} />
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleUpdateClick}>Update</button>
               </div>
             </div>

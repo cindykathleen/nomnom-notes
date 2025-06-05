@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { v4 as uuidv4 } from 'uuid';
 import { useDrag, useDrop } from 'react-dnd';
 import type { Identifier, XYCoord } from 'dnd-core';
-import { List, Lists } from "@/app/interfaces/interfaces";
+import { List } from "@/app/interfaces/interfaces";
+import { UploadImage } from '@/app/components/UploadImage';
 
 interface ListProps {
   list: List;
@@ -23,7 +24,6 @@ interface DragItem {
 }
 
 const ListComponent: React.FC<ListProps> = ({ list, index, setSelectedList, setShowEditModal, setShowDeleteAlert, setInputName, setInputDescription, setInputImageUrl, moveList }) => {
-  const { setLists } = useListsContext();
   const [showMenuModal, setShowMenuModal] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
@@ -121,15 +121,14 @@ const ListComponent: React.FC<ListProps> = ({ list, index, setSelectedList, setS
 
 export const CustomLists = () => {
   const { lists, setLists } = useListsContext();
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [selectedList, setSelectedList] = useState<List | null>(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
 
   // Refs for the input fields in the add modal
   const listName = useRef<HTMLInputElement | null>(null);
   const listDescription = useRef<HTMLInputElement | null>(null);
-  const listImage = useRef<HTMLInputElement | null>(null);
 
   // States for the input fields in the edit modal
   const [inputName, setInputName] = useState<string>('');
@@ -160,14 +159,11 @@ export const CustomLists = () => {
       return;
     }
 
-    // Use a placeholder image if no image is provided
-    listImage.current!.value === '' ? listImage.current!.value = 'https://placehold.co/400' : listImage.current!.value;
-
     const newList: List = {
       uuid: uuidv4(),
       name: listName.current!.value,
       description: listDescription.current!.value,
-      imageUrl: listImage.current!.value,
+      imageUrl: inputImageUrl === '' ? 'https://placehold.co/400' : inputImageUrl,
       restaurants: []
     };
 
@@ -180,19 +176,17 @@ export const CustomLists = () => {
     // Reset input fields 
     listName.current!.value = '';
     listDescription.current!.value = '';
-    listImage.current!.value = '';
+    setInputImageUrl('');
     setShowAddModal(false);
   };
 
   const handleUpdateClick = (id: string) => {
-    const newImageUrl = inputImageUrl === '' ? 'https://placehold.co/400' : inputImageUrl;
-
     setLists((prev) => {
       const updatedLists = [...prev];
       const listIndex = updatedLists.findIndex((list) => list.uuid === id);
       updatedLists[listIndex].name = inputName;
       updatedLists[listIndex].description = inputDescription;
-      updatedLists[listIndex].imageUrl = newImageUrl;
+      updatedLists[listIndex].imageUrl = inputImageUrl === '' ? 'https://placehold.co/400' : inputImageUrl;
       return updatedLists;
     });
 
@@ -204,7 +198,6 @@ export const CustomLists = () => {
     setLists((prev) => {
       const updatedLists = [...prev];
       const listIndex = updatedLists.findIndex((list) => list.uuid === id);
-
       updatedLists.splice(listIndex, 1);
 
       return updatedLists;
@@ -220,7 +213,7 @@ export const CustomLists = () => {
       <div className="grid grid-cols-6 gap-16 mb-4">
         {lists.map((list, index) => renderList(list, index))}
         <div className="flex items-start h-full">
-          <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => setShowAddModal(true)}>
+          <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => { setInputImageUrl(''); setShowAddModal(true); }}>
             <p className="text-2xl text-gray-500">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -245,8 +238,7 @@ export const CustomLists = () => {
                 <input id="list-name" type="text" ref={listName} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
                 <label htmlFor="list-description" className="pb-1 font-semibold">Description</label>
                 <input id="list-description" type="text" ref={listDescription} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
-                <label htmlFor="list-image" className="pb-1 font-semibold">Image</label>
-                <input id="list-image" type="text" ref={listImage} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
+                <UploadImage currImage={inputImageUrl} setNewImage={(newImage) => setInputImageUrl(newImage)} />
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleAddClick}>Create</button>
               </div>
             </div>
@@ -272,9 +264,7 @@ export const CustomLists = () => {
                 <label htmlFor="list-description" className="pb-1 font-semibold">Description</label>
                 <textarea id="list-description" placeholder="Add a description for this list" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
                   className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
-                <label htmlFor="list-image" className="pb-1 font-semibold">Image</label>
-                <input id="list-image" type="text" placeholder="Add image URL here" value={inputImageUrl} onChange={(e) => setInputImageUrl(e.target.value)}
-                  className="w-full px-2 py-1 mb-6 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
+                <UploadImage currImage={inputImageUrl} setNewImage={(newImage) => setInputImageUrl(newImage)} />
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleUpdateClick(selectedList.uuid)}>Update</button>
               </div>
             </div>

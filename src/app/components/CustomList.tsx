@@ -13,8 +13,8 @@ export const CustomList: React.FC<Props> = ({ list }) => {
   const { setLists } = useListsContext();
   const [selectedMenuModal, setSelectedMenuModal] = useState<string | null>(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
 
   // States for the input fields in the edit modal
   const [ratingHover, setRatingHover] = useState<boolean>(false);
@@ -39,7 +39,6 @@ export const CustomList: React.FC<Props> = ({ list }) => {
       const updatedLists = [...prev];
       const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
       const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((restaurant) => restaurant.id === id);
-
       updatedLists[listIndex].restaurants.splice(restaurantIndex, 1);
 
       return updatedLists;

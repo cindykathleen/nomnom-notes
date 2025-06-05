@@ -11,7 +11,7 @@ export interface Dish {
   name: string;
   note: string;
   rating: number;
-  imageUrl?: string;
+  imageUrl: string;
 }
 export interface Restaurant extends Place {
   rating: number;
