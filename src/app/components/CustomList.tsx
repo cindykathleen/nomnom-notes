@@ -13,6 +13,8 @@ export const CustomList: React.FC<Props> = ({ list }) => {
   const { setLists } = useListsContext();
   const [selectedMenuModal, setSelectedMenuModal] = useState<string | null>(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   // States for the input fields in the edit modal
   const [ratingHover, setRatingHover] = useState<boolean>(false);
@@ -29,6 +31,7 @@ export const CustomList: React.FC<Props> = ({ list }) => {
     });
 
     setSelectedRestaurant(null);
+    setShowEditModal(false);
   };
 
   const handleDeleteClick = (id: string) => {
@@ -37,12 +40,13 @@ export const CustomList: React.FC<Props> = ({ list }) => {
       const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
       const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((restaurant) => restaurant.id === id);
 
-      // TODO: Add confirmation dialog before deleting
-
       updatedLists[listIndex].restaurants.splice(restaurantIndex, 1);
 
       return updatedLists;
     })
+
+    setSelectedRestaurant(null);
+    setShowDeleteAlert(false);
   }
 
   return (
@@ -91,12 +95,12 @@ export const CustomList: React.FC<Props> = ({ list }) => {
                     <div className="flex flex-col absolute right-9 top-18 min-w-30 p-2 bg-white border border-gray-200 rounded-sm">
                       <button
                         className="px-2 py-1 mb-2 text-left cursor-pointer hover:bg-gray-100"
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedMenuModal(null); setSelectedRestaurant(restaurant); setInputDescription(restaurant.description); }}>
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedMenuModal(null); setSelectedRestaurant(restaurant); setShowEditModal(true); setInputDescription(restaurant.description); }}>
                         Edit
                       </button>
                       <button
                         className="px-2 py-1 text-left cursor-pointer hover:bg-gray-100"
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedMenuModal(null); handleDeleteClick(restaurant.id); }}>
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedMenuModal(null); setSelectedRestaurant(restaurant); setShowDeleteAlert(true); }}>
                         Delete
                       </button>
                     </div>
@@ -108,12 +112,12 @@ export const CustomList: React.FC<Props> = ({ list }) => {
         })}
       </div>
       { // Modal for editing restaurants
-        selectedRestaurant && (
+        showEditModal && selectedRestaurant && (
           <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div className="relative px-6 py-8 w-2/5 bg-white rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-blue-900">Edit {selectedRestaurant.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => setSelectedRestaurant(null)}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => { setSelectedRestaurant(null); setShowEditModal(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
@@ -141,6 +145,27 @@ export const CustomList: React.FC<Props> = ({ list }) => {
                 <textarea id="restaurant-description" placeholder="Add a description for this restaurant" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
                   className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleEditClick(selectedRestaurant.id)}>Update</button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+      { // Alert for deleting a restaurant
+        showDeleteAlert && selectedRestaurant && (
+          <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+            <div role="alert" className="relative px-6 py-8 w-1/5 border border-gray-300 rounded-lg bg-gray-50">
+              <h3 className="mb-4 text-2xl font-semibold text-blue-900">Are you sure you want to delete this dish?</h3>
+              <div className="flex">
+                <button type="button"
+                  className="px-8 py-1.5 mr-4 text-sm text-white text-center bg-blue-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg cursor-pointer"
+                  onClick={() => { handleDeleteClick(selectedRestaurant.id) }}>
+                  Yes
+                </button>
+                <button type="button"
+                  className="px-8 py-1.5 text-sm text-blue-900 text-center bg-transparent border border-blue-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg cursor-pointer"
+                  onClick={() => { setSelectedRestaurant(null); setShowDeleteAlert(false); }}>
+                  No
+                </button>
               </div>
             </div>
           </div>

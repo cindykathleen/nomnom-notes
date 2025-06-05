@@ -13,12 +13,35 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
   const { setLists } = useListsContext();
   const [showMenuModal, setShowMenuModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showUploadInput, setShowUploadInput] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   // States for the input fields in the edit modal
   const [inputName, setInputName] = useState<string>(dish.name);
   const [inputNote, setInputNote] = useState<string>(dish.note);
-  const [inputImageUrl, setInputImageUrl] = useState<string>('');
+  const [inputImageUrl, setInputImageUrl] = useState<string>(dish.imageUrl || '');
   const [ratingHover, setRatingHover] = useState<boolean>(false);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const formData = new FormData();
+      formData.append('file', e.target.files[0]);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error(`${response.status} - ${JSON.stringify(data)}`);
+        return;
+      }
+
+      setInputImageUrl(`/uploads/${e.target.files[0].name.replaceAll(" ", "_")}`);
+    }
+  };
 
   const handleUpdateClick = () => {
     setLists((prev) => {
@@ -28,15 +51,13 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
       const dishIndex = updatedLists[listIndex].restaurants[restaurantIndex].dishes.findIndex((d) => d.name === dish.name);
       updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].name = inputName;
       updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].note = inputNote;
-
-      if (inputImageUrl !== '') {
-        updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].imageUrl = inputImageUrl;
-      }
+      updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].imageUrl = inputImageUrl;
 
       return updatedLists;
     })
 
     setShowEditModal(false);
+    setShowUploadInput(false);
   };
 
   const handleDeleteClick = () => {
@@ -46,27 +67,29 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
       const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((r) => r.id === restaurant.id);
       const dishIndex = updatedLists[listIndex].restaurants[restaurantIndex].dishes.findIndex((d) => d.name === dish.name);
 
-      // TODO: Add confirmation dialog before deleting
-
       updatedLists[listIndex].restaurants[restaurantIndex].dishes.splice(dishIndex, 1);
 
       return updatedLists;
     })
+
+    setShowDeleteAlert(false);
   };
 
   return (
     <div className="flex flex-col px-6 py-4 border border-gray-200 rounded-lg">
-      {dish.imageUrl !== undefined && (
-        <div>
-          <img src={dish.imageUrl} alt={dish.name} />
-        </div>
-      )}
+      { // Check to make sure dish.imageUrl is not undefined, null or an empty string
+        !!dish.imageUrl && (
+          <div>
+            <img src={dish.imageUrl} alt={dish.name} />
+          </div>
+        )
+      }
       <div className="flex flex-col gap-2">
         <div className="flex justify-between relative">
           <h3 className="text-xl font-semibold">{dish.name}</h3>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
             className="ml-4 size-8 cursor-pointer"
-            onClick={() => { setShowMenuModal(!showMenuModal); }}>
+            onClick={() => setShowMenuModal(!showMenuModal)}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
           </svg>
           {/* Modal for menu */
@@ -74,12 +97,12 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
               <div className="flex flex-col absolute right-0 top-8 min-w-30 p-2 bg-white border border-gray-200 rounded-sm">
                 <button
                   className="px-2 py-1 mb-2 text-left cursor-pointer hover:bg-gray-100"
-                  onClick={() => { setShowMenuModal(false); setShowEditModal(true) }}>
+                  onClick={() => { setShowMenuModal(false); setShowEditModal(true); }}>
                   Edit
                 </button>
                 <button
                   className="px-2 py-1 text-left cursor-pointer hover:bg-gray-100"
-                  onClick={() => { setShowMenuModal(false); handleDeleteClick(); }}>
+                  onClick={() => { setShowMenuModal(false); setShowDeleteAlert(true); }}>
                   Delete
                 </button>
               </div>
@@ -89,7 +112,7 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
         <RatingDisplay rating={dish.rating} />
         <p>{dish.note}</p>
       </div>
-      { // Modal for editing lists
+      { // Modal for editing a dish
         showEditModal && (
           <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div className="relative px-6 py-8 w-2/5 bg-white rounded-lg z-99">
@@ -126,11 +149,40 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
                 <label htmlFor="dish-note" className="pb-1 font-semibold">Note</label>
                 <textarea id="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
-                <label htmlFor="dish-image" className="pb-1 font-semibold">Image</label>
-                <input type="file" accept="image/*" />
-                {/* <input id="dish-image" type="text" placeholder="Add image URL here" value={inputImageUrl} onChange={(e) => setInputImageUrl(e.target.value)}
-                  className="w-full px-2 py-1 mb-6 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" /> */}
+                {showUploadInput
+                  ? <label className="pb-1 font-semibold">Image (<span className="underline cursor-pointer hover:text-blue-900" onClick={() => setShowUploadInput(false)}>use an existing image</span>)</label>
+                  : <label className="pb-1 font-semibold">Image (<span className="underline cursor-pointer hover:text-blue-900" onClick={() => setShowUploadInput(true)}>upload your own</span>)</label>
+                }
+                {showUploadInput
+                  ? <input key="file-input" type="file" accept="image/*"
+                    className="mb-6 file:px-3 file:py-1 file:mr-2 file:font-semibold file:border file:border-blue-900 file:rounded-lg file:cursor-pointer"
+                    onChange={handleImageChange} />
+                  : <input key="url-input" type="text" placeholder="Add image URL here"
+                    value={inputImageUrl} onChange={(e) => setInputImageUrl(e.target.value)}
+                    className="w-full px-2 py-1 mb-6 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
+                }
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleUpdateClick}>Update</button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+      { // Alert for deleting a dish
+        showDeleteAlert && (
+          <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+            <div role="alert" className="relative px-6 py-8 w-1/5 border border-gray-300 rounded-lg bg-gray-50">
+              <h3 className="mb-4 text-2xl font-semibold text-blue-900">Are you sure you want to delete this dish?</h3>
+              <div className="flex">
+                <button type="button"
+                  className="px-8 py-1.5 mr-4 text-sm text-white text-center bg-blue-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg cursor-pointer"
+                  onClick={handleDeleteClick}>
+                  Yes
+                </button>
+                <button type="button"
+                  className="px-8 py-1.5 text-sm text-blue-900 text-center bg-transparent border border-blue-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg cursor-pointer"
+                  onClick={() => setShowDeleteAlert(false)}>
+                  No
+                </button>
               </div>
             </div>
           </div>

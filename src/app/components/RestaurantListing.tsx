@@ -122,7 +122,7 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
           </div>
         </div>
       </div>
-      {/* Modal for creating a new dish */
+      {/* Modal for adding a new dish */
         showModal && (
           <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div className="relative px-6 py-8 w-2/5 bg-white rounded-lg">
@@ -137,14 +137,13 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
                 <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
                 <input id="dish-name" type="text" ref={dishName} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
                 <label htmlFor="dish-name" className="pb-1 font-semibold">Rating</label>
-                <RatingSystem currRating={0} setNewRating={(newRating) => { setDishRating(newRating) }} />
+                <RatingSystem currRating={0} setNewRating={(newRating) => setDishRating(newRating) } />
                 <label htmlFor="dish-note" className="pb-1 mt-6 font-semibold">Note</label>
                 <textarea id="dish-note" ref={dishNote} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
                 <label htmlFor="dish-image" className="pb-1 font-semibold">Image</label>
                 <input id="dish-image" type="file" accept="image/*"
-                  className="mb-6 file:px-4 file:py-1 file:font-semibold file:border file:border-blue-900 file:rounded-lg file:cursor-pointer"
+                  className="mb-6 file:px-3 file:py-1 file:mr-2 file:font-semibold file:border file:border-blue-900 file:rounded-lg file:cursor-pointer"
                   onChange={handleImageChange} />
-                {/* <input id="dish-image" type="text" ref={dishImage} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" /> */}
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleClick}>Add</button>
               </div>
             </div>

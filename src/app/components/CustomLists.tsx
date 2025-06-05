@@ -10,6 +10,8 @@ interface ListProps {
   list: List;
   index: number;
   setSelectedList: React.Dispatch<React.SetStateAction<List | null>>;
+  setShowEditModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowDeleteAlert: React.Dispatch<React.SetStateAction<boolean>>;
   setInputName: React.Dispatch<React.SetStateAction<string>>;
   setInputDescription: React.Dispatch<React.SetStateAction<string>>;
   setInputImageUrl: React.Dispatch<React.SetStateAction<string>>;
@@ -20,24 +22,11 @@ interface DragItem {
   index: number;
 }
 
-const ListComponent: React.FC<ListProps> = ({ list, index, setSelectedList, setInputName, setInputDescription, setInputImageUrl, moveList }) => {
+const ListComponent: React.FC<ListProps> = ({ list, index, setSelectedList, setShowEditModal, setShowDeleteAlert, setInputName, setInputDescription, setInputImageUrl, moveList }) => {
   const { setLists } = useListsContext();
   const [showMenuModal, setShowMenuModal] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
-
-  const handleDeleteClick = (id: string) => {
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((list) => list.uuid === id);
-
-      // TODO: Add confirmation dialog before deleting
-
-      updatedLists.splice(listIndex, 1);
-
-      return updatedLists;
-    })
-  }
 
   const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
     accept: "list",
@@ -113,12 +102,12 @@ const ListComponent: React.FC<ListProps> = ({ list, index, setSelectedList, setI
             <div className="flex flex-col absolute right-0 top-8 min-w-30 p-2 bg-white border border-gray-200 rounded-sm">
               <button
                 className="px-2 py-1 mb-2 text-left cursor-pointer hover:bg-gray-100"
-                onClick={(e) => { setShowMenuModal(false); setSelectedList(list); setInputName(list.name); setInputDescription(list.description); setInputImageUrl(list.imageUrl); }}>
+                onClick={(e) => { setShowMenuModal(false); setSelectedList(list); setShowEditModal(true); setInputName(list.name); setInputDescription(list.description); setInputImageUrl(list.imageUrl); }}>
                 Edit
               </button>
               <button
                 className="px-2 py-1 text-left cursor-pointer hover:bg-gray-100"
-                onClick={(e) => { setShowMenuModal(false); handleDeleteClick(list.uuid); }}>
+                onClick={(e) => { setShowMenuModal(false); setSelectedList(list); setShowDeleteAlert(true); }}>
                 Delete
               </button>
             </div>
@@ -134,6 +123,8 @@ export const CustomLists = () => {
   const { lists, setLists } = useListsContext();
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedList, setSelectedList] = useState<List | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   // Refs for the input fields in the add modal
   const listName = useRef<HTMLInputElement | null>(null);
@@ -159,7 +150,7 @@ export const CustomLists = () => {
 
   const renderList = useCallback((list: List, index: number) => {
     return (
-      <ListComponent key={list.uuid} list={list} index={index} setSelectedList={setSelectedList} setInputName={setInputName} setInputDescription={setInputDescription} setInputImageUrl={setInputImageUrl} moveList={moveList} />
+      <ListComponent key={list.uuid} list={list} index={index} setSelectedList={setSelectedList} setShowEditModal={setShowEditModal} setShowDeleteAlert={setShowDeleteAlert} setInputName={setInputName} setInputDescription={setInputDescription} setInputImageUrl={setInputImageUrl} moveList={moveList} />
     )
   }, [])
 
@@ -206,7 +197,22 @@ export const CustomLists = () => {
     });
 
     setSelectedList(null);
+    setShowEditModal(false);
   };
+
+  const handleDeleteClick = (id: string) => {
+    setLists((prev) => {
+      const updatedLists = [...prev];
+      const listIndex = updatedLists.findIndex((list) => list.uuid === id);
+
+      updatedLists.splice(listIndex, 1);
+
+      return updatedLists;
+    })
+
+    setSelectedList(null);
+    setShowDeleteAlert(false);
+  }
 
   return (
     <div className="relative h-screen p-16 sm:ml-64">
@@ -249,12 +255,12 @@ export const CustomLists = () => {
       }
       { // Modal for editing lists
         // This modal is in this component instead of ListComponent so it can span the entire screen
-        selectedList && (
+        showEditModal && selectedList && (
           <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div className="relative px-6 py-8 w-2/5 bg-white rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-blue-900">Edit {selectedList.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => setSelectedList(null)}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => { setSelectedList(null); setShowEditModal(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
@@ -270,6 +276,28 @@ export const CustomLists = () => {
                 <input id="list-image" type="text" placeholder="Add image URL here" value={inputImageUrl} onChange={(e) => setInputImageUrl(e.target.value)}
                   className="w-full px-2 py-1 mb-6 border border-black border-solid rounded-sm focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleUpdateClick(selectedList.uuid)}>Update</button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+      { // Alert for deleting lists
+       // This modal is in this component instead of ListComponent so it can span the entire screen
+        showDeleteAlert && selectedList && (
+          <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+            <div role="alert" className="relative px-6 py-8 w-1/5 border border-gray-300 rounded-lg bg-gray-50">
+              <h3 className="mb-4 text-2xl font-semibold text-blue-900">Are you sure you want to delete this dish?</h3>
+              <div className="flex">
+                <button type="button"
+                  className="px-8 py-1.5 mr-4 text-sm text-white text-center bg-blue-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg cursor-pointer"
+                  onClick={(e) => { handleDeleteClick(selectedList.uuid) }}>
+                  Yes
+                </button>
+                <button type="button"
+                  className="px-8 py-1.5 text-sm text-blue-900 text-center bg-transparent border border-blue-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg cursor-pointer"
+                  onClick={() => { setSelectedList(null);  setShowDeleteAlert(false); }}>
+                  No
+                </button>
               </div>
             </div>
           </div>
