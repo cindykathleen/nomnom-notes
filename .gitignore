@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/lib/test.js
+/components/x.js
 
 # next.js
 /.next/
