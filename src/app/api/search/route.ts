@@ -2,8 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { searchPlace } from '@/app/lib/GooglePlacesAPI';
 
 export const GET = async (request: NextRequest) => {
-  const searchParams = request.nextUrl.searchParams;
-  const query = searchParams.get('query');
+  const query = request.nextUrl.searchParams.get('query');
 
   if (!query) {
     return NextResponse.json({ error: 'Query parameter is required' }, { status: 400 });

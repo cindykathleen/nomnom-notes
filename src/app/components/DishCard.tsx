@@ -3,7 +3,8 @@ import { useListsContext } from '@/app/context/ListsContext';
 import { List, Restaurant, Dish } from '@/app/interfaces/interfaces';
 import { RatingDisplay } from '@/app/components/RatingDisplay';
 import { RatingSystem } from '@/app/components/RatingSystem';
-import { UploadImage } from '@/app/components/UploadImage';
+import { ImageInput } from '@/app/components/ImageInput';
+import { uploadImage } from '@/app/lib/uploadImage';
 
 interface Props {
   list: List;
@@ -20,10 +21,19 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
   // States for the input fields in the edit modal
   const [inputName, setInputName] = useState<string>(dish.name);
   const [inputNote, setInputNote] = useState<string>(dish.note);
-  const [inputImageUrl, setInputImageUrl] = useState<string>(dish.imageUrl || '');
+  const [inputImage, setInputImage] = useState<string>(dish.photo || '');
   const [ratingHover, setRatingHover] = useState<boolean>(false);
 
-  const handleUpdateClick = () => {
+  const handleUpdateClick = async () => {
+    let inputPhotoID: string | null = '';
+
+    if (inputImage !== '') {
+      inputPhotoID = await uploadImage(inputImage);
+      if (inputPhotoID === null) return;
+    } else {
+      inputPhotoID = 'placeholder';
+    }
+
     setLists((prev) => {
       const updatedLists = [...prev];
       const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
@@ -31,7 +41,8 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
       const dishIndex = updatedLists[listIndex].restaurants[restaurantIndex].dishes.findIndex((d) => d.name === dish.name);
       updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].name = inputName;
       updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].note = inputNote;
-      updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].imageUrl = inputImageUrl;
+      updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].photo = inputPhotoID;
+      updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].photoUrl = `/uploads/${inputPhotoID}`;
 
       return updatedLists;
     })
@@ -56,8 +67,8 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
   return (
     <div className="flex flex-col border border-gray-200 rounded-lg">
       { // Check to make sure dish.imageUrl is not undefined, null or an empty string
-        !!dish.imageUrl && (
-          <img src={dish.imageUrl} alt={dish.name} className="rounded-t-lg" />
+        !!dish.photoUrl && (
+          <img src={dish.photoUrl} alt={dish.name} className="aspect-square object-cover rounded-t-lg" />
         )
       }
       <div className="flex flex-col gap-2 p-4">
@@ -73,7 +84,7 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
               <div className="flex flex-col absolute right-0 top-8 min-w-30 p-2 bg-white border border-gray-200 rounded-sm">
                 <button
                   className="px-2 py-1 mb-2 text-left cursor-pointer hover:bg-gray-100"
-                  onClick={() => { setShowMenuModal(false); setShowEditModal(true); }}>
+                  onClick={() => { setShowMenuModal(false); setShowEditModal(true); setInputImage(dish.photoUrl); }}>
                   Edit
                 </button>
                 <button
@@ -125,7 +136,7 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
                 <label htmlFor="dish-note" className="pb-1 font-semibold">Note</label>
                 <textarea id="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
-                <UploadImage currImage={inputImageUrl} setNewImage={(newImage) => setInputImageUrl(newImage)} />
+                <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleUpdateClick}>Update</button>
               </div>
             </div>

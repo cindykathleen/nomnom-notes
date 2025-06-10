@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { useDrag, useDrop } from 'react-dnd';
 import type { Identifier, XYCoord } from 'dnd-core';
 import { List } from "@/app/interfaces/interfaces";
-import { UploadImage } from '@/app/components/UploadImage';
+import { ImageInput } from '@/app/components/ImageInput';
+import { uploadImage } from '@/app/lib/uploadImage';
 
 interface ListProps {
   list: List;
@@ -15,7 +16,7 @@ interface ListProps {
   setShowDeleteAlert: React.Dispatch<React.SetStateAction<boolean>>;
   setInputName: React.Dispatch<React.SetStateAction<string>>;
   setInputDescription: React.Dispatch<React.SetStateAction<string>>;
-  setInputImageUrl: React.Dispatch<React.SetStateAction<string>>;
+  setInputImage: React.Dispatch<React.SetStateAction<string>>;
   moveList: (dragIndex: number, hoverIndex: number) => void; // Function used to reorder the lists
 }
 
@@ -23,7 +24,7 @@ interface DragItem {
   index: number;
 }
 
-const ListComponent: React.FC<ListProps> = ({ list, index, setSelectedList, setShowEditModal, setShowDeleteAlert, setInputName, setInputDescription, setInputImageUrl, moveList }) => {
+const ListComponent: React.FC<ListProps> = ({ list, index, setSelectedList, setShowEditModal, setShowDeleteAlert, setInputName, setInputDescription, setInputImage, moveList }) => {
   const [showMenuModal, setShowMenuModal] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
@@ -89,7 +90,7 @@ const ListComponent: React.FC<ListProps> = ({ list, index, setSelectedList, setS
 
   return (
     <div ref={ref} key={list.uuid} className="flex flex-col relative bg-white rounded-sm" data-handler-id={handlerId}>
-      <Link href={`/list/${list.uuid}`}><img className="aspect-square rounded-lg mb-4" src={list.imageUrl} alt={list.name} /></Link>
+      <Link href={`/list/${list.uuid}`}><img className="aspect-square rounded-lg mb-4" src={`/uploads/${list.photo}`} alt={list.name} /></Link>
       <div className="flex justify-between relative">
         <p className="text-2xl font-semibold">{list.name}</p>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
@@ -102,7 +103,7 @@ const ListComponent: React.FC<ListProps> = ({ list, index, setSelectedList, setS
             <div className="flex flex-col absolute right-0 top-8 min-w-30 p-2 bg-white border border-gray-200 rounded-sm">
               <button
                 className="px-2 py-1 mb-2 text-left cursor-pointer hover:bg-gray-100"
-                onClick={(e) => { setShowMenuModal(false); setSelectedList(list); setShowEditModal(true); setInputName(list.name); setInputDescription(list.description); setInputImageUrl(list.imageUrl); }}>
+                onClick={(e) => { setShowMenuModal(false); setSelectedList(list); setShowEditModal(true); setInputName(list.name); setInputDescription(list.description); setInputImage(list.photoUrl); }}>
                 Edit
               </button>
               <button
@@ -133,7 +134,7 @@ export const CustomLists = () => {
   // States for the input fields in the edit modal
   const [inputName, setInputName] = useState<string>('');
   const [inputDescription, setInputDescription] = useState<string>('');
-  const [inputImageUrl, setInputImageUrl] = useState<string>('');
+  const [inputImage, setInputImage] = useState<string>('');
 
   const moveList = useCallback((dragIndex: number, hoverIndex: number) => {
     setLists((prev) => {
@@ -149,21 +150,32 @@ export const CustomLists = () => {
 
   const renderList = useCallback((list: List, index: number) => {
     return (
-      <ListComponent key={list.uuid} list={list} index={index} setSelectedList={setSelectedList} setShowEditModal={setShowEditModal} setShowDeleteAlert={setShowDeleteAlert} setInputName={setInputName} setInputDescription={setInputDescription} setInputImageUrl={setInputImageUrl} moveList={moveList} />
+      <ListComponent key={list.uuid} list={list} index={index} setSelectedList={setSelectedList} setShowEditModal={setShowEditModal} setShowDeleteAlert={setShowDeleteAlert} setInputName={setInputName} setInputDescription={setInputDescription} setInputImage={setInputImage} moveList={moveList} />
     )
   }, [])
 
-  const handleAddClick = () => {
+  const handleAddClick = async () => {
     if (listName.current!.value === '') {
       alert("Please enter a list name");
       return;
     }
 
+    let inputPhotoID: string | null = '';
+
+    if (inputImage !== '') {
+      inputPhotoID = await uploadImage(inputImage);
+      if (inputPhotoID === null) return;
+    } else {
+      inputPhotoID = 'placeholder';
+    }
+    
+
     const newList: List = {
       uuid: uuidv4(),
       name: listName.current!.value,
       description: listDescription.current!.value,
-      imageUrl: inputImageUrl === '' ? 'https://placehold.co/400' : inputImageUrl,
+      photo: inputPhotoID,
+      photoUrl: `/uploads/${inputPhotoID}`,
       restaurants: []
     };
 
@@ -176,17 +188,27 @@ export const CustomLists = () => {
     // Reset input fields 
     listName.current!.value = '';
     listDescription.current!.value = '';
-    setInputImageUrl('');
+    setInputImage('');
     setShowAddModal(false);
   };
 
-  const handleUpdateClick = (id: string) => {
+  const handleUpdateClick = async (id: string) => {
+    let inputPhotoID: string | null = '';
+
+    if (inputImage !== '') {
+      inputPhotoID = await uploadImage(inputImage);
+      if (inputPhotoID === null) return;
+    } else {
+      inputPhotoID = 'placeholder';
+    }
+
     setLists((prev) => {
       const updatedLists = [...prev];
       const listIndex = updatedLists.findIndex((list) => list.uuid === id);
       updatedLists[listIndex].name = inputName;
       updatedLists[listIndex].description = inputDescription;
-      updatedLists[listIndex].imageUrl = inputImageUrl === '' ? 'https://placehold.co/400' : inputImageUrl;
+      updatedLists[listIndex].photo = inputPhotoID;
+      updatedLists[listIndex].photoUrl = `/uploads/${inputPhotoID}`;
       return updatedLists;
     });
 
@@ -213,7 +235,7 @@ export const CustomLists = () => {
       <div className="grid grid-cols-6 gap-16 mb-4">
         {lists.map((list, index) => renderList(list, index))}
         <div className="flex items-start h-full">
-          <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => { setInputImageUrl(''); setShowAddModal(true); }}>
+          <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => { setInputImage(''); setShowAddModal(true); }}>
             <p className="text-2xl text-gray-500">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -238,7 +260,7 @@ export const CustomLists = () => {
                 <input id="list-name" type="text" ref={listName} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
                 <label htmlFor="list-description" className="pb-1 font-semibold">Description</label>
                 <input id="list-description" type="text" ref={listDescription} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
-                <UploadImage currImage={inputImageUrl} setNewImage={(newImage) => setInputImageUrl(newImage)} />
+                <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleAddClick}>Create</button>
               </div>
             </div>
@@ -264,7 +286,7 @@ export const CustomLists = () => {
                 <label htmlFor="list-description" className="pb-1 font-semibold">Description</label>
                 <textarea id="list-description" placeholder="Add a description for this list" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
                   className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
-                <UploadImage currImage={inputImageUrl} setNewImage={(newImage) => setInputImageUrl(newImage)} />
+                <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleUpdateClick(selectedList.uuid)}>Update</button>
               </div>
             </div>

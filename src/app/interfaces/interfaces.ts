@@ -1,22 +1,23 @@
 export interface Place {
   id: string;
   name: string;
-  mapsUri: string;
-  address: string;
-  photo: string;
   type: string;
+  address: string;
+  mapsUri: string;
+  photo: string
 }
 
 export interface Dish {
   name: string;
   note: string;
   rating: number;
-  imageUrl: string;
+  photo: string;
+  photoUrl: string;
 }
 export interface Restaurant extends Place {
+  photoUrl: string;
   rating: number;
   description: string;
-  visited: boolean;
   dishes: Dish[];
 }
 
@@ -24,7 +25,8 @@ export interface List {
   uuid: string;
   name: string;
   description: string;
-  imageUrl: string;
+  photo: string;
+  photoUrl: string;
   restaurants: Restaurant[];
 }
 

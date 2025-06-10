@@ -23,9 +23,7 @@ export const Search = () => {
       return;
     }
 
-    const response = await fetch(`/api/search?query=${query}`, {
-      method: 'GET'
-    });
+    const response = await fetch(`/api/search?query=${query}`);
 
     const data = await response.json();
 
@@ -50,10 +48,8 @@ export const Search = () => {
 
     // Get the restaurant cover photo from Google
     if (place.photo !== '') {
-      const response = await fetch(`/api/photos?photoId=${place.photo}`, {
-        method: 'GET'
-      });
-
+      console.log(place.photo);
+      const response = await fetch(`/api/google-photos/?photoID=${place.photo}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -61,22 +57,23 @@ export const Search = () => {
         return;
       }
 
-      place.photo = data.photo;
+      place.photo = data.photoID;
     } else {
       // Use a placeholder image if no photo is available from Google
-      place.photo = 'https://placehold.co/400';
+      // There is a default image in the uploads folder named 'placeholder' instead of using a UUID
+      place.photo = 'placeholder';
     }
 
     const newRestaurant: Restaurant = {
       id: place.id,
       name: place.name,
-      mapsUri: place.mapsUri,
-      address: place.address,
-      photo: place.photo,
       type: place.type,
+      address: place.address,
+      mapsUri: place.mapsUri,
+      photo: place.photo,
+      photoUrl: `/uploads/${place.photo}`,
       rating: 0,
       description: '',
-      visited: false,
       dishes: []
     }
 
@@ -151,7 +148,7 @@ export const Search = () => {
                 {lists.map((list) => {
                   return (
                     <div key={list.uuid} className="flex gap-4 cursor-pointer" onClick={() => handleAddToList(list.uuid, selectedPlace)}>
-                      <img className="max-w-24 aspect-square rounded-lg mb-4" src={list.imageUrl} alt={list.name} />
+                      <img className="max-w-24 aspect-square rounded-lg mb-4" src={`/uploads/${list.photo}`} alt={list.name} />
                       <div>
                         <p className="font-semibold">{list.name}</p>
                         <p>{list.restaurants.length} places</p>

@@ -5,7 +5,8 @@ import { Dish, Restaurant } from '@/app/interfaces/interfaces';
 import { DishCard } from '@/app/components/DishCard';
 import { RatingDisplay } from '@/app/components/RatingDisplay';
 import { RatingSystem } from '@/app/components/RatingSystem';
-import { UploadImage } from '@/app/components/UploadImage';
+import { ImageInput } from '@/app/components/ImageInput';
+import { uploadImage } from '@/app/lib/uploadImage';
 
 interface Props {
   restaurant: Restaurant;
@@ -24,17 +25,27 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
   const [dishImage, setDishImage] = useState<string>('');
   const [dishRating, setDishRating] = useState<number>(0);
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (dishName.current!.value === '') {
       alert("Please enter a dish name");
       return;
+    }
+
+    let dishImageID: string | null = '';
+
+    if (dishImage !== '') {
+      dishImageID = await uploadImage(dishImage);
+      if (dishImageID === null) return;
+    } else {
+      dishImageID = 'placeholder';
     }
 
     const newDish: Dish = {
       name: dishName.current!.value,
       note: dishNote.current!.value,
       rating: dishRating,
-      imageUrl: dishImage
+      photo: dishImageID,
+      photoUrl: `/uploads/${dishImageID}`
     };
 
     setLists((prev) => {
@@ -117,7 +128,7 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
                 <RatingSystem currRating={0} setNewRating={(newRating) => setDishRating(newRating)} />
                 <label htmlFor="dish-note" className="pb-1 mt-6 font-semibold">Note</label>
                 <textarea id="dish-note" ref={dishNote} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
-                <UploadImage currImage={dishImage} setNewImage={(newImage) => setDishImage(newImage)} />
+                <ImageInput currImage={dishImage} setNewImage={(newImage) => setDishImage(newImage)} />
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleClick}>Add</button>
               </div>
             </div>
