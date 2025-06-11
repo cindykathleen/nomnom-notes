@@ -74,7 +74,8 @@ export const Search = () => {
       photoUrl: `/uploads/${place.photo}`,
       rating: 0,
       description: '',
-      dishes: []
+      dishes: [],
+      dateAdded: new Date()
     }
 
     setLists((prev) => {

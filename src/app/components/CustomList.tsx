@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useListsContext } from '@/app/context/ListsContext';
 import { List, Restaurant } from '@/app/interfaces/interfaces';
 import { RatingDisplay } from '@/app/components/RatingDisplay';
@@ -9,8 +9,14 @@ interface Props {
   list: List;
 }
 
+enum SortType {
+  RecentlyAdded = 'recently-added',
+  Name = 'name'
+}
+
 export const CustomList: React.FC<Props> = ({ list }) => {
   const { setLists } = useListsContext();
+  const [sortBy, setSortBy] = useState<SortType>(SortType.RecentlyAdded);
   const [selectedMenuModal, setSelectedMenuModal] = useState<string | null>(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -19,6 +25,30 @@ export const CustomList: React.FC<Props> = ({ list }) => {
   // States for the input fields in the edit modal
   const [ratingHover, setRatingHover] = useState<boolean>(false);
   const [inputDescription, setInputDescription] = useState<string>('');
+
+  // Make sure the list is sorted by recently added on default
+  // This will run once when the component mounts
+  useEffect(() => { sortRestaurants(SortType.RecentlyAdded) }, []);
+
+  const sortRestaurants = (sort: SortType) => {
+    setSortBy(sort);
+
+    if (sort === SortType.RecentlyAdded) {
+      setLists((prev) => {
+        const updatedLists = [...prev];
+        const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
+        updatedLists[listIndex].restaurants.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());;
+        return updatedLists;
+      });
+    } else if (sort === SortType.Name) {
+      setLists((prev) => {
+        const updatedLists = [...prev];
+        const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
+        updatedLists[listIndex].restaurants.sort((a, b) => a.name.localeCompare(b.name));
+        return updatedLists;
+      });
+    }
+  };
 
   const handleEditClick = (id: string) => {
     // Updating the restaurant description
@@ -60,18 +90,17 @@ export const CustomList: React.FC<Props> = ({ list }) => {
       <h1 className="mb-8 text-4xl font-semibold">{list.name}</h1>
       <div className="mb-8">
         <h2 className="text-2xl font-semibold">{`${list.restaurants.length} Places`}</h2>
-        {/* TODO: Implement sorting functionality
-        <form className="flex items-center w-64 my-2">
+        <form className="flex items-center w-fit my-2">
           <p className="text-lg text-nowrap mr-2">Sort by</p>
-          <select className="w-full bg-transparent text-lg font-semibold appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-            <option defaultValue="date-added">Date added</option>
-            <option value="recently-added">Recently added</option>
-            <option value="name">Name</option>
-          </select> 
+          <select className="w-full bg-transparent text-lg font-semibold appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+            onChange={(e) => sortRestaurants(e.target.value as SortType)}>
+            <option value={SortType.RecentlyAdded}>Recently added</option>
+            <option value={SortType.Name}>Name</option>
+          </select>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="size-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-          </svg> 
-        </form> */}
+          </svg>
+        </form>
       </div>
       <div className="flex flex-col gap-8 pb-16">
         {list.restaurants.map((restaurant) => {

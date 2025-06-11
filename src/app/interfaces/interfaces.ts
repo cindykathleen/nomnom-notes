@@ -19,6 +19,7 @@ export interface Restaurant extends Place {
   rating: number;
   description: string;
   dishes: Dish[];
+  dateAdded: Date;
 }
 
 export interface List {
