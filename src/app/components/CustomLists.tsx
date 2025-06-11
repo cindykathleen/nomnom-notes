@@ -36,7 +36,14 @@ export const CustomLists = () => {
 
   const renderList = useCallback((list: List, index: number) => {
     return (
-      <ListCard key={list.uuid} list={list} index={index} setSelectedList={setSelectedList} setShowEditModal={setShowEditModal} setShowDeleteAlert={setShowDeleteAlert} setInputName={setInputName} setInputDescription={setInputDescription} setInputImage={setInputImage} moveList={moveList} />
+      <ListCard key={list.uuid} list={list} index={index} 
+        setSelectedList={setSelectedList} 
+        setShowEditModal={setShowEditModal} 
+        setShowDeleteAlert={setShowDeleteAlert} 
+        setInputName={setInputName} 
+        setInputDescription={setInputDescription} 
+        setInputImage={setInputImage} 
+        moveList={moveList} />
     )
   }, [])
 

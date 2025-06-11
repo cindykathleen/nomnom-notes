@@ -1,5 +1,5 @@
+import { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { useState, useRef } from 'react';
 import { useListsContext } from '@/app/context/ListsContext';
 import { Dish, Restaurant } from '@/app/interfaces/interfaces';
 import { DishCard } from '@/app/components/DishCard';
@@ -25,6 +25,26 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
   const [dishImage, setDishImage] = useState<string>('');
   const [dishRating, setDishRating] = useState<number>(0);
 
+  const moveList = useCallback((dragIndex: number, hoverIndex: number) => {
+    setLists((prev) => {
+      const updatedLists = [...prev];
+      const listIndex = updatedLists.findIndex((l) => l.uuid === currentList.uuid);
+      const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((r) => r.id === restaurant.id);
+      const dragCard = updatedLists[listIndex].restaurants[restaurantIndex].dishes[dragIndex];
+
+      updatedLists[listIndex].restaurants[restaurantIndex].dishes.splice(dragIndex, 1);
+      updatedLists[listIndex].restaurants[restaurantIndex].dishes.splice(hoverIndex, 0, dragCard);
+
+      return updatedLists;
+    })
+  }, [])
+
+  const renderDish = useCallback((dish: Dish, index: number) => {
+    return (
+      <DishCard key={dish.name} list={currentList} restaurant={restaurant} dish={dish} index={index} moveList={moveList} />
+    )
+  }, [])
+
   const handleClick = async () => {
     if (dishName.current!.value === '') {
       alert("Please enter a dish name");
@@ -49,22 +69,11 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
     };
 
     setLists((prev) => {
-      return prev.map((list) => {
-        const updatedRestaurants = list.restaurants.map((r) => {
-          if (r.id === restaurant.id) {
-            return {
-              ...r,
-              dishes: [...r.dishes, newDish],
-            };
-          }
-          return r;
-        });
-
-        return {
-          ...list,
-          restaurants: updatedRestaurants,
-        };
-      });
+      const updatedLists = [...prev];
+      const listIndex = updatedLists.findIndex((l) => l.uuid === currentList.uuid);
+      const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((r) => r.id === restaurant.id);
+      updatedLists[listIndex].restaurants[restaurantIndex].dishes.push(newDish);
+      return updatedLists;
     });
 
     // Reset input fields 
@@ -97,9 +106,7 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
         <h2 className="text-3xl font-semibold">Dishes</h2>
       </div>
       <div className="grid grid-cols-6 gap-16 mb-4">
-        {restaurant.dishes.map((dish) => {
-          return <DishCard key={dish.name} list={currentList} restaurant={restaurant} dish={dish} />
-        })}
+        {restaurant.dishes.map((dish, index) => renderDish(dish, index))}
         <div className="flex items-start h-full">
           <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => setShowModal(true)}>
             <p className="text-2xl text-gray-500">

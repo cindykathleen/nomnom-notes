@@ -4,6 +4,8 @@ import { useListsContext } from '@/app/context/ListsContext';
 import { RestaurantListing } from '@/app/components/RestaurantListing';
 import { Sidebar } from '@/app/components/Sidebar';
 import { Restaurant } from '@/app/interfaces/interfaces';
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 export default function RestaurantPage({ id }: { id: string }) {
   const { lists } = useListsContext();
@@ -20,16 +22,19 @@ export default function RestaurantPage({ id }: { id: string }) {
     // If you throw an error here, it will crash the component because it will not be able to find the restaurant with the given id that is passed in the URL
     // Instead, return null to indicate that the restaurant was not found
     // This allows the component to render without crashing
-    
+
     return null;
   };
 
   const restaurant = getRestaurant(id);
-  
+
   return (
-    <div>
-      <Sidebar />
-      {restaurant && <RestaurantListing restaurant={restaurant} />}
-    </div>
+    // Wrap the entire application in the DndProvider for drag-and-drop functionality
+    <DndProvider backend={HTML5Backend}>
+      <div>
+        <Sidebar />
+        {restaurant && <RestaurantListing restaurant={restaurant} />}
+      </div>
+    </DndProvider>
   );
 }

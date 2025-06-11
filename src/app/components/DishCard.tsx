@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useListsContext } from '@/app/context/ListsContext';
+import { useDrag, useDrop } from 'react-dnd';
+import type { Identifier, XYCoord } from 'dnd-core';
 import { List, Restaurant, Dish } from '@/app/interfaces/interfaces';
 import { RatingDisplay } from '@/app/components/RatingDisplay';
 import { RatingSystem } from '@/app/components/RatingSystem';
@@ -10,9 +12,15 @@ interface Props {
   list: List;
   restaurant: Restaurant;
   dish: Dish;
+  index: number;
+  moveList: (dragIndex: number, hoverIndex: number) => void; // Function used to reorder the lists
 }
 
-export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
+interface DragItem {
+  index: number;
+}
+
+export const DishCard: React.FC<Props> = ({ list, restaurant, dish, index, moveList }) => {
   const { setLists } = useListsContext();
   const [showMenuModal, setShowMenuModal] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -23,6 +31,67 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
   const [inputNote, setInputNote] = useState<string>(dish.note);
   const [inputImage, setInputImage] = useState<string>(dish.photo || '');
   const [ratingHover, setRatingHover] = useState<boolean>(false);
+
+  const ref = useRef<HTMLDivElement>(null);
+  
+    const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
+      accept: "list",
+      // A collecting function that keeps track of the drop target/zone
+      collect(monitor) {
+        return {
+          handlerId: monitor.getHandlerId()
+        }
+      },
+      hover(item: DragItem, monitor) {
+        // Checking to make sure ref is not null
+        if (!ref.current) {
+          return;
+        }
+  
+        const dragIndex = item.index;
+        const hoverIndex = index;
+  
+        // Don't call moveList if the item is hovering over itself
+        if (dragIndex === hoverIndex) {
+          return;
+        }
+  
+        // Get the bounding rect of the hovered item
+        const hoverBoundingRect = ref.current?.getBoundingClientRect();
+        // Get the middle of the hovered item
+        const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+        // Get the mouse position
+        const clientOffset = monitor.getClientOffset();
+        // Get the pixels to the left
+        const hoverClientX = (clientOffset as XYCoord).x - hoverBoundingRect.left;
+  
+        // Don't call moveList if the item did not pass the middle while dragging to the right
+        if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
+          return;
+        }
+        // Don't call moveList if the item did not pass the middle while dragging to the left
+        if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
+          return;
+        }
+  
+        moveList(dragIndex, hoverIndex);
+        item.index = hoverIndex;
+      }
+    })
+  
+    const [{ isDragging }, drag] = useDrag({
+      type: "list",
+      item: () => {
+        return { id: list.uuid, index }
+      },
+      // A collecting function that keeps track of the dragging state
+      collect: (monitor: any) => ({
+        isDragging: monitor.isDragging()
+      }),
+    })
+  
+    // Setting ref to act as both a drag source and a drop target
+    drag(drop(ref));
 
   const handleUpdateClick = async () => {
     let inputPhotoID: string | null = '';
@@ -65,7 +134,7 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish }) => {
   };
 
   return (
-    <div className="flex flex-col border border-gray-200 rounded-lg">
+    <div ref={ref} key={dish.name} className="flex flex-col border border-gray-200 rounded-lg cursor-pointer" data-handler-id={handlerId}>
       { // Check to make sure dish.imageUrl is not undefined, null or an empty string
         !!dish.photoUrl && (
           <img src={dish.photoUrl} alt={dish.name} className="aspect-square object-cover rounded-t-lg" />
