@@ -16,7 +16,6 @@ enum SortType {
 
 export const CustomList: React.FC<Props> = ({ list }) => {
   const { setLists } = useListsContext();
-  const [sortBy, setSortBy] = useState<SortType>(SortType.RecentlyAdded);
   const [selectedMenuModal, setSelectedMenuModal] = useState<string | null>(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -31,8 +30,6 @@ export const CustomList: React.FC<Props> = ({ list }) => {
   useEffect(() => { sortRestaurants(SortType.RecentlyAdded) }, []);
 
   const sortRestaurants = (sort: SortType) => {
-    setSortBy(sort);
-
     if (sort === SortType.RecentlyAdded) {
       setLists((prev) => {
         const updatedLists = [...prev];
