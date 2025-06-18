@@ -36,7 +36,7 @@ export const CustomLists = () => {
 
   const renderList = useCallback((list: List, index: number) => {
     return (
-      <ListCard key={list.uuid} list={list} index={index} 
+      <ListCard key={list.id} list={list} index={index} 
         setSelectedList={setSelectedList} 
         setShowEditModal={setShowEditModal} 
         setShowDeleteAlert={setShowDeleteAlert} 
@@ -62,12 +62,11 @@ export const CustomLists = () => {
       inputPhotoID = 'placeholder';
     }
     
-
     const newList: List = {
-      uuid: uuidv4(),
+      id: uuidv4(),
       name: listName.current!.value,
       description: listDescription.current!.value,
-      photo: inputPhotoID,
+      photoId: inputPhotoID,
       photoUrl: `/uploads/${inputPhotoID}`,
       restaurants: []
     };
@@ -97,10 +96,10 @@ export const CustomLists = () => {
 
     setLists((prev) => {
       const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((list) => list.uuid === id);
+      const listIndex = updatedLists.findIndex((list) => list.id === id);
       updatedLists[listIndex].name = inputName;
       updatedLists[listIndex].description = inputDescription;
-      updatedLists[listIndex].photo = inputPhotoID;
+      updatedLists[listIndex].photoId = inputPhotoID;
       updatedLists[listIndex].photoUrl = `/uploads/${inputPhotoID}`;
       return updatedLists;
     });
@@ -112,7 +111,7 @@ export const CustomLists = () => {
   const handleDeleteClick = (id: string) => {
     setLists((prev) => {
       const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((list) => list.uuid === id);
+      const listIndex = updatedLists.findIndex((list) => list.id === id);
       updatedLists.splice(listIndex, 1);
 
       return updatedLists;
@@ -180,7 +179,7 @@ export const CustomLists = () => {
                 <textarea id="list-description" placeholder="Add a description for this list" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
                   className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleUpdateClick(selectedList.uuid)}>Update</button>
+                <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleUpdateClick(selectedList.id)}>Update</button>
               </div>
             </div>
           </div>
@@ -195,7 +194,7 @@ export const CustomLists = () => {
               <div className="flex">
                 <button type="button"
                   className="px-8 py-1.5 mr-4 text-sm text-white text-center bg-blue-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg cursor-pointer"
-                  onClick={(e) => { handleDeleteClick(selectedList.uuid) }}>
+                  onClick={(e) => { handleDeleteClick(selectedList.id) }}>
                   Yes
                 </button>
                 <button type="button"
