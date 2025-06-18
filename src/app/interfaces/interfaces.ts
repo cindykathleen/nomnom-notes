@@ -1,34 +1,35 @@
+export type Lists = List[];
+
+export interface List {
+  _id: string;
+  name: string;
+  description: string;
+  photoId: string;
+  photoUrl: string;
+  restaurants: string[];
+}
 export interface Place {
-  id: string;
+  _id: string;
   name: string;
   type: string;
   address: string;
-  mapsUri: string;
-  photo: string
+  mapsUrl: string;
+  photoId: string
 }
 
-export interface Dish {
-  name: string;
-  note: string;
-  rating: number;
-  photo: string;
-  photoUrl: string;
-}
 export interface Restaurant extends Place {
   photoUrl: string;
   rating: number;
   description: string;
-  dishes: Dish[];
   dateAdded: Date;
+  dishes: string[];
 }
 
-export interface List {
-  uuid: string;
+export interface Dish {
+  _id: string;
   name: string;
-  description: string;
-  photo: string;
+  note: string;
+  rating: number;
+  photoId: string;
   photoUrl: string;
-  restaurants: Restaurant[];
 }
-
-export type Lists = List[];

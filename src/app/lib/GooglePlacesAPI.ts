@@ -42,12 +42,12 @@ export const searchPlace = async (query: string): Promise<Place[]> => {
 
   const results = places.map((place: any) => {
     return {
-      id: place.id,
+      _id: place.id,
       name: place.displayName.text,
-      mapsUri: place.googleMapsUri,
+      type: place.primaryTypeDisplayName.text,
       address: place.formattedAddress,
-      photo: place.photos?.[0]?.name || "",
-      type: place.primaryTypeDisplayName.text
+      mapsUrl: place.googleMapsUri,
+      photoId: place.photos?.[0]?.name || ""
     }
   });
 
