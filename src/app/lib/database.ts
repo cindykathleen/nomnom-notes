@@ -1,6 +1,5 @@
-import { MongoClient, Db, ObjectId } from 'mongodb';
-import { List, Restaurant, Dish } from "@/app/interfaces/interfaces";
-import { v4 as uuidv4 } from 'uuid';
+import { MongoClient, Db, Binary } from 'mongodb';
+import { List, Restaurant, Dish, Place, SearchResult, Photo } from "@/app/interfaces/interfaces";
 
 export class Database {
   client: MongoClient;
@@ -133,5 +132,33 @@ export class Database {
 
   async deleteDish(dishId: string) {
     await this.db.collection<Dish>('dishes').deleteOne({ _id: dishId });
+  }
+
+  // Search functions
+  async getSearchResult(query: string) {
+    return await this.db.collection<SearchResult>('places').findOne({ _id: query});
+  }
+
+  async addSearchResult(query: string, places: Place[]) {
+    const newSearch = {
+      _id: query,
+      result: places
+    }
+
+    await this.db.collection<SearchResult>('places').insertOne(newSearch);
+  }
+
+  //Photo functions
+  async getPhoto(photoId: string) {
+    return await this.db.collection<Photo>('photos').findOne({ _id: photoId});
+  }
+  
+  async uploadPhoto(photoId: string, photoData: Buffer) {
+    const newPhoto = {
+      _id: photoId,
+      data: new Binary(photoData)
+    }
+
+    await this.db.collection<Photo>('photos').insertOne(newPhoto);
   }
 }
