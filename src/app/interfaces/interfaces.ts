@@ -1,3 +1,5 @@
+import { Binary } from 'mongodb';
+
 export type Lists = List[];
 
 export interface List {
@@ -32,4 +34,14 @@ export interface Dish {
   rating: number;
   photoId: string;
   photoUrl: string;
+}
+
+export interface SearchResult {
+  _id: string;
+  result: Place[];
+}
+
+export interface Photo {
+  _id: string;
+  data: Binary;
 }

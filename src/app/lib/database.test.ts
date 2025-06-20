@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 const testDb = new Database('nomnom_notes_test');
 const listUuid = uuidv4();
 const dishUuid = uuidv4();
+const photoUuid = uuidv4();
 
 const newList = {
   _id: listUuid,
@@ -32,6 +33,25 @@ const newDish = {
   photoId: '1d14055a-8402-408a-a67c-800130874c2c',
   photoUrl: '/uploads/1d14055a-8402-408a-a67c-800130874c2c'
 }
+
+const searchResults = [
+  {
+    _id: 'ChIJTRDQZ_K1j4ARqdjFU7FbSes',
+    name: 'TP Tea',
+    type: 'Tea house',
+    address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
+    mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
+    photoId: '503574d6-db6d-4be7-bec7-1c305686119e'
+  },
+  {
+    _id: 'ChIJZ0uK75gzjoARCoIgh3aIO1M',
+    name: 'TP TEA – San Jose Oakridge',
+    type: 'Tea house',
+    address: '925 Blossom Hill Rd #1228, San Jose, CA 95123, USA',
+    mapsUrl: 'https://maps.google.com/?cid=5997537371428520458',
+    photoId: 'AXQCQNSkq6kDl4fjCcYGXnnxXS5LvC22oEDkMLOqnRniVljSUe0cV5x'
+  }
+]
 
 beforeAll(async () => {
   await testDb.db.dropDatabase();
@@ -151,5 +171,52 @@ describe('Database dishes collection', async () => {
     await testDb.deleteDish(dishUuid);
     const dish = await testDb.getDish(dishUuid)
     expect(dish).toBeNull();
+  })
+})
+
+//TODO: Search functions tests
+describe('Database search', async () => {
+  it('add & get search result', async () => {
+    await testDb.addSearchResult('TP Tea', searchResults);
+
+    const expectedResults = [
+      {
+        _id: 'ChIJTRDQZ_K1j4ARqdjFU7FbSes',
+        name: 'TP Tea',
+        type: 'Tea house',
+        address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
+        mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
+        photoId: '503574d6-db6d-4be7-bec7-1c305686119e'
+      },
+      {
+        _id: 'ChIJZ0uK75gzjoARCoIgh3aIO1M',
+        name: 'TP TEA – San Jose Oakridge',
+        type: 'Tea house',
+        address: '925 Blossom Hill Rd #1228, San Jose, CA 95123, USA',
+        mapsUrl: 'https://maps.google.com/?cid=5997537371428520458',
+        photoId: 'AXQCQNSkq6kDl4fjCcYGXnnxXS5LvC22oEDkMLOqnRniVljSUe0cV5x'
+      }
+    ]
+
+    const results = await testDb.getSearchResult('TP Tea');
+    expect(results).not.toBeNull();
+    expect(results._id).toEqual('TP Tea');
+    expect(results.result).toEqual(expectedResults);
+  })
+})
+
+//TODO: Photo functions tests
+describe('Database photos', async () => {
+  it('upload & get photo', async () => {
+    const url = 'https://placehold.co/400';
+    const response = await fetch(url);
+    const bytes = await response.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    await testDb.uploadPhoto(photoUuid, buffer);
+
+    const photo = await testDb.getPhoto(photoUuid);
+    expect(photo).not.toBeNull();
+    expect(photo._id).toEqual(photoUuid);
+    expect(photo.data.value()).toEqual(buffer);
   })
 })

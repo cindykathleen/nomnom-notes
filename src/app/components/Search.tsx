@@ -40,16 +40,16 @@ export const Search = () => {
 
   const handleAddToList = async (id: string, place: Place) => {
     // Check if the restaurant is already in the list
-    const currentList = lists.find((list) => list.uuid === id);
-    if (currentList!.restaurants.find((restaurant) => restaurant.id === place.id)) {
+    const currentList = lists.find((list) => list._id === id);
+    if (currentList!.restaurants.find((restaurant) => restaurant.id === place._id)) {
       alert("This restaurant is already in the list");
       return;
     }
 
     // Get the restaurant cover photo from Google
-    if (place.photo !== '') {
-      console.log(place.photo);
-      const response = await fetch(`/api/google-photos/?photoID=${place.photo}`);
+    if (place.photoId !== '') {
+      console.log(place.photoId);
+      const response = await fetch(`/api/google-photos/?photoID=${place.photoId}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -57,21 +57,21 @@ export const Search = () => {
         return;
       }
 
-      place.photo = data.photoID;
+      place.photoId = data.photoID;
     } else {
       // Use a placeholder image if no photo is available from Google
       // There is a default image in the uploads folder named 'placeholder' instead of using a UUID
-      place.photo = 'placeholder';
+      place.photoId = 'placeholder';
     }
 
     const newRestaurant: Restaurant = {
-      id: place.id,
+      _id: place._id,
       name: place.name,
       type: place.type,
       address: place.address,
-      mapsUri: place.mapsUri,
-      photo: place.photo,
-      photoUrl: `/uploads/${place.photo}`,
+      mapsUrl: place.mapsUrl,
+      photoId: place.photoId,
+      photoUrl: `/uploads/${place.photoId}`,
       rating: 0,
       description: '',
       dishes: [],
@@ -80,7 +80,7 @@ export const Search = () => {
 
     setLists((prev) => {
       const updatedLists = prev.map((list) => {
-        if (list.uuid === id) {
+        if (list._id === id) {
           return {
             ...list,
             restaurants: [...list.restaurants, newRestaurant]
@@ -107,7 +107,7 @@ export const Search = () => {
         <div className="flex flex-col min-w-3xl">
           {results.map((place) => {
             return (
-              <div key={place.id} className="relative mb-8 bg-white cursor-pointer" onClick={() => setSelectedPlace(place)}>
+              <div key={place._id} className="relative mb-8 bg-white cursor-pointer" onClick={() => setSelectedPlace(place)}>
                 <p className="text-xl font-semibold pb-2">{place.name}</p>
                 <div className="flex gap-2 pb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -122,7 +122,7 @@ export const Search = () => {
                   </svg>
                   <p className="text-md">{place.address}</p>
                 </div>
-                <Link href={place.mapsUri} target="_blank">
+                <Link href={place.mapsUrl} target="_blank">
                   <div className="group flex gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="group-hover:stroke-blue-900 size-6">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
@@ -148,8 +148,8 @@ export const Search = () => {
               <div className="flex flex-col gap-4">
                 {lists.map((list) => {
                   return (
-                    <div key={list.uuid} className="flex gap-4 cursor-pointer" onClick={() => handleAddToList(list.uuid, selectedPlace)}>
-                      <img className="max-w-24 aspect-square rounded-lg mb-4" src={`/uploads/${list.photo}`} alt={list.name} />
+                    <div key={list._id} className="flex gap-4 cursor-pointer" onClick={() => handleAddToList(list._id, selectedPlace)}>
+                      <img className="max-w-24 aspect-square rounded-lg mb-4" src={`/uploads/${list.photoId}`} alt={list.name} />
                       <div>
                         <p className="font-semibold">{list.name}</p>
                         <p>{list.restaurants.length} places</p>
