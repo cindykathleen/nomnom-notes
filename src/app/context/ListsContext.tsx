@@ -20,22 +20,27 @@ export const ListsProvider: React.FC<Props> = ({ children }) => {
   // This is called AFTER the components mount
   // So lists is [] on initial render
   useEffect(() => {
-    const storedLists = localStorage.getItem("lists");
-    setLists(storedLists ? JSON.parse(storedLists) : []);
+    const fetchLists = async () => {
+      const reponse = await fetch('/api/database/lists');
+      const data = await reponse.json();
+      setLists(data);
+    }
+
+    fetchLists()
   }, []);
 
-  const hasLoaded = useRef(false);
+  // const hasLoaded = useRef(false);
 
-  useEffect(() => {
-    // Skipping the initial mount effect
-    // Otherwise it will save an empty array to localStorage
-    if (!hasLoaded.current) {
-      hasLoaded.current = true;
-      return;
-    }
-    
-    localStorage.setItem("lists", JSON.stringify(lists));
-  }, [lists]);
+  // useEffect(() => {
+  //   // Skipping the initial mount effect
+  //   // Otherwise it will save an empty array to localStorage
+  //   if (!hasLoaded.current) {
+  //     hasLoaded.current = true;
+  //     return;
+  //   }
+
+  //   localStorage.setItem("lists", JSON.stringify(lists));
+  // }, [lists]);
 
   return (
     <ListsContext.Provider value={{ lists, setLists }}>

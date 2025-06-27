@@ -1,13 +1,14 @@
-import { useState, useRef, useCallback } from 'react';
-import { useListsContext } from '@/app/context/ListsContext';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { List } from "@/app/interfaces/interfaces";
+import { Lists, List } from "@/app/interfaces/interfaces";
 import { ListCard } from '@/app/components/ListCard';
 import { ImageInput } from '@/app/components/ImageInput';
 import { uploadImage } from '@/app/lib/uploadImage';
 
 export const CustomLists = () => {
-  const { lists, setLists } = useListsContext();
+  const [lists, setLists] = useState<List[]>([]);
+
+  // States for modals & alerts
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [selectedList, setSelectedList] = useState<List | null>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -22,6 +23,18 @@ export const CustomLists = () => {
   const [inputDescription, setInputDescription] = useState<string>('');
   const [inputImage, setInputImage] = useState<string>('');
 
+  const fetchLists = async () => {
+    const reponse = await fetch('/api/database/lists');
+    const data = await reponse.json();
+    setLists(data);
+  }
+  
+  useEffect(() => {
+    fetchLists()
+  }, []);
+
+  // TODO: Change how reordering is done
+  // Can use index
   const moveList = useCallback((dragIndex: number, hoverIndex: number) => {
     setLists((prev) => {
       const updatedLists = [...prev];
@@ -36,13 +49,13 @@ export const CustomLists = () => {
 
   const renderList = useCallback((list: List, index: number) => {
     return (
-      <ListCard key={list.id} list={list} index={index} 
-        setSelectedList={setSelectedList} 
-        setShowEditModal={setShowEditModal} 
-        setShowDeleteAlert={setShowDeleteAlert} 
-        setInputName={setInputName} 
-        setInputDescription={setInputDescription} 
-        setInputImage={setInputImage} 
+      <ListCard key={list._id} list={list} index={index}
+        setSelectedList={setSelectedList}
+        setShowEditModal={setShowEditModal}
+        setShowDeleteAlert={setShowDeleteAlert}
+        setInputName={setInputName}
+        setInputDescription={setInputDescription}
+        setInputImage={setInputImage}
         moveList={moveList} />
     )
   }, [])
@@ -61,20 +74,24 @@ export const CustomLists = () => {
     } else {
       inputPhotoID = 'placeholder';
     }
-    
+
     const newList: List = {
-      id: uuidv4(),
+      _id: uuidv4(),
       name: listName.current!.value,
       description: listDescription.current!.value,
       photoId: inputPhotoID,
-      photoUrl: `/uploads/${inputPhotoID}`,
+      photoUrl: `/api/database/photos?id=${inputPhotoID}`,
       restaurants: []
     };
 
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      updatedLists.push(newList);
-      return updatedLists;
+    await fetch('/api/database/list', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        list: newList,
+      })
     });
 
     // Reset input fields 
@@ -82,6 +99,8 @@ export const CustomLists = () => {
     listDescription.current!.value = '';
     setInputImage('');
     setShowAddModal(false);
+
+    await fetchLists();
   };
 
   const handleUpdateClick = async (id: string) => {
@@ -94,31 +113,45 @@ export const CustomLists = () => {
       inputPhotoID = 'placeholder';
     }
 
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((list) => list.id === id);
-      updatedLists[listIndex].name = inputName;
-      updatedLists[listIndex].description = inputDescription;
-      updatedLists[listIndex].photoId = inputPhotoID;
-      updatedLists[listIndex].photoUrl = `/uploads/${inputPhotoID}`;
-      return updatedLists;
-    });
+    const updatedList: Partial<List> = {
+      _id: id,
+      name: inputName,
+      description: inputDescription,
+      photoId: inputPhotoID,
+      photoUrl: `/api/database/photos?id=${inputPhotoID}`
+    }
+
+    await fetch('/api/database/list', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        list: updatedList
+      })
+    })
 
     setSelectedList(null);
     setShowEditModal(false);
+
+    await fetchLists();
   };
 
-  const handleDeleteClick = (id: string) => {
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((list) => list.id === id);
-      updatedLists.splice(listIndex, 1);
-
-      return updatedLists;
+  const handleDeleteClick = async (id: string) => {
+    await fetch('/api/database/list', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: id
+      })
     })
 
     setSelectedList(null);
     setShowDeleteAlert(false);
+
+    await fetchLists();
   }
 
   return (
@@ -179,14 +212,14 @@ export const CustomLists = () => {
                 <textarea id="list-description" placeholder="Add a description for this list" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
                   className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleUpdateClick(selectedList.id)}>Update</button>
+                <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleUpdateClick(selectedList._id)}>Update</button>
               </div>
             </div>
           </div>
         )
       }
       { // Alert for deleting lists
-       // This modal is in this component instead of ListComponent so it can span the entire screen
+        // This modal is in this component instead of ListComponent so it can span the entire screen
         showDeleteAlert && selectedList && (
           <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div role="alert" className="relative px-6 py-8 w-1/5 border border-gray-300 rounded-lg bg-gray-50">
@@ -194,12 +227,12 @@ export const CustomLists = () => {
               <div className="flex">
                 <button type="button"
                   className="px-8 py-1.5 mr-4 text-sm text-white text-center bg-blue-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg cursor-pointer"
-                  onClick={(e) => { handleDeleteClick(selectedList.id) }}>
+                  onClick={(e) => { handleDeleteClick(selectedList._id) }}>
                   Yes
                 </button>
                 <button type="button"
                   className="px-8 py-1.5 text-sm text-blue-900 text-center bg-transparent border border-blue-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg cursor-pointer"
-                  onClick={() => { setSelectedList(null);  setShowDeleteAlert(false); }}>
+                  onClick={() => { setSelectedList(null); setShowDeleteAlert(false); }}>
                   No
                 </button>
               </div>

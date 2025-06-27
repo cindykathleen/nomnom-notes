@@ -2,8 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getPhoto } from '@/app/lib/GooglePhotosAPI';
 
 export const GET = async (request: NextRequest) => {
-  const searchParams = request.nextUrl.searchParams;
-  let photoID = searchParams.get('photoID');
+  const photoID = request.nextUrl.searchParams.get('photoID');
 
   if (!photoID) {
     return NextResponse.json({ error: 'photoID parameter is required' }, { status: 400 });
@@ -24,7 +23,7 @@ export const GET = async (request: NextRequest) => {
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     const baseUrl = `${protocol}://${host}`;
 
-    const response = await fetch(`${baseUrl}/api/upload`, {
+    const response = await fetch(`${baseUrl}/api/database/photos`, {
       method: 'POST',
       body: formData
     });

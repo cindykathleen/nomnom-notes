@@ -1,7 +1,7 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { useListsContext } from '@/app/context/ListsContext';
-import { Dish, Restaurant } from '@/app/interfaces/interfaces';
+import { v4 as uuidv4 } from 'uuid';
+import { Dish, Restaurant, List } from '@/app/interfaces/interfaces';
 import { DishCard } from '@/app/components/DishCard';
 import { RatingDisplay } from '@/app/components/RatingDisplay';
 import { RatingSystem } from '@/app/components/RatingSystem';
@@ -13,11 +13,11 @@ interface Props {
 }
 
 export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
-  const { lists, setLists } = useListsContext();
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [list, setList] = useState<List>();
+  const [dishes, setDishes] = useState<Dish[]>([]);
 
-  const currentList = lists.find((list) => list.restaurants.some((r) => r.id === restaurant.id));
-  if (!currentList) return;
+  // State for modal
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   // Refs/states for the input fields in the add modal
   const dishName = useRef<HTMLInputElement | null>(null);
@@ -25,23 +25,42 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
   const [dishImage, setDishImage] = useState<string>('');
   const [dishRating, setDishRating] = useState<number>(0);
 
+  const fetchList = async () => {
+    const response = await fetch(`/api/database/list?restaurantId=${restaurant._id}`)
+    const data = await response.json();
+    setList(data);
+  }
+
+  const fetchDishes = async () => {
+    const fetchedDishes = await Promise.all(
+      restaurant.dishes.map(async (dishId) => {
+        const response = await fetch(`/api/database/dishes/?id=${dishId}`);
+        const data = await response.json();
+        return data;
+      })
+    );
+
+    setDishes(fetchedDishes);
+  }
+
+  useEffect(() => {
+    fetchList();
+  }, []);
+
+  useEffect(() => {
+    fetchDishes();
+  }, [restaurant.dishes]);
+
   const moveList = useCallback((dragIndex: number, hoverIndex: number) => {
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((l) => l.uuid === currentList.uuid);
-      const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((r) => r.id === restaurant.id);
-      const dragCard = updatedLists[listIndex].restaurants[restaurantIndex].dishes[dragIndex];
 
-      updatedLists[listIndex].restaurants[restaurantIndex].dishes.splice(dragIndex, 1);
-      updatedLists[listIndex].restaurants[restaurantIndex].dishes.splice(hoverIndex, 0, dragCard);
-
-      return updatedLists;
-    })
   }, [])
 
   const renderDish = useCallback((dish: Dish, index: number) => {
+    // Make sure list is loaded before continuing
+    if (!list) return null
+
     return (
-      <DishCard key={dish.name} list={currentList} restaurant={restaurant} dish={dish} index={index} moveList={moveList} />
+      <DishCard key={dish._id} list={list} restaurant={restaurant} dish={dish} index={index} moveList={moveList} />
     )
   }, [])
 
@@ -61,20 +80,26 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
     }
 
     const newDish: Dish = {
+      _id: uuidv4(),
       name: dishName.current!.value,
       note: dishNote.current!.value,
       rating: dishRating,
-      photo: dishImageID,
-      photoUrl: `/uploads/${dishImageID}`
+      photoId: dishImageID,
+      photoUrl: `/api/database/photos?id=${dishImageID}`
     };
 
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((l) => l.uuid === currentList.uuid);
-      const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((r) => r.id === restaurant.id);
-      updatedLists[listIndex].restaurants[restaurantIndex].dishes.push(newDish);
-      return updatedLists;
+    await fetch('/api/database/dishes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        restaurantId: restaurant._id,
+        dish: newDish,
+      })
     });
+
+    setDishes(prev => [...prev, newDish]);
 
     // Reset input fields 
     dishName.current!.value = '';
@@ -84,6 +109,9 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
     setShowModal(false);
   };
 
+  // Make sure list is loaded before continuing
+  if (!list) return null;
+
   return (
     <div className="relative h-screen p-16 sm:ml-64">
       <div className="flex gap-2 mb-6">
@@ -91,8 +119,8 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
           Lists
         </Link>
         <p className="font-semibold">/</p>
-        <Link href={`/list/${currentList!.uuid}`} className="font-semibold hover:underline">
-          {currentList!.name}
+        <Link href={`/list/${list._id}`} className="font-semibold hover:underline">
+          {list!.name}
         </Link>
         <p className="font-semibold">/</p>
         <p>{restaurant.name}</p>
@@ -106,7 +134,7 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
         <h2 className="text-3xl font-semibold">Dishes</h2>
       </div>
       <div className="grid grid-cols-6 gap-16 mb-4">
-        {restaurant.dishes.map((dish, index) => renderDish(dish, index))}
+        {dishes.map((dish, index) => renderDish(dish, index))}
         <div className="flex items-start h-full">
           <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => setShowModal(true)}>
             <p className="text-2xl text-gray-500">
