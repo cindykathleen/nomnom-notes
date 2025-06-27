@@ -21,6 +21,7 @@ interface DragItem {
 }
 
 export const ListCard: React.FC<Props> = ({ list, index, setSelectedList, setShowEditModal, setShowDeleteAlert, setInputName, setInputDescription, setInputImage, moveList }) => {
+  // State for modal
   const [showMenuModal, setShowMenuModal] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
@@ -73,7 +74,7 @@ export const ListCard: React.FC<Props> = ({ list, index, setSelectedList, setSho
   const [{ isDragging }, drag] = useDrag({
     type: "list",
     item: () => {
-      return { id: list.uuid, index }
+      return { id: list._id, index }
     },
     // A collecting function that keeps track of the dragging state
     collect: (monitor: any) => ({
@@ -85,8 +86,8 @@ export const ListCard: React.FC<Props> = ({ list, index, setSelectedList, setSho
   drag(drop(ref));
 
   return (
-    <div ref={ref} key={list.uuid} className="flex flex-col relative bg-white rounded-sm" data-handler-id={handlerId}>
-      <Link href={`/list/${list.uuid}`}><img className="aspect-square rounded-lg mb-4" src={`/uploads/${list.photo}`} alt={list.name} /></Link>
+    <div ref={ref} key={list._id} className="flex flex-col relative bg-white rounded-sm" data-handler-id={handlerId}>
+      <Link href={`/list/${list._id}`}><img className="aspect-square rounded-lg mb-4" src={list.photoUrl} alt={list.name} /></Link>
       <div className="flex justify-between relative">
         <p className="text-2xl font-semibold">{list.name}</p>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"

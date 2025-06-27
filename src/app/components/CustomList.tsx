@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { useListsContext } from '@/app/context/ListsContext';
 import { List, Restaurant } from '@/app/interfaces/interfaces';
 import { RatingDisplay } from '@/app/components/RatingDisplay';
 import { RatingSystem } from '@/app/components/RatingSystem';
@@ -15,64 +14,88 @@ enum SortType {
 }
 
 export const CustomList: React.FC<Props> = ({ list }) => {
-  const { setLists } = useListsContext();
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+
+  // States for modals & alerts
   const [selectedMenuModal, setSelectedMenuModal] = useState<string | null>(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
 
   // States for the input fields in the edit modal
+  const [rating, setRating] = useState<number>(0);
   const [ratingHover, setRatingHover] = useState<boolean>(false);
   const [inputDescription, setInputDescription] = useState<string>('');
 
-  // Make sure the list is sorted by recently added on default
-  // This will run once when the component mounts
-  useEffect(() => { sortRestaurants(SortType.RecentlyAdded) }, []);
+  const fetchRestaurants = async () => {
+    const fetchedRestaurants = await Promise.all(
+      list.restaurants.map(async (restaurantId) => {
+        const response = await fetch(`/api/database/restaurants/?id=${restaurantId}`);
+        const data = await response.json();
+        return data;
+      })
+    );
+
+    setRestaurants(fetchedRestaurants);
+  }
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, [list.restaurants]);
 
   const sortRestaurants = (sort: SortType) => {
-    if (sort === SortType.RecentlyAdded) {
-      setLists((prev) => {
-        const updatedLists = [...prev];
-        const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
-        updatedLists[listIndex].restaurants.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());;
-        return updatedLists;
-      });
-    } else if (sort === SortType.Name) {
-      setLists((prev) => {
-        const updatedLists = [...prev];
-        const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
-        updatedLists[listIndex].restaurants.sort((a, b) => a.name.localeCompare(b.name));
-        return updatedLists;
-      });
-    }
+    setRestaurants((prev) => {
+      const sortedRestaurants = [...prev];
+
+      if (sort === SortType.RecentlyAdded) {
+        sortedRestaurants.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
+      } else if (sort === SortType.Name) {
+        sortedRestaurants.sort((a, b) => a.name.localeCompare(b.name));
+      }
+
+      return sortedRestaurants;
+    });
   };
 
-  const handleEditClick = (id: string) => {
-    // Updating the restaurant description
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
-      const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((restaurant) => restaurant.id === id);
-      updatedLists[listIndex].restaurants[restaurantIndex].description = inputDescription;
-      return updatedLists;
-    });
+  const handleEditClick = async (id: string) => {
+    const updatedRestaurant: Partial<Restaurant> = {
+      _id: id,
+      rating: rating,
+      description: inputDescription,
+    }
+
+    await fetch('/api/database/restaurants', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        restaurant: updatedRestaurant
+      })
+    })
 
     setSelectedRestaurant(null);
     setShowEditModal(false);
+
+    await fetchRestaurants();
   };
 
-  const handleDeleteClick = (id: string) => {
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
-      const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((restaurant) => restaurant.id === id);
-      updatedLists[listIndex].restaurants.splice(restaurantIndex, 1);
-
-      return updatedLists;
+  const handleDeleteClick = async (id: string) => {
+    await fetch('/api/database/restaurants', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        listId: list._id,
+        restaurantId: id
+      })
     })
 
     setSelectedRestaurant(null);
     setShowDeleteAlert(false);
+
+    await fetchRestaurants();
   }
 
   return (
@@ -100,9 +123,9 @@ export const CustomList: React.FC<Props> = ({ list }) => {
         </form>
       </div>
       <div className="flex flex-col gap-8 pb-16">
-        {list.restaurants.map((restaurant) => {
+        {restaurants.map((restaurant: Restaurant) => {
           return (
-            <Link key={restaurant.id} href={`/restaurant/${restaurant.id}`}>
+            <Link key={restaurant._id} href={`/restaurant/${restaurant._id}`}>
               <div className="flex relative p-8 border border-gray-200 rounded-3xl cursor-pointer">
                 <img className="aspect-square object-cover rounded-lg mr-8" src={restaurant.photoUrl} alt={restaurant.name} width={200} height={200} />
                 <div className="flex flex-col flex-1 gap-2">
@@ -112,15 +135,15 @@ export const CustomList: React.FC<Props> = ({ list }) => {
                 </div>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
                   className="size-10 cursor-pointer"
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedMenuModal(selectedMenuModal === restaurant.id ? null : restaurant.id); }}>
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedMenuModal(selectedMenuModal === restaurant._id ? null : restaurant._id); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                 </svg>
                 {/* Modal for menu */
-                  selectedMenuModal === restaurant.id && (
+                  selectedMenuModal === restaurant._id && (
                     <div className="flex flex-col absolute right-9 top-18 min-w-30 p-2 bg-white border border-gray-200 rounded-sm">
                       <button
                         className="px-2 py-1 mb-2 text-left cursor-pointer hover:bg-gray-100"
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedMenuModal(null); setSelectedRestaurant(restaurant); setShowEditModal(true); setInputDescription(restaurant.description); }}>
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedMenuModal(null); setSelectedRestaurant(restaurant); setShowEditModal(true); setInputDescription(restaurant.description); setRating(restaurant.rating); }}>
                         Edit
                       </button>
                       <button
@@ -151,25 +174,14 @@ export const CustomList: React.FC<Props> = ({ list }) => {
                 <label htmlFor="restaurant-rating" className="pb-1 font-semibold">Rating</label>
                 <div id="restaurant-rating" className="w-fit mb-6" onMouseEnter={() => setRatingHover(true)} onMouseLeave={() => setRatingHover(false)}>
                   {ratingHover
-                    ? <RatingSystem currRating={selectedRestaurant.rating}
-                      setNewRating={
-                        (newRating) => {
-                          setLists((prev) => {
-                            const updatedLists = [...prev];
-                            const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
-                            const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((r) => r.id === selectedRestaurant.id);
-                            updatedLists[listIndex].restaurants[restaurantIndex].rating = newRating;
-                            return updatedLists;
-                          });
-                        }
-                      }
-                    />
-                    : <RatingDisplay rating={selectedRestaurant.rating} />}
+                    ? <RatingSystem currRating={rating} setNewRating={newRating => setRating(newRating)} />
+                    : <RatingDisplay rating={rating} />
+                  }
                 </div>
                 <label htmlFor="restaurant-description" className="pb-1 font-semibold">Description</label>
                 <textarea id="restaurant-description" placeholder="Add a description for this restaurant" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
                   className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
-                <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleEditClick(selectedRestaurant.id)}>Update</button>
+                <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleEditClick(selectedRestaurant._id)}>Update</button>
               </div>
             </div>
           </div>
@@ -183,7 +195,7 @@ export const CustomList: React.FC<Props> = ({ list }) => {
               <div className="flex">
                 <button type="button"
                   className="px-8 py-1.5 mr-4 text-sm text-white text-center bg-blue-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg cursor-pointer"
-                  onClick={() => { handleDeleteClick(selectedRestaurant.id) }}>
+                  onClick={() => { handleDeleteClick(selectedRestaurant._id) }}>
                   Yes
                 </button>
                 <button type="button"

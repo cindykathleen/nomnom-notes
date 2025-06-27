@@ -10,22 +10,22 @@ export class Database {
     this.db = this.client.db(databaseName);
   }
 
+  // Lists function
+  async getLists() {
+    return await this.db.collection<List>('lists').find({}).toArray();
+  }
+
   // List functions
   async getList(listId: string) {
     return await this.db.collection<List>('lists').findOne({ _id: listId });
   }
 
-  async addList(list: List) {
-    const newList = {
-      _id: list._id,
-      name: list.name,
-      description: list.description,
-      photoId: list.photoId,
-      photoUrl: list.photoUrl,
-      restaurants: []
-    };
+  async getListByRestaurantId(restaurantId: string) {
+    return await this.db.collection<List>('lists').findOne({ restaurants: restaurantId });
+  }
 
-    await this.db.collection<List>('lists').insertOne(newList);
+  async addList(list: List) {
+    await this.db.collection<List>('lists').insertOne(list);
   }
 
   async updateList(list: List) {
@@ -52,26 +52,12 @@ export class Database {
   }
 
   async addRestaurant(listId: string, restaurant: Restaurant) {
-    const newRestaurant = {
-      _id: restaurant._id,
-      name: restaurant.name,
-      type: restaurant.type,
-      address: restaurant.address,
-      mapsUrl: restaurant.mapsUrl,
-      photoId: restaurant.photoId,
-      photoUrl: restaurant.photoUrl,
-      rating: 0,
-      description: '',
-      dateAdded: new Date(),
-      dishes: []
-    }
-
-    await this.db.collection<Restaurant>('restaurants').insertOne(newRestaurant);
+    await this.db.collection<Restaurant>('restaurants').insertOne(restaurant);
 
     // Add the restaurant ID to the specified list
     await this.db.collection<List>('lists').updateOne(
       { _id: listId },
-      { $push: { restaurants: newRestaurant._id } }
+      { $push: { restaurants: restaurant._id } }
     );
   }
 
@@ -87,8 +73,14 @@ export class Database {
     );
   }
 
-  async deleteRestaurant(restaurantId: string) {
+  async deleteRestaurant(listId: string, restaurantId: string) {
     await this.db.collection<Restaurant>('restaurants').deleteOne({ _id: restaurantId });
+
+    // Delete the restaurant ID from the specified list
+    await this.db.collection<List>('lists').updateOne(
+      { _id: listId },
+      { $pull: { restaurants: restaurantId } }
+    );
   }
 
   // Dish functions
@@ -130,13 +122,19 @@ export class Database {
     );
   }
 
-  async deleteDish(dishId: string) {
+  async deleteDish(restaurantId: string, dishId: string) {
     await this.db.collection<Dish>('dishes').deleteOne({ _id: dishId });
+
+    // Delete the restaurant ID from the specified list
+    await this.db.collection<Restaurant>('restaurants').updateOne(
+      { _id: restaurantId },
+      { $pull: { dishes: dishId } }
+    );
   }
 
   // Search functions
-  async getSearchResult(query: string) {
-    return await this.db.collection<SearchResult>('places').findOne({ _id: query});
+  async getSearchResults() {
+    return await this.db.collection<SearchResult>('places').find({}).toArray();
   }
 
   async addSearchResult(query: string, places: Place[]) {

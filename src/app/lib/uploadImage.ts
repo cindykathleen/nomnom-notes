@@ -21,7 +21,7 @@ export const uploadImage = async (imageUrl: string): Promise<string | null> => {
     formData.append('url', imageUrl);
   }
 
-  const response = await fetch('/api/upload', {
+  const response = await fetch('/api/database/photos', {
     method: 'POST',
     body: formData
   });

@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { useListsContext } from '@/app/context/ListsContext';
 import { useDrag, useDrop } from 'react-dnd';
 import type { Identifier, XYCoord } from 'dnd-core';
 import { List, Restaurant, Dish } from '@/app/interfaces/interfaces';
@@ -21,77 +20,78 @@ interface DragItem {
 }
 
 export const DishCard: React.FC<Props> = ({ list, restaurant, dish, index, moveList }) => {
-  const { setLists } = useListsContext();
+  // States for modals & alerts
   const [showMenuModal, setShowMenuModal] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
 
   // States for the input fields in the edit modal
   const [inputName, setInputName] = useState<string>(dish.name);
-  const [inputNote, setInputNote] = useState<string>(dish.note);
-  const [inputImage, setInputImage] = useState<string>(dish.photo || '');
+  const [rating, setRating] = useState<number>(0);
   const [ratingHover, setRatingHover] = useState<boolean>(false);
+  const [inputNote, setInputNote] = useState<string>(dish.note);
+  const [inputImage, setInputImage] = useState<string>(dish.photoId || '');
 
   const ref = useRef<HTMLDivElement>(null);
-  
-    const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
-      accept: "list",
-      // A collecting function that keeps track of the drop target/zone
-      collect(monitor) {
-        return {
-          handlerId: monitor.getHandlerId()
-        }
-      },
-      hover(item: DragItem, monitor) {
-        // Checking to make sure ref is not null
-        if (!ref.current) {
-          return;
-        }
-  
-        const dragIndex = item.index;
-        const hoverIndex = index;
-  
-        // Don't call moveList if the item is hovering over itself
-        if (dragIndex === hoverIndex) {
-          return;
-        }
-  
-        // Get the bounding rect of the hovered item
-        const hoverBoundingRect = ref.current?.getBoundingClientRect();
-        // Get the middle of the hovered item
-        const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
-        // Get the mouse position
-        const clientOffset = monitor.getClientOffset();
-        // Get the pixels to the left
-        const hoverClientX = (clientOffset as XYCoord).x - hoverBoundingRect.left;
-  
-        // Don't call moveList if the item did not pass the middle while dragging to the right
-        if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
-          return;
-        }
-        // Don't call moveList if the item did not pass the middle while dragging to the left
-        if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
-          return;
-        }
-  
-        moveList(dragIndex, hoverIndex);
-        item.index = hoverIndex;
+
+  const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
+    accept: "list",
+    // A collecting function that keeps track of the drop target/zone
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId()
       }
-    })
-  
-    const [{ isDragging }, drag] = useDrag({
-      type: "list",
-      item: () => {
-        return { id: list.uuid, index }
-      },
-      // A collecting function that keeps track of the dragging state
-      collect: (monitor: any) => ({
-        isDragging: monitor.isDragging()
-      }),
-    })
-  
-    // Setting ref to act as both a drag source and a drop target
-    drag(drop(ref));
+    },
+    hover(item: DragItem, monitor) {
+      // Checking to make sure ref is not null
+      if (!ref.current) {
+        return;
+      }
+
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      // Don't call moveList if the item is hovering over itself
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      // Get the bounding rect of the hovered item
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      // Get the middle of the hovered item
+      const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+      // Get the mouse position
+      const clientOffset = monitor.getClientOffset();
+      // Get the pixels to the left
+      const hoverClientX = (clientOffset as XYCoord).x - hoverBoundingRect.left;
+
+      // Don't call moveList if the item did not pass the middle while dragging to the right
+      if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
+        return;
+      }
+      // Don't call moveList if the item did not pass the middle while dragging to the left
+      if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
+        return;
+      }
+
+      moveList(dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    }
+  })
+
+  const [{ isDragging }, drag] = useDrag({
+    type: "list",
+    item: () => {
+      return { id: list._id, index }
+    },
+    // A collecting function that keeps track of the dragging state
+    collect: (monitor: any) => ({
+      isDragging: monitor.isDragging()
+    }),
+  })
+
+  // Setting ref to act as both a drag source and a drop target
+  drag(drop(ref));
 
   const handleUpdateClick = async () => {
     let inputPhotoID: string | null = '';
@@ -103,31 +103,38 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish, index, moveL
       inputPhotoID = 'placeholder';
     }
 
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
-      const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((r) => r.id === restaurant.id);
-      const dishIndex = updatedLists[listIndex].restaurants[restaurantIndex].dishes.findIndex((d) => d.name === dish.name);
-      updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].name = inputName;
-      updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].note = inputNote;
-      updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].photo = inputPhotoID;
-      updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].photoUrl = `/uploads/${inputPhotoID}`;
+    const updatedDish: Partial<Dish> = {
+      _id: dish._id,
+      name: inputName,
+      note: inputNote,
+      rating: rating,
+      photoId: inputPhotoID,
+      photoUrl: `/api/database/photos?id=${inputPhotoID}`
+    }
 
-      return updatedLists;
+    await fetch('/api/database/dishes', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        dish: updatedDish
+      })
     })
 
     setShowEditModal(false);
   };
 
-  const handleDeleteClick = () => {
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
-      const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((r) => r.id === restaurant.id);
-      const dishIndex = updatedLists[listIndex].restaurants[restaurantIndex].dishes.findIndex((d) => d.name === dish.name);
-      updatedLists[listIndex].restaurants[restaurantIndex].dishes.splice(dishIndex, 1);
-
-      return updatedLists;
+  const handleDeleteClick = async () => {
+    await fetch('/api/database/dishes', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        restaurantId: restaurant._id,
+        dishId: dish._id
+      })
     })
 
     setShowDeleteAlert(false);
@@ -153,7 +160,7 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish, index, moveL
               <div className="flex flex-col absolute right-0 top-8 min-w-30 p-2 bg-white border border-gray-200 rounded-sm">
                 <button
                   className="px-2 py-1 mb-2 text-left cursor-pointer hover:bg-gray-100"
-                  onClick={() => { setShowMenuModal(false); setShowEditModal(true); setInputImage(dish.photoUrl); }}>
+                  onClick={() => { setShowMenuModal(false); setShowEditModal(true); setRating(dish.rating); setInputImage(dish.photoUrl); }}>
                   Edit
                 </button>
                 <button
@@ -186,21 +193,9 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish, index, moveL
                 <label htmlFor="dish-rating" className="pb-1 font-semibold">Rating</label>
                 <div id="dish-rating" className="w-fit mb-6" onMouseEnter={() => setRatingHover(true)} onMouseLeave={() => setRatingHover(false)}>
                   {ratingHover
-                    ? <RatingSystem currRating={dish.rating}
-                      setNewRating={
-                        (newRating) => {
-                          setLists((prev) => {
-                            const updatedLists = [...prev];
-                            const listIndex = updatedLists.findIndex((l) => l.uuid === list.uuid);
-                            const restaurantIndex = updatedLists[listIndex].restaurants.findIndex((r) => r.id === restaurant.id);
-                            const dishIndex = updatedLists[listIndex].restaurants[restaurantIndex].dishes.findIndex((d) => d.name === dish.name);
-                            updatedLists[listIndex].restaurants[restaurantIndex].dishes[dishIndex].rating = newRating;
-                            return updatedLists;
-                          });
-                        }
-                      }
-                    />
-                    : <RatingDisplay rating={dish.rating} />}
+                    ? <RatingSystem currRating={rating} setNewRating={newRating => setRating(newRating)} />
+                    : <RatingDisplay rating={rating} />
+                  }
                 </div>
                 <label htmlFor="dish-note" className="pb-1 font-semibold">Note</label>
                 <textarea id="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}

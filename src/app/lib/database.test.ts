@@ -12,7 +12,8 @@ const newList = {
   name: 'Boba',
   description: 'Rating all of the boba drinks we have tried',
   photoId: '48f7b0c4-dfc7-46c4-b85c-c834767e2850',
-  photoUrl: '/uploads/48f7b0c4-dfc7-46c4-b85c-c834767e2850'
+  photoUrl: '/uploads/48f7b0c4-dfc7-46c4-b85c-c834767e2850',
+  restaurants: []
 }
 
 const newRestaurant = {
@@ -22,7 +23,11 @@ const newRestaurant = {
   address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
   mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
   photoId: '503574d6-db6d-4be7-bec7-1c305686119e',
-  photoUrl: '/uploads/503574d6-db6d-4be7-bec7-1c305686119e'
+  photoUrl: '/uploads/503574d6-db6d-4be7-bec7-1c305686119e',
+  rating: 0,
+  description: '',
+  dateAdded: new Date(),
+  dishes: []
 }
 
 const newDish = {
@@ -79,10 +84,16 @@ describe('Database lists collection', async () => {
     const list = await testDb.getList(listUuid);
     expect(list).not.toBeNull();
 
+    if (!list) return;
+
     list.description = 'Updated description for boba drinks';
     await testDb.updateList(list);
 
     const updatedList = await testDb.getList(listUuid);
+    expect(updatedList).not.toBeNull();
+
+    if (!updatedList) return;
+
     expect(updatedList.description).toBe('Updated description for boba drinks');
   })
 
@@ -108,7 +119,7 @@ describe('Database restaurants collection', async () => {
       photoUrl: '/uploads/503574d6-db6d-4be7-bec7-1c305686119e',
       rating: 0,
       description: '',
-      dateAdded: restaurant.dateAdded,
+      dateAdded: newRestaurant.dateAdded,
       dishes: []
     }
 
@@ -120,17 +131,22 @@ describe('Database restaurants collection', async () => {
     const restaurant = await testDb.getRestaurant(newRestaurant._id);
     expect(restaurant).not.toBeNull();
 
+    if (!restaurant) return;
+
     restaurant.rating = 5;
     restaurant.description = 'One of our go-to places for boba';
     await testDb.updateRestaurant(restaurant);
 
     const updatedRestaurant = await testDb.getRestaurant(newRestaurant._id);
+
+    if (!updatedRestaurant) return;
+
     expect(updatedRestaurant.rating).toBe(5);
     expect(updatedRestaurant.description).toBe('One of our go-to places for boba');
   })
 
   it('delete restaurant', async () => {
-    await testDb.deleteRestaurant(newRestaurant._id);
+    await testDb.deleteRestaurant(listUuid, newRestaurant._id);
     const restaurant = await testDb.getRestaurant(newRestaurant._id);
     expect(restaurant).toBeNull();
   })
@@ -158,11 +174,16 @@ describe('Database dishes collection', async () => {
     const dish = await testDb.getDish(dishUuid);
     expect(dish).not.toBeNull();
 
+    if (!dish) return;
+
     dish.rating = 4;
     dish.note = 'Omg, yum!';
     await testDb.updateDish(dish);
 
     const updatedDish = await testDb.getDish(dishUuid);
+
+    if (!updatedDish) return;
+
     expect(updatedDish.rating).toBe(4);
     expect(updatedDish.note).toBe('Omg, yum!');
   })
@@ -181,27 +202,31 @@ describe('Database search', async () => {
 
     const expectedResults = [
       {
-        _id: 'ChIJTRDQZ_K1j4ARqdjFU7FbSes',
-        name: 'TP Tea',
-        type: 'Tea house',
-        address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
-        mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
-        photoId: '503574d6-db6d-4be7-bec7-1c305686119e'
-      },
-      {
-        _id: 'ChIJZ0uK75gzjoARCoIgh3aIO1M',
-        name: 'TP TEA – San Jose Oakridge',
-        type: 'Tea house',
-        address: '925 Blossom Hill Rd #1228, San Jose, CA 95123, USA',
-        mapsUrl: 'https://maps.google.com/?cid=5997537371428520458',
-        photoId: 'AXQCQNSkq6kDl4fjCcYGXnnxXS5LvC22oEDkMLOqnRniVljSUe0cV5x'
+        '_id': 'TP Tea',
+        'result': [
+          {
+            _id: 'ChIJTRDQZ_K1j4ARqdjFU7FbSes',
+            name: 'TP Tea',
+            type: 'Tea house',
+            address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
+            mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
+            photoId: '503574d6-db6d-4be7-bec7-1c305686119e'
+          },
+          {
+            _id: 'ChIJZ0uK75gzjoARCoIgh3aIO1M',
+            name: 'TP TEA – San Jose Oakridge',
+            type: 'Tea house',
+            address: '925 Blossom Hill Rd #1228, San Jose, CA 95123, USA',
+            mapsUrl: 'https://maps.google.com/?cid=5997537371428520458',
+            photoId: 'AXQCQNSkq6kDl4fjCcYGXnnxXS5LvC22oEDkMLOqnRniVljSUe0cV5x'
+          }
+        ]
       }
     ]
 
-    const results = await testDb.getSearchResult('TP Tea');
+    const results = await testDb.getSearchResults();
     expect(results).not.toBeNull();
-    expect(results._id).toEqual('TP Tea');
-    expect(results.result).toEqual(expectedResults);
+    expect(results).toEqual(expectedResults);
   })
 })
 
@@ -216,6 +241,9 @@ describe('Database photos', async () => {
 
     const photo = await testDb.getPhoto(photoUuid);
     expect(photo).not.toBeNull();
+
+    if (!photo) return;
+
     expect(photo._id).toEqual(photoUuid);
     expect(photo.data.value()).toEqual(buffer);
   })

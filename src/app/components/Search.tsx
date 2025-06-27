@@ -1,10 +1,22 @@
-import { useState, useRef } from 'react';
-import { useListsContext } from '@/app/context/ListsContext';
-import { Place, Restaurant } from '@/app/interfaces/interfaces';
+import { useState, useEffect, useRef } from 'react';
+import { Lists, Place, Restaurant } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 
 export const Search = () => {
-  const { lists, setLists } = useListsContext();
+  const [lists, setLists] = useState<Lists>([]);
+
+  // This is called AFTER the components mount
+  // So lists is [] on initial render
+  useEffect(() => {
+    const fetchLists = async () => {
+      const reponse = await fetch('/api/database/lists');
+      const data = await reponse.json();
+      setLists(data);
+    }
+
+    fetchLists()
+  }, []);
+
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [results, setResults] = useState<Place[]>([]);
   const searchQuery = useRef<HTMLInputElement>(null);
@@ -15,48 +27,42 @@ export const Search = () => {
     // Make sure the input is not null
     if (!query) return;
 
-    // Check if the query is already stored in local storage
-    const storedPlaces = JSON.parse(localStorage.getItem('places') || '{}');
-    if (query in storedPlaces) {
-      console.log('Using cached results');
-      setResults(storedPlaces[query]);
+    // Check if the query is already stored in the database
+    const searchDbResponse = await fetch('/api/database/search');
+    const storedPlaces = await searchDbResponse.json();
+
+    if (storedPlaces.some((place: Place) => place._id === query)) {
+      setResults(storedPlaces.find((place: Place) => place._id === query)?.result || []);
       return;
     }
 
-    const response = await fetch(`/api/search?query=${query}`);
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error(`HTTP ${response.status} - ${JSON.stringify(data)}`);
-      return;
-    }
-
+    const searchResponse = await fetch(`/api/search?query=${query}`);
+    const data = await searchResponse.json();
     const places = data.places;
 
+    await fetch('/api/database/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ query, places })
+    });
+
     setResults(places);
-    localStorage.setItem('places', JSON.stringify({ ...storedPlaces, [query]: places }));
   };
 
   const handleAddToList = async (id: string, place: Place) => {
     // Check if the restaurant is already in the list
     const currentList = lists.find((list) => list._id === id);
-    if (currentList!.restaurants.find((restaurant) => restaurant.id === place._id)) {
+    if (currentList!.restaurants.find((restaurant) => restaurant === place._id)) {
       alert("This restaurant is already in the list");
       return;
     }
 
     // Get the restaurant cover photo from Google
     if (place.photoId !== '') {
-      console.log(place.photoId);
       const response = await fetch(`/api/google-photos/?photoID=${place.photoId}`);
       const data = await response.json();
-
-      if (!response.ok) {
-        console.error(`HTTP ${response.status} - ${JSON.stringify(data)}`);
-        return;
-      }
-
       place.photoId = data.photoID;
     } else {
       // Use a placeholder image if no photo is available from Google
@@ -71,27 +77,26 @@ export const Search = () => {
       address: place.address,
       mapsUrl: place.mapsUrl,
       photoId: place.photoId,
-      photoUrl: `/uploads/${place.photoId}`,
+      photoUrl: `/api/database/photos?id=${place.photoId}`,
       rating: 0,
       description: '',
       dishes: [],
       dateAdded: new Date()
     }
 
-    setLists((prev) => {
-      const updatedLists = prev.map((list) => {
-        if (list._id === id) {
-          return {
-            ...list,
-            restaurants: [...list.restaurants, newRestaurant]
-          };
-        }
-        return list;
-      });
-
-      alert("The restaurant has been added to the list");
-      return updatedLists;
+    await fetch('/api/database/restaurants/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        listId: id,
+        restaurant: newRestaurant
+      })
     });
+
+    alert("The restaurant has been added to the list");
+    setSelectedPlace(null);
   };
 
   return (
@@ -149,7 +154,7 @@ export const Search = () => {
                 {lists.map((list) => {
                   return (
                     <div key={list._id} className="flex gap-4 cursor-pointer" onClick={() => handleAddToList(list._id, selectedPlace)}>
-                      <img className="max-w-24 aspect-square rounded-lg mb-4" src={`/uploads/${list.photoId}`} alt={list.name} />
+                      <img className="max-w-24 aspect-square rounded-lg mb-4" src={list.photoUrl} alt={list.name} />
                       <div>
                         <p className="font-semibold">{list.name}</p>
                         <p>{list.restaurants.length} places</p>
