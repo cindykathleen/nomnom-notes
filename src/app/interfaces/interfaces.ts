@@ -4,6 +4,7 @@ export type Lists = List[];
 
 export interface List {
   _id: string;
+  index: number;
   name: string;
   description: string;
   photoId: string;
@@ -29,6 +30,7 @@ export interface Restaurant extends Place {
 
 export interface Dish {
   _id: string;
+  index: number;
   name: string;
   note: string;
   rating: number;

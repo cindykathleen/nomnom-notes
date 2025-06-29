@@ -6,7 +6,6 @@ import { List } from "@/app/interfaces/interfaces";
 
 interface Props {
   list: List;
-  index: number;
   setSelectedList: React.Dispatch<React.SetStateAction<List | null>>;
   setShowEditModal: React.Dispatch<React.SetStateAction<boolean>>;
   setShowDeleteAlert: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,7 +19,7 @@ interface DragItem {
   index: number;
 }
 
-export const ListCard: React.FC<Props> = ({ list, index, setSelectedList, setShowEditModal, setShowDeleteAlert, setInputName, setInputDescription, setInputImage, moveList }) => {
+export const ListCard: React.FC<Props> = ({ list, setSelectedList, setShowEditModal, setShowDeleteAlert, setInputName, setInputDescription, setInputImage, moveList }) => {
   // State for modal
   const [showMenuModal, setShowMenuModal] = useState(false);
 
@@ -41,7 +40,7 @@ export const ListCard: React.FC<Props> = ({ list, index, setSelectedList, setSho
       }
 
       const dragIndex = item.index;
-      const hoverIndex = index;
+      const hoverIndex = list.index;
 
       // Don't call moveList if the item is hovering over itself
       if (dragIndex === hoverIndex) {
@@ -74,7 +73,7 @@ export const ListCard: React.FC<Props> = ({ list, index, setSelectedList, setSho
   const [{ isDragging }, drag] = useDrag({
     type: "list",
     item: () => {
-      return { id: list._id, index }
+      return { id: list._id, index: list.index }
     },
     // A collecting function that keeps track of the dragging state
     collect: (monitor: any) => ({

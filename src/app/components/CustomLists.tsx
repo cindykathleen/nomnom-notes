@@ -33,23 +33,25 @@ export const CustomLists = () => {
     fetchLists()
   }, []);
 
-  // TODO: Change how reordering is done
-  // Can use index
-  const moveList = useCallback((dragIndex: number, hoverIndex: number) => {
-    setLists((prev) => {
-      const updatedLists = [...prev];
-      const dragCard = updatedLists[dragIndex];
-
-      updatedLists.splice(dragIndex, 1);
-      updatedLists.splice(hoverIndex, 0, dragCard);
-
-      return updatedLists;
+  const moveList = useCallback(async (dragIndex: number, hoverIndex: number) => {
+    await fetch('/api/database/drag-drop', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        collectionName: 'lists',
+        dragIndex: dragIndex,
+        hoverIndex: hoverIndex
+      })
     })
+
+    fetchLists()
   }, [])
 
-  const renderList = useCallback((list: List, index: number) => {
+  const renderList = useCallback((list: List) => {
     return (
-      <ListCard key={list._id} list={list} index={index}
+      <ListCard key={list._id} list={list}
         setSelectedList={setSelectedList}
         setShowEditModal={setShowEditModal}
         setShowDeleteAlert={setShowDeleteAlert}
@@ -75,8 +77,11 @@ export const CustomLists = () => {
       inputPhotoID = 'placeholder';
     }
 
+    const highestIndex = lists.length === 0 ? 0 : Math.max(...lists.map(list => list.index));
+
     const newList: List = {
       _id: uuidv4(),
+      index: highestIndex + 1,
       name: listName.current!.value,
       description: listDescription.current!.value,
       photoId: inputPhotoID,
@@ -158,7 +163,7 @@ export const CustomLists = () => {
     <div className="relative h-screen p-16 sm:ml-64">
       <h1 className="text-4xl mb-8 font-semibold">My lists</h1>
       <div className="grid grid-cols-6 gap-16 mb-4">
-        {lists.map((list, index) => renderList(list, index))}
+        {lists.map(list => renderList(list))}
         <div className="flex items-start h-full">
           <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => { setInputImage(''); setShowAddModal(true); }}>
             <p className="text-2xl text-gray-500">
