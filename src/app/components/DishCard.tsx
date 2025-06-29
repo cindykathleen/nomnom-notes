@@ -11,7 +11,6 @@ interface Props {
   list: List;
   restaurant: Restaurant;
   dish: Dish;
-  index: number;
   moveList: (dragIndex: number, hoverIndex: number) => void; // Function used to reorder the lists
 }
 
@@ -19,7 +18,7 @@ interface DragItem {
   index: number;
 }
 
-export const DishCard: React.FC<Props> = ({ list, restaurant, dish, index, moveList }) => {
+export const DishCard: React.FC<Props> = ({ list, restaurant, dish, moveList }) => {
   // States for modals & alerts
   const [showMenuModal, setShowMenuModal] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -49,7 +48,7 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish, index, moveL
       }
 
       const dragIndex = item.index;
-      const hoverIndex = index;
+      const hoverIndex = dish.index;
 
       // Don't call moveList if the item is hovering over itself
       if (dragIndex === hoverIndex) {
@@ -82,7 +81,7 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish, index, moveL
   const [{ isDragging }, drag] = useDrag({
     type: "list",
     item: () => {
-      return { id: list._id, index }
+      return { id: list._id, index: dish.index }
     },
     // A collecting function that keeps track of the dragging state
     collect: (monitor: any) => ({

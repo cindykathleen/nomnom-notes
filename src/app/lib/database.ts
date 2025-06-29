@@ -12,7 +12,7 @@ export class Database {
 
   // Lists function
   async getLists() {
-    return await this.db.collection<List>('lists').find({}).toArray();
+    return await this.db.collection<List>('lists').find({}).sort({ index: 1 }).toArray();
   }
 
   // List functions
@@ -89,21 +89,12 @@ export class Database {
   }
 
   async addDish(restaurantId: string, dish: Dish) {
-    const newDish = {
-      _id: dish._id,
-      name: dish.name,
-      note: dish.note,
-      rating: dish.rating,
-      photoId: dish.photoId,
-      photoUrl: dish.photoUrl
-    }
-
-    await this.db.collection<Dish>('dishes').insertOne(newDish);
+    await this.db.collection<Dish>('dishes').insertOne(dish);
 
     // Add the dish ID to the specified restaurant
     await this.db.collection<Restaurant>('restaurants').updateOne(
       { _id: restaurantId },
-      { $push: { dishes: newDish._id } }
+      { $push: { dishes: dish._id } }
     );
   }
 
@@ -132,6 +123,77 @@ export class Database {
     );
   }
 
+  // Drag & Drop functions
+  async getHighestDishIndex(restaurantId: string) {
+    const restaurants = this.db.collection<Restaurant>('restaurants');
+
+    const pipeline = [
+      {
+        $match: { _id: restaurantId }
+      },
+      {
+        $lookup: {
+          from: 'dishes',
+          localField: 'dishes',
+          foreignField: '_id',
+          as: 'dishes'
+        }
+      },
+      {
+        $unwind: '$dishes'
+      },
+      {
+        $group: {
+          _id: '$_id',
+          maxIndex: { $max: '$dishes.index' }
+        }
+      }
+    ];
+
+    const result = await restaurants.aggregate<{ _id: string, maxIndex: number }>(pipeline).toArray();
+
+    return result.length > 0 ? result[0].maxIndex : null;
+  }
+
+  async moveList(collectionName: string, dragIndex: number, hoverIndex: number) {
+    let collection = null;
+
+    if (collectionName === 'lists') {
+      collection = this.db.collection<List>('lists');
+    } else if (collectionName === 'dishes') {
+      collection = this.db.collection<Dish>('dishes');
+    } else {
+      return;
+    }
+
+    const dragItem = await collection.findOne({ index: dragIndex });
+    if (!dragItem) return;
+
+    // Moving item from the right to the left
+    if (dragIndex > hoverIndex) {
+      await collection.updateMany(
+        // Shift items from hoverIndex to dragIndex - 1
+        { index: { $gte: hoverIndex, $lt: dragIndex } },
+        { $inc: { index: 1 } }
+      );
+    } 
+    // Moving item from left to right
+    else {
+      await collection.updateMany(
+        // Shift items from dragIndex + 1 to hoverIndex
+        { index: { $gt: dragIndex, $lte: hoverIndex } },
+        { $inc: { index: -1 } }
+      );
+    }
+    // If dragIndex and hoverIndex are the same, it is already being taken care of in ListCard.tsx and DishCard.tsx
+
+    // Update the item to its new index
+    await collection.updateOne(
+      { _id: dragItem._id },
+      { $set: { index: hoverIndex } }
+    )
+  }
+
   // Search functions
   async getSearchResults() {
     return await this.db.collection<SearchResult>('places').find({}).toArray();
@@ -148,9 +210,9 @@ export class Database {
 
   //Photo functions
   async getPhoto(photoId: string) {
-    return await this.db.collection<Photo>('photos').findOne({ _id: photoId});
+    return await this.db.collection<Photo>('photos').findOne({ _id: photoId });
   }
-  
+
   async uploadPhoto(photoId: string, photoData: Buffer) {
     const newPhoto = {
       _id: photoId,

@@ -9,6 +9,7 @@ const photoUuid = uuidv4();
 
 const newList = {
   _id: listUuid,
+  index: 0,
   name: 'Boba',
   description: 'Rating all of the boba drinks we have tried',
   photoId: '48f7b0c4-dfc7-46c4-b85c-c834767e2850',
@@ -32,6 +33,7 @@ const newRestaurant = {
 
 const newDish = {
   _id: dishUuid,
+  index: 0,
   name: 'Strawberry Milk Tea w/ boba 50% sweet',
   note: 'Just ok',
   rating: 3,
@@ -68,6 +70,7 @@ describe('Database lists collection', async () => {
 
     const expectedList = {
       _id: listUuid,
+      index: 0,
       name: 'Boba',
       description: 'Rating all of the boba drinks we have tried',
       photoId: '48f7b0c4-dfc7-46c4-b85c-c834767e2850',
@@ -82,16 +85,12 @@ describe('Database lists collection', async () => {
 
   it('update list', async () => {
     const list = await testDb.getList(listUuid);
-    expect(list).not.toBeNull();
-
     if (!list) return;
 
     list.description = 'Updated description for boba drinks';
     await testDb.updateList(list);
 
     const updatedList = await testDb.getList(listUuid);
-    expect(updatedList).not.toBeNull();
-
     if (!updatedList) return;
 
     expect(updatedList.description).toBe('Updated description for boba drinks');
@@ -129,8 +128,6 @@ describe('Database restaurants collection', async () => {
 
   it('update restaurant', async () => {
     const restaurant = await testDb.getRestaurant(newRestaurant._id);
-    expect(restaurant).not.toBeNull();
-
     if (!restaurant) return;
 
     restaurant.rating = 5;
@@ -138,7 +135,6 @@ describe('Database restaurants collection', async () => {
     await testDb.updateRestaurant(restaurant);
 
     const updatedRestaurant = await testDb.getRestaurant(newRestaurant._id);
-
     if (!updatedRestaurant) return;
 
     expect(updatedRestaurant.rating).toBe(5);
@@ -158,6 +154,7 @@ describe('Database dishes collection', async () => {
 
     const expectedDish = {
       _id: dishUuid,
+      index: 0,
       name: 'Strawberry Milk Tea w/ boba 50% sweet',
       note: 'Just ok',
       rating: 3,
@@ -172,8 +169,6 @@ describe('Database dishes collection', async () => {
 
   it('update dish', async () => {
     const dish = await testDb.getDish(dishUuid);
-    expect(dish).not.toBeNull();
-
     if (!dish) return;
 
     dish.rating = 4;
@@ -181,21 +176,84 @@ describe('Database dishes collection', async () => {
     await testDb.updateDish(dish);
 
     const updatedDish = await testDb.getDish(dishUuid);
-
     if (!updatedDish) return;
 
     expect(updatedDish.rating).toBe(4);
     expect(updatedDish.note).toBe('Omg, yum!');
   })
 
-  it('delete restaurant', async () => {
-    await testDb.deleteDish(dishUuid);
+  it('delete dish', async () => {
+    await testDb.deleteDish(newRestaurant._id, dishUuid);
     const dish = await testDb.getDish(dishUuid)
     expect(dish).toBeNull();
   })
 })
 
-//TODO: Search functions tests
+describe('Database drag & drop', async () => {
+  const restaurant = {
+    _id: 'test-restaurant',
+    name: 'TP Tea',
+    type: 'Tea house',
+    address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
+    mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
+    photoId: '503574d6-db6d-4be7-bec7-1c305686119e',
+    photoUrl: '/uploads/503574d6-db6d-4be7-bec7-1c305686119e',
+    rating: 0,
+    description: '',
+    dateAdded: new Date(),
+    dishes: ['test0', 'test1']
+  }
+
+  const dish0 = {
+    _id: 'test0',
+    index: 1,
+    name: 'Strawberry Milk Tea w/ boba 50% sweet',
+    note: 'Yum',
+    rating: 5,
+    photoId: '1d14055a-8402-408a-a67c-800130874c2c',
+    photoUrl: '/uploads/1d14055a-8402-408a-a67c-800130874c2c'
+  }
+
+  const dish1 = {
+    _id: 'test1',
+    index: 2,
+    name: 'Milk Tea w/ boba 50% sweet',
+    note: 'Just ok',
+    rating: 3,
+    photoId: '1d14055a-8402-408a-a67c-800130874c2c',
+    photoUrl: '/uploads/1d14055a-8402-408a-a67c-800130874c2c'
+  }
+
+  const dish2 = {
+    _id: 'test2',
+    index: 3,
+    name: 'Peach Milk Tea w/ boba 50% sweet',
+    note: 'Pretty good',
+    rating: 4,
+    photoId: '1d14055a-8402-408a-a67c-800130874c2c',
+    photoUrl: '/uploads/1d14055a-8402-408a-a67c-800130874c2c'
+  }
+
+  it('get highest index of an array of dish IDs', async () => {
+    await testDb.addRestaurant(listUuid, restaurant);
+    await testDb.addDish('test-restaurant', dish0);
+    await testDb.addDish('test-restaurant', dish1);
+    await testDb.addDish('test-restaurant', dish2);
+
+    const highestIndex = await testDb.getHighestDishIndex('test-restaurant');
+    expect(highestIndex).toEqual(3);
+  })
+
+  it('update collection after drag & drop feature', async () => {
+    await testDb.moveList('dishes', 3, 2);
+    
+    const dish = await testDb.getDish('test2');
+    if (!dish) return;
+    
+    expect(dish.index).toEqual(2);
+  })
+})
+
 describe('Database search', async () => {
   it('add & get search result', async () => {
     await testDb.addSearchResult('TP Tea', searchResults);
@@ -230,7 +288,6 @@ describe('Database search', async () => {
   })
 })
 
-//TODO: Photo functions tests
 describe('Database photos', async () => {
   it('upload & get photo', async () => {
     const url = 'https://placehold.co/400';

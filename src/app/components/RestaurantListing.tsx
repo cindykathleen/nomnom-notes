@@ -51,16 +51,28 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
     fetchDishes();
   }, [restaurant.dishes]);
 
-  const moveList = useCallback((dragIndex: number, hoverIndex: number) => {
+  const moveList = useCallback(async (dragIndex: number, hoverIndex: number) => {
+    await fetch('/api/database/drag-drop', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        collectionName: 'dishes',
+        dragIndex: dragIndex,
+        hoverIndex: hoverIndex
+      })
+    })
 
+    fetchDishes();
   }, [])
 
-  const renderDish = useCallback((dish: Dish, index: number) => {
+  const renderDish = useCallback((dish: Dish) => {
     // Make sure list is loaded before continuing
     if (!list) return null
 
     return (
-      <DishCard key={dish._id} list={list} restaurant={restaurant} dish={dish} index={index} moveList={moveList} />
+      <DishCard key={dish._id} list={list} restaurant={restaurant} dish={dish} moveList={moveList} />
     )
   }, [])
 
@@ -79,8 +91,12 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
       dishImageID = 'placeholder';
     }
 
+    const response = await fetch(`/api/database/drag-drop?id=${restaurant._id}`);
+    const highestIndex = await response.json();
+
     const newDish: Dish = {
       _id: uuidv4(),
+      index: highestIndex + 1,
       name: dishName.current!.value,
       note: dishNote.current!.value,
       rating: dishRating,
@@ -134,7 +150,7 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
         <h2 className="text-3xl font-semibold">Dishes</h2>
       </div>
       <div className="grid grid-cols-6 gap-16 mb-4">
-        {dishes.map((dish, index) => renderDish(dish, index))}
+        {dishes.map((dish) => renderDish(dish))}
         <div className="flex items-start h-full">
           <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => setShowModal(true)}>
             <p className="text-2xl text-gray-500">
