@@ -52,7 +52,12 @@ export class Database {
   }
 
   async addRestaurant(listId: string, restaurant: Restaurant) {
-    await this.db.collection<Restaurant>('restaurants').insertOne(restaurant);
+    // Only add the restaurant if it doesn't already exist inside of the restaraunts collection
+    await this.db.collection<Restaurant>('restaurants').updateOne(
+      { _id: restaurant._id },
+      { $setOnInsert: restaurant },
+      { upsert: true }
+    )
 
     // Add the restaurant ID to the specified list
     await this.db.collection<List>('lists').updateOne(
@@ -74,13 +79,18 @@ export class Database {
   }
 
   async deleteRestaurant(listId: string, restaurantId: string) {
-    await this.db.collection<Restaurant>('restaurants').deleteOne({ _id: restaurantId });
-
     // Delete the restaurant ID from the specified list
     await this.db.collection<List>('lists').updateOne(
       { _id: listId },
       { $pull: { restaurants: restaurantId } }
     );
+
+    // Only delete the restaurant if the ID is not found in any list
+    const foundList = await this.db.collection<List>('lists').findOne({ restaurants: restaurantId });
+
+    if (!foundList) {
+      await this.db.collection<Restaurant>('restaurants').deleteOne({ _id: restaurantId });
+    }
   }
 
   // Dish functions
@@ -151,6 +161,7 @@ export class Database {
     ];
 
     const result = await restaurants.aggregate<{ _id: string, maxIndex: number }>(pipeline).toArray();
+    console.log(result);
 
     return result.length > 0 ? result[0].maxIndex : null;
   }
@@ -176,7 +187,7 @@ export class Database {
         { index: { $gte: hoverIndex, $lt: dragIndex } },
         { $inc: { index: 1 } }
       );
-    } 
+    }
     // Moving item from left to right
     else {
       await collection.updateMany(
@@ -187,7 +198,7 @@ export class Database {
     }
     // If dragIndex and hoverIndex are the same, it is already being taken care of in ListCard.tsx and DishCard.tsx
 
-    // Update the item to its new index
+    // Update the item to its new index position
     await collection.updateOne(
       { _id: dragItem._id },
       { $set: { index: hoverIndex } }

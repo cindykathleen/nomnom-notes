@@ -4,22 +4,19 @@ import Link from 'next/link';
 
 export const Search = () => {
   const [lists, setLists] = useState<Lists>([]);
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [results, setResults] = useState<Place[]>([]);
+  const searchQuery = useRef<HTMLInputElement>(null);
 
-  // This is called AFTER the components mount
-  // So lists is [] on initial render
-  useEffect(() => {
-    const fetchLists = async () => {
+  const fetchLists = async () => {
       const reponse = await fetch('/api/database/lists');
       const data = await reponse.json();
       setLists(data);
     }
 
+  useEffect(() => {
     fetchLists()
   }, []);
-
-  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
-  const [results, setResults] = useState<Place[]>([]);
-  const searchQuery = useRef<HTMLInputElement>(null);
 
   const handleSearch = async () => {
     const query = searchQuery.current?.value.toLowerCase();
@@ -61,13 +58,13 @@ export const Search = () => {
 
     // Get the restaurant cover photo from Google
     if (place.photoId !== '') {
-      const response = await fetch(`/api/google-photos/?photoID=${place.photoId}`);
+      const response = await fetch(`/api/google-photos/?photoId=${place.photoId}`);
       const data = await response.json();
-      place.photoId = data.photoID;
+      place.photoId = data.photoId;
     } else {
       // Use a placeholder image if no photo is available from Google
-      // There is a default image in the uploads folder named 'placeholder' instead of using a UUID
-      place.photoId = 'placeholder';
+      // There is a placeholder image in the database
+      place.photoId = '110eef21-e1df-4f07-9442-44cbca0b42fc';
     }
 
     const newRestaurant: Restaurant = {
@@ -112,7 +109,7 @@ export const Search = () => {
         <div className="flex flex-col min-w-3xl">
           {results.map((place) => {
             return (
-              <div key={place._id} className="relative mb-8 bg-white cursor-pointer" onClick={() => setSelectedPlace(place)}>
+              <div key={place._id} className="relative mb-8 bg-white cursor-pointer" onClick={() => {fetchLists(); setSelectedPlace(place);}}>
                 <p className="text-xl font-semibold pb-2">{place.name}</p>
                 <div className="flex gap-2 pb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">

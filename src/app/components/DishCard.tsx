@@ -8,9 +8,9 @@ import { ImageInput } from '@/app/components/ImageInput';
 import { uploadImage } from '@/app/lib/uploadImage';
 
 interface Props {
-  list: List;
   restaurant: Restaurant;
   dish: Dish;
+  fetchRestaurant: () => void;
   moveList: (dragIndex: number, hoverIndex: number) => void; // Function used to reorder the lists
 }
 
@@ -18,7 +18,7 @@ interface DragItem {
   index: number;
 }
 
-export const DishCard: React.FC<Props> = ({ list, restaurant, dish, moveList }) => {
+export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, moveList }) => {
   // States for modals & alerts
   const [showMenuModal, setShowMenuModal] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -34,7 +34,7 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish, moveList }) 
   const ref = useRef<HTMLDivElement>(null);
 
   const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
-    accept: "list",
+    accept: "dish",
     // A collecting function that keeps track of the drop target/zone
     collect(monitor) {
       return {
@@ -79,9 +79,9 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish, moveList }) 
   })
 
   const [{ isDragging }, drag] = useDrag({
-    type: "list",
+    type: "dish",
     item: () => {
-      return { id: list._id, index: dish.index }
+      return { id: dish._id, index: dish.index }
     },
     // A collecting function that keeps track of the dragging state
     collect: (monitor: any) => ({
@@ -93,13 +93,16 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish, moveList }) 
   drag(drop(ref));
 
   const handleUpdateClick = async () => {
-    let inputPhotoID: string | null = '';
+    let inputPhotoId: string | null = '';
 
-    if (inputImage !== '') {
-      inputPhotoID = await uploadImage(inputImage);
-      if (inputPhotoID === null) return;
+    // If there is no change to the image, don't re-upload it into the database
+    if (inputImage === dish.photoUrl) {
+      inputPhotoId = inputImage.split('=')[1];
+    } else if (inputImage !== '') {
+      inputPhotoId = await uploadImage(inputImage);
+      if (inputPhotoId === null) return;
     } else {
-      inputPhotoID = 'placeholder';
+      inputPhotoId = '110eef21-e1df-4f07-9442-44cbca0b42fc';
     }
 
     const updatedDish: Partial<Dish> = {
@@ -107,8 +110,8 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish, moveList }) 
       name: inputName,
       note: inputNote,
       rating: rating,
-      photoId: inputPhotoID,
-      photoUrl: `/api/database/photos?id=${inputPhotoID}`
+      photoId: inputPhotoId,
+      photoUrl: `/api/database/photos?id=${inputPhotoId}`
     }
 
     await fetch('/api/database/dishes', {
@@ -122,6 +125,7 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish, moveList }) 
     })
 
     setShowEditModal(false);
+    fetchRestaurant();
   };
 
   const handleDeleteClick = async () => {
@@ -137,10 +141,11 @@ export const DishCard: React.FC<Props> = ({ list, restaurant, dish, moveList }) 
     })
 
     setShowDeleteAlert(false);
+    fetchRestaurant();
   };
 
   return (
-    <div ref={ref} key={dish.name} className="flex flex-col border border-gray-200 rounded-lg cursor-pointer" data-handler-id={handlerId}>
+    <div ref={ref} key={dish._id} className="flex flex-col border border-gray-200 rounded-lg cursor-pointer" data-handler-id={handlerId} >
       { // Check to make sure dish.imageUrl is not undefined, null or an empty string
         !!dish.photoUrl && (
           <img src={dish.photoUrl} alt={dish.name} className="aspect-square object-cover rounded-t-lg" />

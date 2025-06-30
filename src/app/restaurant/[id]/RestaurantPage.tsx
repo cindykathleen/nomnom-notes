@@ -25,7 +25,7 @@ export default function RestaurantPage({ id }: { id: string }) {
     <DndProvider backend={HTML5Backend}>
       <div>
         <Sidebar />
-        {restaurant && <RestaurantListing restaurant={restaurant} />}
+        {restaurant && <RestaurantListing currRestaurant={restaurant} />}
       </div>
     </DndProvider>
   );

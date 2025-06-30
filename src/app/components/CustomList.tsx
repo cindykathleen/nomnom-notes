@@ -5,7 +5,7 @@ import { RatingDisplay } from '@/app/components/RatingDisplay';
 import { RatingSystem } from '@/app/components/RatingSystem';
 
 interface Props {
-  list: List;
+  currList: List;
 }
 
 enum SortType {
@@ -13,8 +13,10 @@ enum SortType {
   Name = 'name'
 }
 
-export const CustomList: React.FC<Props> = ({ list }) => {
+export const CustomList: React.FC<Props> = ({ currList }) => {
+  const [list, setList] = useState<List>();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [sort, setSort] = useState<SortType>(SortType.RecentlyAdded);
 
   // States for modals & alerts
   const [selectedMenuModal, setSelectedMenuModal] = useState<string | null>(null);
@@ -27,35 +29,36 @@ export const CustomList: React.FC<Props> = ({ list }) => {
   const [ratingHover, setRatingHover] = useState<boolean>(false);
   const [inputDescription, setInputDescription] = useState<string>('');
 
-  const fetchRestaurants = async () => {
+  const fetchList = async () => {
+    const response = await fetch(`/api/database/list?id=${currList._id}`);
+    const data = await response.json();
+    setList(data);
+    await fetchRestaurants(data.restaurants, sort);
+  }
+
+  const fetchRestaurants = async (restaurantIds: string[], sort: SortType) => {
+    if (restaurantIds.length === 0) return;
+
     const fetchedRestaurants = await Promise.all(
-      list.restaurants.map(async (restaurantId) => {
+      restaurantIds.map(async (restaurantId) => {
         const response = await fetch(`/api/database/restaurants/?id=${restaurantId}`);
         const data = await response.json();
         return data;
       })
     );
 
+    if (sort === SortType.RecentlyAdded) {
+      fetchedRestaurants.sort((a, b) => new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime());
+    } else if (sort === SortType.Name) {
+      fetchedRestaurants.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
     setRestaurants(fetchedRestaurants);
   }
 
   useEffect(() => {
-    fetchRestaurants();
-  }, [list.restaurants]);
-
-  const sortRestaurants = (sort: SortType) => {
-    setRestaurants((prev) => {
-      const sortedRestaurants = [...prev];
-
-      if (sort === SortType.RecentlyAdded) {
-        sortedRestaurants.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
-      } else if (sort === SortType.Name) {
-        sortedRestaurants.sort((a, b) => a.name.localeCompare(b.name));
-      }
-
-      return sortedRestaurants;
-    });
-  };
+    fetchList();
+  }, [sort]);
 
   const handleEditClick = async (id: string) => {
     const updatedRestaurant: Partial<Restaurant> = {
@@ -77,10 +80,13 @@ export const CustomList: React.FC<Props> = ({ list }) => {
     setSelectedRestaurant(null);
     setShowEditModal(false);
 
-    await fetchRestaurants();
+    await fetchList();
   };
 
   const handleDeleteClick = async (id: string) => {
+    // Make sure list is loaded before continuing
+    if (!list) return null
+
     await fetch('/api/database/restaurants', {
       method: 'DELETE',
       headers: {
@@ -95,8 +101,11 @@ export const CustomList: React.FC<Props> = ({ list }) => {
     setSelectedRestaurant(null);
     setShowDeleteAlert(false);
 
-    await fetchRestaurants();
+    await fetchList();
   }
+
+  // Make sure list is loaded before continuing
+  if (!list) return null;
 
   return (
     <div className="relative h-screen p-16 sm:ml-64">
@@ -113,7 +122,7 @@ export const CustomList: React.FC<Props> = ({ list }) => {
         <form className="flex items-center w-fit my-2">
           <p className="text-lg text-nowrap mr-2">Sort by</p>
           <select className="w-full bg-transparent text-lg font-semibold appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer"
-            onChange={(e) => sortRestaurants(e.target.value as SortType)}>
+            onChange={(e) => setSort(e.target.value as SortType)}>
             <option value={SortType.RecentlyAdded}>Recently added</option>
             <option value={SortType.Name}>Name</option>
           </select>
