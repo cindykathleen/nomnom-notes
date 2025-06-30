@@ -9,11 +9,12 @@ import { ImageInput } from '@/app/components/ImageInput';
 import { uploadImage } from '@/app/lib/uploadImage';
 
 interface Props {
-  restaurant: Restaurant;
+  currRestaurant: Restaurant;
 }
 
-export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
+export const RestaurantListing: React.FC<Props> = ({ currRestaurant }) => {
   const [list, setList] = useState<List>();
+  const [restaurant, setRestaurant] = useState<Restaurant>();
   const [dishes, setDishes] = useState<Dish[]>([]);
 
   // State for modal
@@ -26,30 +27,41 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
   const [dishRating, setDishRating] = useState<number>(0);
 
   const fetchList = async () => {
-    const response = await fetch(`/api/database/list?restaurantId=${restaurant._id}`)
+    const response = await fetch(`/api/database/list?restaurantId=${currRestaurant._id}`)
     const data = await response.json();
     setList(data);
   }
 
-  const fetchDishes = async () => {
+  const fetchRestaurant = async () => {
+    const response = await fetch(`/api/database/restaurants?id=${currRestaurant._id}`);
+    const data = await response.json();
+    setRestaurant(data);
+    await fetchDishes(data.dishes);
+  };
+
+  const fetchDishes = async (dishIds: string[]) => {
+    if (dishIds.length === 0) {
+      setDishes([]);
+      return;
+    }
+
     const fetchedDishes = await Promise.all(
-      restaurant.dishes.map(async (dishId) => {
+      dishIds.map(async (dishId) => {
         const response = await fetch(`/api/database/dishes/?id=${dishId}`);
         const data = await response.json();
         return data;
       })
     );
 
+    fetchedDishes.sort((a, b) => a.index - b.index);
+
     setDishes(fetchedDishes);
   }
 
   useEffect(() => {
     fetchList();
+    fetchRestaurant();
   }, []);
-
-  useEffect(() => {
-    fetchDishes();
-  }, [restaurant.dishes]);
 
   const moveList = useCallback(async (dragIndex: number, hoverIndex: number) => {
     await fetch('/api/database/drag-drop', {
@@ -64,19 +76,13 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
       })
     })
 
-    fetchDishes();
+    await fetchRestaurant();
   }, [])
 
-  const renderDish = useCallback((dish: Dish) => {
-    // Make sure list is loaded before continuing
-    if (!list) return null
+  const handleAddClick = async () => {
+    // Make sure restaurant is loaded before continuing
+    if (!restaurant) return null
 
-    return (
-      <DishCard key={dish._id} list={list} restaurant={restaurant} dish={dish} moveList={moveList} />
-    )
-  }, [])
-
-  const handleClick = async () => {
     if (dishName.current!.value === '') {
       alert("Please enter a dish name");
       return;
@@ -88,11 +94,15 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
       dishImageID = await uploadImage(dishImage);
       if (dishImageID === null) return;
     } else {
-      dishImageID = 'placeholder';
+      dishImageID = '110eef21-e1df-4f07-9442-44cbca0b42fc';
     }
 
-    const response = await fetch(`/api/database/drag-drop?id=${restaurant._id}`);
-    const highestIndex = await response.json();
+    let highestIndex = 0;
+
+    if (restaurant.dishes.length > 0) {
+      const response = await fetch(`/api/database/drag-drop?id=${restaurant._id}`);
+      highestIndex = await response.json();
+    }
 
     const newDish: Dish = {
       _id: uuidv4(),
@@ -115,7 +125,7 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
       })
     });
 
-    setDishes(prev => [...prev, newDish]);
+    await fetchRestaurant();
 
     // Reset input fields 
     dishName.current!.value = '';
@@ -127,6 +137,9 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
 
   // Make sure list is loaded before continuing
   if (!list) return null;
+
+  // Make sure restaurant is loaded before continuing
+  if (!restaurant) return null
 
   return (
     <div className="relative h-screen p-16 sm:ml-64">
@@ -150,7 +163,10 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
         <h2 className="text-3xl font-semibold">Dishes</h2>
       </div>
       <div className="grid grid-cols-6 gap-16 mb-4">
-        {dishes.map((dish) => renderDish(dish))}
+        {dishes.map((dish) => (
+          <DishCard key={dish._id} restaurant={restaurant} dish={dish} 
+            fetchRestaurant={fetchRestaurant} moveList={moveList} />
+        ))}
         <div className="flex items-start h-full">
           <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => setShowModal(true)}>
             <p className="text-2xl text-gray-500">
@@ -180,7 +196,7 @@ export const RestaurantListing: React.FC<Props> = ({ restaurant }) => {
                 <label htmlFor="dish-note" className="pb-1 mt-6 font-semibold">Note</label>
                 <textarea id="dish-note" ref={dishNote} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
                 <ImageInput currImage={dishImage} setNewImage={(newImage) => setDishImage(newImage)} />
-                <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleClick}>Add</button>
+                <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleAddClick}>Add</button>
               </div>
             </div>
           </div>

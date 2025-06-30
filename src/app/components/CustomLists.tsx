@@ -28,7 +28,7 @@ export const CustomLists = () => {
     const data = await reponse.json();
     setLists(data);
   }
-  
+
   useEffect(() => {
     fetchLists()
   }, []);
@@ -49,32 +49,19 @@ export const CustomLists = () => {
     fetchLists()
   }, [])
 
-  const renderList = useCallback((list: List) => {
-    return (
-      <ListCard key={list._id} list={list}
-        setSelectedList={setSelectedList}
-        setShowEditModal={setShowEditModal}
-        setShowDeleteAlert={setShowDeleteAlert}
-        setInputName={setInputName}
-        setInputDescription={setInputDescription}
-        setInputImage={setInputImage}
-        moveList={moveList} />
-    )
-  }, [])
-
   const handleAddClick = async () => {
     if (listName.current!.value === '') {
       alert("Please enter a list name");
       return;
     }
 
-    let inputPhotoID: string | null = '';
+    let inputPhotoId: string | null = '';
 
     if (inputImage !== '') {
-      inputPhotoID = await uploadImage(inputImage);
-      if (inputPhotoID === null) return;
+      inputPhotoId = await uploadImage(inputImage);
+      if (inputPhotoId === null) return;
     } else {
-      inputPhotoID = 'placeholder';
+      inputPhotoId = '110eef21-e1df-4f07-9442-44cbca0b42fc';
     }
 
     const highestIndex = lists.length === 0 ? 0 : Math.max(...lists.map(list => list.index));
@@ -84,8 +71,8 @@ export const CustomLists = () => {
       index: highestIndex + 1,
       name: listName.current!.value,
       description: listDescription.current!.value,
-      photoId: inputPhotoID,
-      photoUrl: `/api/database/photos?id=${inputPhotoID}`,
+      photoId: inputPhotoId,
+      photoUrl: `/api/database/photos?id=${inputPhotoId}`,
       restaurants: []
     };
 
@@ -108,22 +95,25 @@ export const CustomLists = () => {
     await fetchLists();
   };
 
-  const handleUpdateClick = async (id: string) => {
-    let inputPhotoID: string | null = '';
+  const handleUpdateClick = async (list: List) => {
+    let inputPhotoId: string | null = '';
 
-    if (inputImage !== '') {
-      inputPhotoID = await uploadImage(inputImage);
-      if (inputPhotoID === null) return;
+    // If there is no change to the image, don't re-upload it into the database
+    if (inputImage === list.photoUrl) {
+      inputPhotoId = inputImage.split('=')[1];
+    } else if (inputImage !== '') {
+      inputPhotoId = await uploadImage(inputImage);
+      if (inputPhotoId === null) return;
     } else {
-      inputPhotoID = 'placeholder';
+      inputPhotoId = '110eef21-e1df-4f07-9442-44cbca0b42fc';
     }
 
     const updatedList: Partial<List> = {
-      _id: id,
+      _id: list._id,
       name: inputName,
       description: inputDescription,
-      photoId: inputPhotoID,
-      photoUrl: `/api/database/photos?id=${inputPhotoID}`
+      photoId: inputPhotoId,
+      photoUrl: `/api/database/photos?id=${inputPhotoId}`
     }
 
     await fetch('/api/database/list', {
@@ -163,7 +153,16 @@ export const CustomLists = () => {
     <div className="relative h-screen p-16 sm:ml-64">
       <h1 className="text-4xl mb-8 font-semibold">My lists</h1>
       <div className="grid grid-cols-6 gap-16 mb-4">
-        {lists.map(list => renderList(list))}
+        {lists.map(list => (
+          <ListCard key={list._id} list={list}
+            setSelectedList={setSelectedList}
+            setShowEditModal={setShowEditModal}
+            setShowDeleteAlert={setShowDeleteAlert}
+            setInputName={setInputName}
+            setInputDescription={setInputDescription}
+            setInputImage={setInputImage}
+            moveList={moveList} />
+        ))}
         <div className="flex items-start h-full">
           <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => { setInputImage(''); setShowAddModal(true); }}>
             <p className="text-2xl text-gray-500">
@@ -217,7 +216,7 @@ export const CustomLists = () => {
                 <textarea id="list-description" placeholder="Add a description for this list" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
                   className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleUpdateClick(selectedList._id)}>Update</button>
+                <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={() => handleUpdateClick(selectedList)}>Update</button>
               </div>
             </div>
           </div>

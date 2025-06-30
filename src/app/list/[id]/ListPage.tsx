@@ -21,7 +21,7 @@ export default function ListPage({ id }: { id: string }) {
   return (
     <div>
       <Sidebar />
-      {list && <CustomList list={list} />}
+      {list && <CustomList currList={list} />}
     </div>
   );
 }

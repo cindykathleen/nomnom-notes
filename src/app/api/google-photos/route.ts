@@ -2,17 +2,17 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getPhoto } from '@/app/lib/GooglePhotosAPI';
 
 export const GET = async (request: NextRequest) => {
-  const photoID = request.nextUrl.searchParams.get('photoID');
+  const photoId = request.nextUrl.searchParams.get('photoId');
 
-  if (!photoID) {
-    return NextResponse.json({ error: 'photoID parameter is required' }, { status: 400 });
+  if (!photoId) {
+    return NextResponse.json({ error: 'photoId parameter is required' }, { status: 400 });
   }
 
   // Get the photo URL from the Google Photos API first 
   // Then upload the photo into the database
-  // And use the new, unique photoID (file name) provided
+  // And use the new, unique photoId (file name) provided
   try {
-    const googlePhotoURL = await getPhoto(photoID!);
+    const googlePhotoURL = await getPhoto(photoId!);
 
     const formData = new FormData();
     formData.append('url', googlePhotoURL);
@@ -35,7 +35,7 @@ export const GET = async (request: NextRequest) => {
       return;
     }
 
-    return NextResponse.json({ photoID: data.fileName }, { status: 201 })
+    return NextResponse.json({ photoId: data.fileName }, { status: 201 })
   } catch (err) {
     return NextResponse.json({ error: `${err}` }, { status: 500 });
   }
