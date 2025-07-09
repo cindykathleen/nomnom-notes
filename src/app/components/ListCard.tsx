@@ -111,7 +111,7 @@ export const ListCard: React.FC<Props> = ({ list, setSelectedList, setShowEditMo
           )
         }
       </div>
-      <p className="py-1 text-lg/6">{list.description}</p>
+      <p className="py-1 text-lg/6 whitespace-pre-line">{list.description}</p>
     </div>
   );
 }

@@ -157,7 +157,7 @@ export const RestaurantListing: React.FC<Props> = ({ currRestaurant }) => {
       <div className="flex flex-col gap-2 mb-8">
         <h1 className="text-4xl font-semibold">{restaurant.name}</h1>
         <RatingDisplay rating={restaurant.rating} />
-        <p>{restaurant.description}</p>
+        <p className="whitespace-pre-line">{restaurant.description}</p>
       </div>
       <div className="mb-8">
         <h2 className="text-3xl font-semibold">Dishes</h2>
@@ -179,7 +179,7 @@ export const RestaurantListing: React.FC<Props> = ({ currRestaurant }) => {
       </div>
       {/* Modal for adding a new dish */
         showModal && (
-          <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+          <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div className="relative px-6 py-8 w-2/5 bg-white rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-blue-900">Add a dish</h2>

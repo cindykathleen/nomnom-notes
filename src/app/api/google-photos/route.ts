@@ -11,7 +11,7 @@ export const GET = async (request: NextRequest) => {
   // Get the photo URL from the Google Photos API first 
   // Then upload the photo into the database
   // And use the new, unique photoId (file name) provided
-  try {
+  try { 
     const googlePhotoURL = await getPhoto(photoId!);
 
     const formData = new FormData();

@@ -6,13 +6,17 @@ export const Search = () => {
   const [lists, setLists] = useState<Lists>([]);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [results, setResults] = useState<Place[]>([]);
+
+  // State for modal
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+
   const searchQuery = useRef<HTMLInputElement>(null);
 
   const fetchLists = async () => {
-      const reponse = await fetch('/api/database/lists');
-      const data = await reponse.json();
-      setLists(data);
-    }
+    const reponse = await fetch('/api/database/lists');
+    const data = await reponse.json();
+    setLists(data);
+  }
 
   useEffect(() => {
     fetchLists()
@@ -92,8 +96,7 @@ export const Search = () => {
       })
     });
 
-    alert("The restaurant has been added to the list");
-    setSelectedPlace(null);
+    setShowConfirmation(true);
   };
 
   return (
@@ -109,7 +112,7 @@ export const Search = () => {
         <div className="flex flex-col min-w-3xl">
           {results.map((place) => {
             return (
-              <div key={place._id} className="relative mb-8 bg-white cursor-pointer" onClick={() => {fetchLists(); setSelectedPlace(place);}}>
+              <div key={place._id} className="relative mb-8 bg-white cursor-pointer" onClick={() => { fetchLists(); setSelectedPlace(place); }}>
                 <p className="text-xl font-semibold pb-2">{place.name}</p>
                 <div className="flex gap-2 pb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -163,6 +166,20 @@ export const Search = () => {
             </div>
           </div>
         )}
+        { // Confirmation that the restaurant has been added to a list
+          showConfirmation && (
+            <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+              <div role="alert" className="relative px-6 py-8 w-1/5 border border-gray-300 rounded-lg bg-gray-50">
+                <h3 className="mb-4 text-2xl font-semibold text-blue-900">The restaurant has been added to the list</h3>
+                <button type="button"
+                  className="px-8 py-1.5 text-sm text-blue-900 text-center bg-transparent border border-blue-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg cursor-pointer"
+                  onClick={() => {setShowConfirmation(false); setSelectedPlace(null);}}>
+                  Ok
+                </button>
+              </div>
+            </div>
+          )
+        }
       </div>
     </div >
   );
