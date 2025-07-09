@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import type { Identifier, XYCoord } from 'dnd-core';
-import { List, Restaurant, Dish } from '@/app/interfaces/interfaces';
+import { Restaurant, Dish } from '@/app/interfaces/interfaces';
 import { RatingDisplay } from '@/app/components/RatingDisplay';
 import { RatingSystem } from '@/app/components/RatingSystem';
 import { ImageInput } from '@/app/components/ImageInput';
@@ -177,11 +177,11 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
           }
         </div>
         <RatingDisplay rating={dish.rating} />
-        <p>{dish.note}</p>
+        <p className="whitespace-pre-line">{dish.note}</p>
       </div>
       { // Modal for editing a dish
         showEditModal && (
-          <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+          <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div className="relative px-6 py-8 w-2/5 bg-white rounded-lg z-99">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-blue-900">Edit {dish.name}</h2>
@@ -213,7 +213,7 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
       }
       { // Alert for deleting a dish
         showDeleteAlert && (
-          <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+          <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div role="alert" className="relative px-6 py-8 w-1/5 border border-gray-300 rounded-lg bg-gray-50">
               <h3 className="mb-4 text-2xl font-semibold text-blue-900">Are you sure you want to delete this dish?</h3>
               <div className="flex">

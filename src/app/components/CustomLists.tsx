@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Lists, List } from "@/app/interfaces/interfaces";
+import { List } from "@/app/interfaces/interfaces";
 import { ListCard } from '@/app/components/ListCard';
 import { ImageInput } from '@/app/components/ImageInput';
 import { uploadImage } from '@/app/lib/uploadImage';
@@ -16,7 +16,7 @@ export const CustomLists = () => {
 
   // Refs for the input fields in the add modal
   const listName = useRef<HTMLInputElement | null>(null);
-  const listDescription = useRef<HTMLInputElement | null>(null);
+  const listDescription = useRef<HTMLTextAreaElement | null>(null);
 
   // States for the input fields in the edit modal
   const [inputName, setInputName] = useState<string>('');
@@ -175,7 +175,7 @@ export const CustomLists = () => {
       </div>
       { // Modal for creating a new list
         showAddModal && (
-          <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+          <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div className="relative px-6 py-8 w-2/5 bg-white rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-blue-900">New list</h2>
@@ -188,7 +188,7 @@ export const CustomLists = () => {
                 <label htmlFor="list-name" className="pb-1 font-semibold">Name</label>
                 <input id="list-name" type="text" ref={listName} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
                 <label htmlFor="list-description" className="pb-1 font-semibold">Description</label>
-                <input id="list-description" type="text" ref={listDescription} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
+                <textarea id="list-description" ref={listDescription} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
                 <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleAddClick}>Create</button>
               </div>
@@ -199,7 +199,7 @@ export const CustomLists = () => {
       { // Modal for editing lists
         // This modal is in this component instead of ListComponent so it can span the entire screen
         showEditModal && selectedList && (
-          <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+          <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div className="relative px-6 py-8 w-2/5 bg-white rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-blue-900">Edit {selectedList.name}</h2>
@@ -225,7 +225,7 @@ export const CustomLists = () => {
       { // Alert for deleting lists
         // This modal is in this component instead of ListComponent so it can span the entire screen
         showDeleteAlert && selectedList && (
-          <div className="absolute flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+          <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
             <div role="alert" className="relative px-6 py-8 w-1/5 border border-gray-300 rounded-lg bg-gray-50">
               <h3 className="mb-4 text-2xl font-semibold text-blue-900">Are you sure you want to delete this dish?</h3>
               <div className="flex">

@@ -12,7 +12,7 @@ export const uploadImage = async (imageUrl: string): Promise<string | null> => {
   else {
     // First check if the image is valid
     const isValid = await checkImageExists(imageUrl);
-
+    
     if (!isValid) {
       alert("Please provide a valid image URL");
       return null;
