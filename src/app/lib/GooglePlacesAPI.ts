@@ -19,6 +19,7 @@ export const searchPlace = async (query: string): Promise<Place[]> => {
     // 'places.googleMapsLinks', // Pro SKU
     'places.formattedAddress', // Essentials SKU
     // 'places.rating', // Enterprise SKU
+    'places.location', // Essentials IDs Only SKU
     'places.photos', // Essentials IDs Only SKU
     'places.primaryTypeDisplayName' // Pro SKU
   ].join(',');
@@ -46,6 +47,7 @@ export const searchPlace = async (query: string): Promise<Place[]> => {
       name: place.displayName.text,
       type: place.primaryTypeDisplayName.text,
       address: place.formattedAddress,
+      location: place.location,
       mapsUrl: place.googleMapsUri,
       photoId: place.photos?.[0]?.name || ""
     }

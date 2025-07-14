@@ -16,6 +16,10 @@ export interface Place {
   name: string;
   type: string;
   address: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
   mapsUrl: string;
   photoId: string
 }
