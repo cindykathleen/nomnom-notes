@@ -11,6 +11,7 @@ describe('Google Places API', async () => {
       name: place.displayName.text,
       type: place.primaryTypeDisplayName.text,
       address: place.formattedAddress,
+      location: place.location,
       mapsUrl: place.googleMapsUri,
       photoId: place.photos?.[0]?.name || ""
     }

@@ -76,6 +76,7 @@ export const Search = () => {
       name: place.name,
       type: place.type,
       address: place.address,
+      location: place.location,
       mapsUrl: place.mapsUrl,
       photoId: place.photoId,
       photoUrl: `/api/database/photos?id=${place.photoId}`,

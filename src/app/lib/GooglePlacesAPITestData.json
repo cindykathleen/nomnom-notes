@@ -12,6 +12,10 @@
         "text": "Tea house",
         "languageCode": "en"
       },
+      "location": {
+        "latitude": 37.422467499999996,
+        "longitude": -121.9168824
+      },
       "photos": [
         {
           "name": "places/ChIJOfQAb0XJj4ARFG40QIgMJx4/photos/AXQCQNS4d8mDzD-PqK5E2407upOT5xc-X0Q5KDBZ2WRGxuJcNG31uOTJcItlj1UwrmMoWe25BvrHhJegMFD5qCGSOy8B0eJhZvHg-rQwbFaCbFBJd_ClGhsE3Nl_qfjsvqT4tCVaphEzf8LRpDiVGCyXX29G9f_NS9H5yCifU60ufyDOh4uNpl84RgunylcyNuJmK8i-kVi7jfPeVJBa93K5_nb-g2dJvU5a9vcgvxMTfyPf_M5TPIXhuajJTK4JcJDeb7dEvuhYQV2rzBEUSTa1S84DgrGzX0g8ljBSf1dbLmBW4MIdrOuz6M5XOu7yTXPYoF0TmWbGndFQI4tRi6MMB-HDID74ZlT9Jniq5KD6-GAVlDJ_rJZN32MbhYJse4o_h4zmBgFHtU7L47XluJX53oIUY6Qzdadf_lkM9ZJ7HdQenvg8",
@@ -173,6 +177,10 @@
       "primaryTypeDisplayName": {
         "text": "Tea house",
         "languageCode": "en"
+      },
+      "location": {
+        "latitude": 37.311288,
+        "longitude": -122.023624
       },
       "photos": [
         {
