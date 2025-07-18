@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { Database } from './database';
+import { Database } from '@/app/lib/database';
 import { v4 as uuidv4 } from 'uuid';
 
 const testDb = new Database('nomnom_notes_test');
@@ -22,6 +22,10 @@ const newRestaurant = {
   name: 'TP Tea',
   type: 'Tea house',
   address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
+  location: {
+    latitude: 37.311288,
+    longitude: -122.023624,
+  },
   mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
   photoId: '503574d6-db6d-4be7-bec7-1c305686119e',
   photoUrl: '/uploads/503574d6-db6d-4be7-bec7-1c305686119e',
@@ -47,6 +51,10 @@ const searchResults = [
     name: 'TP Tea',
     type: 'Tea house',
     address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
+    location: {
+      latitude: 37.311288,
+      longitude: -122.023624,
+    },
     mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
     photoId: '503574d6-db6d-4be7-bec7-1c305686119e'
   },
@@ -55,6 +63,10 @@ const searchResults = [
     name: 'TP TEA – San Jose Oakridge',
     type: 'Tea house',
     address: '925 Blossom Hill Rd #1228, San Jose, CA 95123, USA',
+    location: {
+      latitude: 37.2520873,
+      longitude: -121.86302269999997,
+    },
     mapsUrl: 'https://maps.google.com/?cid=5997537371428520458',
     photoId: 'AXQCQNSkq6kDl4fjCcYGXnnxXS5LvC22oEDkMLOqnRniVljSUe0cV5x'
   }
@@ -113,6 +125,10 @@ describe('Database restaurants collection', async () => {
       name: 'TP Tea',
       type: 'Tea house',
       address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
+      location: {
+        latitude: 37.311288,
+        longitude: -122.023624,
+      },
       mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
       photoId: '503574d6-db6d-4be7-bec7-1c305686119e',
       photoUrl: '/uploads/503574d6-db6d-4be7-bec7-1c305686119e',
@@ -195,6 +211,10 @@ describe('Database drag & drop', async () => {
     name: 'TP Tea',
     type: 'Tea house',
     address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
+    location: {
+      latitude: 37.311288,
+      longitude: -122.023624,
+    },
     mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
     photoId: '503574d6-db6d-4be7-bec7-1c305686119e',
     photoUrl: '/uploads/503574d6-db6d-4be7-bec7-1c305686119e',
@@ -246,10 +266,10 @@ describe('Database drag & drop', async () => {
 
   it('update collection after drag & drop feature', async () => {
     await testDb.moveList('dishes', 3, 2);
-    
+
     const dish = await testDb.getDish('test2');
     if (!dish) return;
-    
+
     expect(dish.index).toEqual(2);
   })
 })
