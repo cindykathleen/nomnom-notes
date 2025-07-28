@@ -12,6 +12,15 @@ export const SignUp = () => {
 
   const router = useRouter();
 
+  const confirmPassword = (password: string, passwordConfirmation: string) => {
+    if (password !== passwordConfirmation) {
+      alert("Passwords do not match");
+      return false;
+    }
+    
+    return true;
+  }
+
   return (
     <div className="relative h-screen p-16 sm:ml-64">
       <div className="w-1/3 m-auto px-16 py-8 border border-gray-200 rounded-3xl">
