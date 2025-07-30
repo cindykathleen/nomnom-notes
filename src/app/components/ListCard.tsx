@@ -85,33 +85,35 @@ export const ListCard: React.FC<Props> = ({ list, setSelectedList, setShowEditMo
   drag(drop(ref));
 
   return (
-    <div ref={ref} key={list._id} className="flex flex-col relative bg-white rounded-sm" data-handler-id={handlerId}>
-      <Link href={`/list/${list._id}`}><img className="aspect-square rounded-lg mb-4" src={list.photoUrl} alt={list.name} /></Link>
-      <div className="flex justify-between relative">
-        <p className="text-2xl font-semibold">{list.name}</p>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-          className="size-9 cursor-pointer"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(!showMenuModal); }}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-        </svg>
-        {/* Modal for menu */
-          showMenuModal && (
-            <div className="flex flex-col absolute right-0 top-8 min-w-30 p-2 bg-white border border-gray-200 rounded-sm">
-              <button
-                className="px-2 py-1 mb-2 text-left cursor-pointer hover:bg-gray-100"
-                onClick={(e) => { setShowMenuModal(false); setSelectedList(list); setShowEditModal(true); setInputName(list.name); setInputDescription(list.description); setInputImage(list.photoUrl); }}>
-                Edit
-              </button>
-              <button
-                className="px-2 py-1 text-left cursor-pointer hover:bg-gray-100"
-                onClick={(e) => { setShowMenuModal(false); setSelectedList(list); setShowDeleteAlert(true); }}>
-                Delete
-              </button>
-            </div>
-          )
-        }
+    <div ref={ref} key={list._id} className="relative flex flex-col bg-snowwhite rounded-sm" data-handler-id={handlerId}>
+      <Link href={`/list/${list._id}`}><img className="aspect-square rounded-lg" src={list.photoUrl} alt={list.name} /></Link>
+      <div className="flex flex-col py-4">
+        <div className="flex justify-between relative">
+          <Link href={`/list/${list._id}`}><p className="text-2xl font-semibold">{list.name}</p></Link>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+            className="size-9 cursor-pointer"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(!showMenuModal); }}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+          </svg>
+          {/* Modal for menu */
+            showMenuModal && (
+              <div className="flex flex-col absolute right-0 top-8 min-w-30 p-2 bg-snowwhite border border-lightgray rounded-sm">
+                <button
+                  className="px-2 py-1 mb-2 text-left rounded-sm cursor-pointer hover:bg-lightpink"
+                  onClick={() => { setShowMenuModal(false); setSelectedList(list); setShowEditModal(true); setInputName(list.name); setInputDescription(list.description); setInputImage(list.photoUrl); }}>
+                  Edit
+                </button>
+                <button
+                  className="px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink"
+                  onClick={() => { setShowMenuModal(false); setSelectedList(list); setShowDeleteAlert(true); }}>
+                  Delete
+                </button>
+              </div>
+            )
+          }
+        </div>
+        <p className="py-1 text-lg/6 whitespace-pre-line">{list.description}</p>
       </div>
-      <p className="py-1 text-lg/6 whitespace-pre-line">{list.description}</p>
     </div>
   );
 }

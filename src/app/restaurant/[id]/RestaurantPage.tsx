@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sidebar } from '@/app/components/Sidebar';
+import { Nav } from '@/app/components/Nav';
 import { RestaurantListing } from '@/app/components/RestaurantListing';
 import { Restaurant } from '@/app/interfaces/interfaces';
 import { DndProvider } from "react-dnd";
@@ -24,7 +24,7 @@ export default function RestaurantPage({ id }: { id: string }) {
     // Wrap the entire application in the DndProvider for drag-and-drop functionality
     <DndProvider backend={HTML5Backend}>
       <div>
-        <Sidebar />
+        <Nav />
         {restaurant && <RestaurantListing currRestaurant={restaurant} />}
       </div>
     </DndProvider>

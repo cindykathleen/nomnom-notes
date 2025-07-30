@@ -1,7 +1,7 @@
 export const Sidebar = () => {
   return (
     <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-      <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50">
+      <div className="h-full px-3 py-4 overflow-y-auto">
         <a href="/" className="flex items-center ps-2.5 mb-5">
           <span className="self-center text-xl font-semibold whitespace-nowrap">NomNom Notes</span>
         </a>

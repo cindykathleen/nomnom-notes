@@ -1,7 +1,7 @@
-import { auth } from '../lib/auth';
+import { auth } from '@/app/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from "next/navigation";
-import { DndWrapper } from '../components/DndWrapper';
+import { DndWrapper } from '@/app/components/DndWrapper';
 
 export default async function Page() {
   const session = await auth.api.getSession({

@@ -142,66 +142,68 @@ export const RestaurantListing: React.FC<Props> = ({ currRestaurant }) => {
   if (!restaurant) return null
 
   return (
-    <div className="relative h-screen p-16 sm:ml-64">
-      <div className="flex gap-2 mb-6">
-        <Link href="/" className="font-semibold hover:underline">
-          Lists
-        </Link>
-        <p className="font-semibold">/</p>
-        <Link href={`/list/${list._id}`} className="font-semibold hover:underline">
-          {list!.name}
-        </Link>
-        <p className="font-semibold">/</p>
-        <p>{restaurant.name}</p>
-      </div>
-      <div className="flex flex-col gap-2 mb-8">
-        <h1 className="text-4xl font-semibold">{restaurant.name}</h1>
-        <RatingDisplay rating={restaurant.rating} />
-        <p className="whitespace-pre-line">{restaurant.description}</p>
-      </div>
-      <div className="mb-8">
-        <h2 className="text-3xl font-semibold">Dishes</h2>
-      </div>
-      <div className="grid grid-cols-6 gap-16 mb-4">
-        {dishes.map((dish) => (
-          <DishCard key={dish._id} restaurant={restaurant} dish={dish} 
-            fetchRestaurant={fetchRestaurant} moveList={moveList} />
-        ))}
-        <div className="flex items-start h-full">
-          <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-gray-200 cursor-pointer" onClick={() => setShowModal(true)}>
-            <p className="text-2xl text-gray-500">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-            </p>
-          </div>
+    <div className="relative h-full w-screen p-16 mt-[80px] flex justify-center">
+      <div className="max-w-[1440px] w-full px-8 flex flex-col space-y-6">
+        <div className="flex gap-2">
+          <Link href="/lists/" className="font-semibold hover:text-mauve transition-colors">
+            Lists
+          </Link>
+          <p className="font-semibold">/</p>
+          <Link href={`/list/${list._id}`} className="font-semibold hover:text-mauve transition-colors">
+            {list!.name}
+          </Link>
+          <p className="font-semibold">/</p>
+          <p>{restaurant.name}</p>
         </div>
-      </div>
-      {/* Modal for adding a new dish */
-        showModal && (
-          <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
-            <div className="relative px-6 py-8 w-2/5 bg-white rounded-lg">
-              <div className="p-4 flex items-center justify-between">
-                <h2 className="text-3xl font-semibold text-blue-900">Add a dish</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => setShowModal(false)}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+        <div className="flex flex-col gap-2">
+          <h1 className="text-4xl font-semibold">{restaurant.name}</h1>
+          <RatingDisplay rating={restaurant.rating} />
+          <p className="whitespace-pre-line">{restaurant.description}</p>
+        </div>
+        <div className="">
+          <h2 className="text-3xl font-semibold">Dishes</h2>
+        </div>
+        <div className="grid grid-cols-4 gap-16">
+          {dishes.map((dish) => (
+            <DishCard key={dish._id} restaurant={restaurant} dish={dish}
+              fetchRestaurant={fetchRestaurant} moveList={moveList} />
+          ))}
+          <div className="flex items-start h-full">
+            <div className="flex items-center justify-center w-full aspect-square rounded-lg bg-lightgray cursor-pointer" onClick={() => setShowModal(true)}>
+              <p className="text-2xl text-slategray">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-              </div>
-              <hr className="border-gray-300" />
-              <div className="p-4 flex flex-col">
-                <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
-                <input id="dish-name" type="text" ref={dishName} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)" autoComplete="off" />
-                <label htmlFor="dish-name" className="pb-1 font-semibold">Rating</label>
-                <RatingSystem currRating={0} setNewRating={(newRating) => setDishRating(newRating)} />
-                <label htmlFor="dish-note" className="pb-1 mt-6 font-semibold">Note</label>
-                <textarea id="dish-note" ref={dishNote} className="px-2 py-1 border border-black border-solid rounded-sm mb-6 focus:outline-none focus:border-blue-900 focus:shadow-(--input-shadow)"></textarea>
-                <ImageInput currImage={dishImage} setNewImage={(newImage) => setDishImage(newImage)} />
-                <button className="px-4 py-2 self-start text-white font-bold bg-blue-900 rounded-lg cursor-pointer" onClick={handleAddClick}>Add</button>
-              </div>
+              </p>
             </div>
           </div>
-        )
-      }
+        </div>
+        {/* Modal for adding a new dish */
+          showModal && (
+            <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+              <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
+                <div className="p-4 flex items-center justify-between">
+                  <h2 className="text-3xl font-semibold text-darkpink">Add a dish</h2>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => setShowModal(false)}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                  </svg>
+                </div>
+                <hr className="border-slategray" />
+                <div className="p-4 flex flex-col">
+                  <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
+                  <input id="dish-name" type="text" ref={dishName} className="px-2 py-1 border border-charcoal border-solid rounded-sm mb-6 focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+                  <label htmlFor="dish-name" className="pb-1 font-semibold">Rating</label>
+                  <RatingSystem currRating={0} setNewRating={(newRating) => setDishRating(newRating)} />
+                  <label htmlFor="dish-note" className="pb-1 mt-6 font-semibold">Note</label>
+                  <textarea id="dish-note" ref={dishNote} className="px-2 py-1 border border-charcoal border-solid rounded-sm mb-6 focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
+                  <ImageInput currImage={dishImage} setNewImage={(newImage) => setDishImage(newImage)} />
+                  <button className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors" onClick={handleAddClick}>Add</button>
+                </div>
+              </div>
+            </div>
+          )
+        }
+      </div>
     </div>
   );
 };
