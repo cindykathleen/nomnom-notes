@@ -2,7 +2,7 @@
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Sidebar } from './Sidebar';
+import { Nav } from './Nav';
 import { CustomLists } from './CustomLists';
 
 export const DndWrapper = () => {
@@ -10,7 +10,7 @@ export const DndWrapper = () => {
     // Wrap the entire application in the DndProvider for drag-and-drop functionality
     <DndProvider backend={HTML5Backend}>
       <div>
-        <Sidebar />
+        <Nav />
         <CustomLists />
       </div>
     </DndProvider>

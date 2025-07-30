@@ -1,12 +1,12 @@
 'use client';
 
 import { Search } from '@/app/components/Search';
-import { Sidebar } from '@/app/components/Sidebar';
+import { Nav } from '@/app/components/Nav';
 
 export default function SearchPage() {
   return (
     <div>
-      <Sidebar />
+      <Nav />
       <Search />
     </div>
   );

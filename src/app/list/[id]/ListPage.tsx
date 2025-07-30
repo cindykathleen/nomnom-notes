@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sidebar } from '@/app/components/Sidebar';
+import { Nav } from '@/app/components/Nav';
 import { CustomList } from '@/app/components/CustomList';
 import { List } from '@/app/interfaces/interfaces';
 
@@ -20,7 +20,7 @@ export default function ListPage({ id }: { id: string }) {
 
   return (
     <div>
-      <Sidebar />
+      <Nav />
       {list && <CustomList currList={list} />}
     </div>
   );
