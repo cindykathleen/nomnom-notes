@@ -27,7 +27,7 @@ export const SignIn = () => {
                 await authClient.signIn.email({
                   email,
                   password,
-                  callbackURL: '/dashboard',
+                  callbackURL: '/lists/',
                   rememberMe: false
                 }, {
                   onResponse: () => {
