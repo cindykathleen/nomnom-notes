@@ -142,7 +142,7 @@ export const Search = () => {
             })}
           </div>
           {selectedPlace && (
-            <div className="min-w-xl h-full px-6 py-4 border border-lightgray rounded-lg">
+            <div className="min-w-xl h-fit px-6 py-4 border border-lightgray rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-darkpink">Add {selectedPlace.name} to your list</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={() => setSelectedPlace(null)}>

@@ -218,7 +218,7 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this dish?</h3>
               <div className="flex">
                 <button type="button"
-                  className="px-8 py-1.5 mr-4 text-sm text-white text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
+                  className="px-8 py-1.5 mr-4 text-sm text-snowwhite text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
                   onClick={handleDeleteClick}>
                   Yes
                 </button>

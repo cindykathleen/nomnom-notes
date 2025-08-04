@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { authClient } from '@/app/lib/auth-client';
 import { useRouter } from "next/navigation";
 import Link from 'next/link';
+import { set } from 'better-auth';
 
 export const SignUp = () => {
   const [displayName, setDisplayName] = useState<string>('');
@@ -9,16 +10,16 @@ export const SignUp = () => {
   const [password, setPassword] = useState<string>('');
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [showPasswordError, setShowPasswordError] = useState<boolean>(false);
 
   const router = useRouter();
 
-  const confirmPassword = (password: string, passwordConfirmation: string) => {
+  const confirmPassword = () => {
     if (password !== passwordConfirmation) {
-      alert("Passwords do not match");
-      return false;
+      setShowPasswordError(true);
+    } else {
+      setShowPasswordError(false);
     }
-
-    return true;
   }
 
   return (
@@ -39,7 +40,11 @@ export const SignUp = () => {
             <input id="password" type="password" required onChange={e => setPassword(e.target.value)} value={password}
               className="px-2 py-1 border border-charcoal border-solid rounded-sm mb-6 focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
             <label htmlFor="password-confirmation" className="pb-1 font-semibold">Password confirmation</label>
+            { // Alert for password mismatch
+              showPasswordError && (<p className="pb-3 text-sm text-red-600 font-semibold">Passwords do not match</p>)
+            }
             <input id="password-confirmation" type="password" required onChange={e => setPasswordConfirmation(e.target.value)} value={passwordConfirmation}
+              onBlur={confirmPassword}
               className="px-2 py-1 border border-charcoal border-solid rounded-sm mb-6 focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
             <button type="submit" disabled={loading}
               className="w-full py-2 text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
@@ -66,7 +71,7 @@ export const SignUp = () => {
                 });
               }}>
               {loading
-                ? (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                ? (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="block m-auto size-6 animate-spin">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                 </svg>)
                 : ("Sign up")

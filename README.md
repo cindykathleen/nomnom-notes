@@ -4,6 +4,9 @@ This full-stack web application enables users to create and manage personalized 
 
 ## Features
 
+### Profile features
+* User can create an account and sign in
+
 ### List features
 * User can create, edit, and delete lists
 * User can add an image (by URL link or file upload) for their list
@@ -30,11 +33,17 @@ This full-stack web application enables users to create and manage personalized 
 
 **Frontend:** React, Next.js, Tailwind CSS
 
-**Backend:** Node.js, MongoDB
+**Backend:** Node.js, MongoDB, Better Auth
 
 **APIs:** Google Places API, Google Photos API, Google Maps JavaScript API
 
 ## Screenshots
+![A sign up page](./images/signup-page.png)
+A page where users can sign up for an account.
+
+![A sign in page](./images/signin-page.png)
+A page where users can sign in to their account.
+
 ![A page with all of the user's lists](./images/lists-page.png)
 A page showing all of the custom lists that the user has created. The user can drag-and-drop each list to change the order of how they appear. The user can also create a new list by clicking on the gray tile with the plus icon. This page can also be accessed by clicking on "Lists" in the sidebar.
 
@@ -56,5 +65,5 @@ A pop-up modal that allows the user to add a dish to a specific restaurant. Only
 ## Future improvements
 * **Responsive design:** Make the web application dynamically adapt to various screen sizes and devices for optimal user experience and accessibility. 
 * **Host the site:** Deploy the web application to make it publicly accessible in a live environment.
-* **User authentication:** User can create a profile and log in. Search rates will also be limited per account.
+* **User authentication:** Search rates will also be limited per account.
 * **List collaboration:** User can collaborate on lists with other users on the platform.
