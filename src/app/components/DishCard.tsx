@@ -182,7 +182,7 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
       { // Modal for editing a dish
         showEditModal && (
           <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
-            <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg z-99">
+            <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-darkpink">Edit {dish.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => setShowEditModal(false)}>
@@ -214,16 +214,16 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
       { // Alert for deleting a dish
         showDeleteAlert && (
           <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
-            <div role="alert" className="relative px-6 py-8 w-1/5 border border-gray-300 rounded-lg bg-gray-50">
+            <div role="alert" className="relative px-6 py-8 w-1/5 bg-snowwhite rounded-lg">
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this dish?</h3>
               <div className="flex">
                 <button type="button"
-                  className="px-8 py-1.5 mr-4 text-sm text-snowwhite text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
+                  className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
                   onClick={handleDeleteClick}>
                   Yes
                 </button>
                 <button type="button"
-                  className="px-8 py-1.5 text-sm text-darkpink text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
+                  className="px-8 py-1.5 text-sm text-darkpink font-semibold text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
                   onClick={() => setShowDeleteAlert(false)}>
                   No
                 </button>
