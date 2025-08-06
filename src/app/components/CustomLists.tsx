@@ -229,16 +229,16 @@ export const CustomLists = () => {
           // This modal is in this component instead of ListComponent so it can span the entire screen
           showDeleteAlert && selectedList && (
             <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
-              <div role="alert" className="relative px-6 py-8 w-1/5 border rounded-lg bg-snowwhite">
+              <div role="alert" className="relative px-6 py-8 w-1/5 bg-snowwhite rounded-lg">
                 <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this dish?</h3>
                 <div className="flex">
                   <button type="button"
-                    className="px-8 py-1.5 mr-4 text-sm text-snowwhite text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
+                    className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
                     onClick={() => { handleDeleteClick(selectedList._id) }}>
                     Yes
                   </button>
                   <button type="button"
-                    className="px-8 py-1.5 text-sm text-darkpink text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
+                    className="px-8 py-1.5 text-sm text-darkpink font-semibold text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
                     onClick={() => { setSelectedList(null); setShowDeleteAlert(false); }}>
                     No
                   </button>
