@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { SignInForm } from '@/app/components/SignInForm';
+import { SignInForm } from './SignInForm';
 
 export default function Page() {
   return (

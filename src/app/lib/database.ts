@@ -166,7 +166,7 @@ export class Database {
     return result.length > 0 ? result[0].maxIndex : null;
   }
 
-  async moveList(collectionName: string, dragIndex: number, hoverIndex: number) {
+  async moveItem(collectionName: string, dragIndex: number, hoverIndex: number) {
     let collection = null;
 
     if (collectionName === 'lists') {
@@ -206,8 +206,13 @@ export class Database {
   }
 
   // Search functions
-  async getSearchResults() {
-    return await this.db.collection<SearchResult>('places').find({}).toArray();
+  async getSearchResults(query: string) {
+    const doc = await this.db.collection<SearchResult>('places').findOne(
+      { _id: query },
+      { projection: { result: 1, _id: 0 } }
+    );
+
+    return doc ? doc.result : null;
   }
 
   async addSearchResult(query: string, places: Place[]) {
@@ -233,3 +238,5 @@ export class Database {
     await this.db.collection<Photo>('photos').insertOne(newPhoto);
   }
 }
+
+export const db = new Database('nomnom_notes');

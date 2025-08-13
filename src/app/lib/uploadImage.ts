@@ -1,3 +1,4 @@
+import { addPhoto } from "@/app/actions/images";
 export const uploadImage = async (imageUrl: string): Promise<string | null> => {
   const formData = new FormData();
 
@@ -12,7 +13,7 @@ export const uploadImage = async (imageUrl: string): Promise<string | null> => {
   else {
     // First check if the image is valid
     const isValid = await checkImageExists(imageUrl);
-    
+
     if (!isValid) {
       alert("Please provide a valid image URL");
       return null;
@@ -21,19 +22,13 @@ export const uploadImage = async (imageUrl: string): Promise<string | null> => {
     formData.append('url', imageUrl);
   }
 
-  const response = await fetch('/api/database/photos', {
-    method: 'POST',
-    body: formData
-  });
+  const fileName = addPhoto(formData);
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    console.error(`${response.status} - ${JSON.stringify(data)}`);
+  if (!fileName) {
     return null;
   }
 
-  return data.fileName;
+  return fileName;
 }
 
 const checkImageExists = (url: string): Promise<boolean> => {
