@@ -1,11 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 
-interface Props {
-  currRating: number;
-  setNewRating: (newRating: number) => void;
-}
-
-export const RatingSystem: React.FC<Props> = ({ currRating, setNewRating }) => {
+export default function RatingSystem({ currRating, setNewRating }: { currRating: number, setNewRating: (newRating: number) => void }) {
   const [updatedRating, setUpdatedRating] = useState<number>(currRating);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [hoverHalf, setHoverHalf] = useState<number | null>(null);

@@ -1,9 +1,7 @@
+'use client';
+
 import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 import { Restaurant } from '@/app/interfaces/interfaces';
-
-interface Props {
-  restaurants: Restaurant[];
-}
 
 type Poi = {
   key: string,
@@ -34,7 +32,7 @@ const computeCenter = (locations: Poi[]) => {
   return { lat: avgLat, lng: avgLng };
 }
 
-export const GoogleMap: React.FC<Props> = ({ restaurants }) => {
+export default function GoogleMap({ restaurants }: { restaurants: Restaurant[] }) {
   if (restaurants.length === 0) {
     return (
       <div>Loading map...</div>
@@ -55,7 +53,7 @@ export const GoogleMap: React.FC<Props> = ({ restaurants }) => {
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_KEY!}>
-      <Map defaultZoom={13} defaultCenter={center} mapId={process.env.NEXT_PUBLIC_MAP_ID!}>
+      <Map defaultZoom={12} defaultCenter={center} mapId={process.env.NEXT_PUBLIC_MAP_ID!}>
         <PoiMarkers pois={locations} />
       </Map>
     </APIProvider>

@@ -1,8 +1,4 @@
-interface Props {
-  rating: number;
-}
-
-export const RatingDisplay: React.FC<Props> = ({ rating }) => {
+export default function RatingDisplay({ rating }: { rating: number }) {
   let wholeStars = Math.floor(rating);
   const stars = [];
 

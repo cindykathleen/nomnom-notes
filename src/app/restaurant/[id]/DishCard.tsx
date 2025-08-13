@@ -1,24 +1,20 @@
+'use client';
+
 import { useState, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import type { Identifier, XYCoord } from 'dnd-core';
 import { Restaurant, Dish } from '@/app/interfaces/interfaces';
-import { RatingDisplay } from '@/app/components/RatingDisplay';
-import { RatingSystem } from '@/app/components/RatingSystem';
-import { ImageInput } from '@/app/components/ImageInput';
+import RatingDisplay from '@/app/components/RatingDisplay';
+import RatingSystem from '@/app/components/RatingSystem';
+import ImageInput from '@/app/components/ImageInput';
 import { uploadImage } from '@/app/lib/uploadImage';
-
-interface Props {
-  restaurant: Restaurant;
-  dish: Dish;
-  fetchRestaurant: () => void;
-  moveList: (dragIndex: number, hoverIndex: number) => void; // Function used to reorder the lists
-}
+import { updateDish, deleteDish, moveDish } from '@/app/actions/dish';
 
 interface DragItem {
   index: number;
 }
 
-export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, moveList }) => {
+export default function DishCard({ restaurant, dish }: { restaurant: Restaurant, dish: Dish }) {
   // States for modals & alerts
   const [showMenuModal, setShowMenuModal] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -26,10 +22,10 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
 
   // States for the input fields in the edit modal
   const [inputName, setInputName] = useState<string>(dish.name);
-  const [rating, setRating] = useState<number>(0);
+  const [rating, setRating] = useState<number>(dish.rating);
   const [ratingHover, setRatingHover] = useState<boolean>(false);
   const [inputNote, setInputNote] = useState<string>(dish.note);
-  const [inputImage, setInputImage] = useState<string>(dish.photoId || '');
+  const [inputImage, setInputImage] = useState<string>(dish.photoUrl || '');
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -73,7 +69,7 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
         return;
       }
 
-      moveList(dragIndex, hoverIndex);
+      moveDish(dragIndex, hoverIndex);
       item.index = hoverIndex;
     }
   })
@@ -92,65 +88,10 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
   // Setting ref to act as both a drag source and a drop target
   drag(drop(ref));
 
-  const handleUpdateClick = async () => {
-    let inputPhotoId: string | null = '';
-
-    // If there is no change to the image, don't re-upload it into the database
-    if (inputImage === dish.photoUrl) {
-      inputPhotoId = inputImage.split('=')[1];
-    } else if (inputImage !== '') {
-      inputPhotoId = await uploadImage(inputImage);
-      if (inputPhotoId === null) return;
-    } else {
-      inputPhotoId = '110eef21-e1df-4f07-9442-44cbca0b42fc';
-    }
-
-    const updatedDish: Partial<Dish> = {
-      _id: dish._id,
-      name: inputName,
-      note: inputNote,
-      rating: rating,
-      photoId: inputPhotoId,
-      photoUrl: `/api/database/photos?id=${inputPhotoId}`
-    }
-
-    await fetch('/api/database/dishes', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        dish: updatedDish
-      })
-    })
-
-    setShowEditModal(false);
-    fetchRestaurant();
-  };
-
-  const handleDeleteClick = async () => {
-    await fetch('/api/database/dishes', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        restaurantId: restaurant._id,
-        dishId: dish._id
-      })
-    })
-
-    setShowDeleteAlert(false);
-    fetchRestaurant();
-  };
-
   return (
-    <div ref={ref} key={dish._id} className="flex flex-col relative bg-snowwhite rounded-sm" data-handler-id={handlerId} >
-      { // Check to make sure dish.imageUrl is not undefined, null or an empty string
-        !!dish.photoUrl && (
-          <img src={dish.photoUrl} alt={dish.name} className="aspect-square object-cover rounded-lg" />
-        )
-      }
+    <div key={dish._id} ref={ref} data-handler-id={handlerId}
+      className="flex flex-col relative bg-snowwhite rounded-sm">
+      <img src={dish.photoUrl} alt={dish.name} className="aspect-square rounded-lg" />
       <div className="flex flex-col gap-2 py-4">
         <div className="flex justify-between relative">
           <h3 className="text-xl font-semibold">{dish.name}</h3>
@@ -159,12 +100,12 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
             onClick={() => setShowMenuModal(!showMenuModal)}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
           </svg>
-          {/* Modal for menu */
+          { // Modal for menu options
             showMenuModal && (
-              <div className="flex flex-col absolute right-0 top-8 min-w-30 p-2 bg-snowwhite border border-lightgray rounded-sm">
+              <div className="absolute right-0 top-8 min-w-30 p-2 flex flex-col bg-snowwhite border border-lightgray rounded-sm">
                 <button
                   className="px-2 py-1 mb-2 text-left rounded-sm cursor-pointer hover:bg-lightpink"
-                  onClick={() => { setShowMenuModal(false); setShowEditModal(true); setRating(dish.rating); setInputImage(dish.photoUrl); }}>
+                  onClick={() => { setShowMenuModal(false); setShowEditModal(true); }}>
                   Edit
                 </button>
                 <button
@@ -181,7 +122,7 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
       </div>
       { // Modal for editing a dish
         showEditModal && (
-          <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
             <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-darkpink">Edit {dish.name}</h2>
@@ -190,10 +131,26 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
                 </svg>
               </div>
               <hr className="border-gray-300" />
-              <div className="p-4 flex flex-col">
+              <form action={async (formData) => {
+                let inputPhotoId: string | null = '';
+
+                if (inputImage === dish.photoUrl) {
+                  // If there is no change to the image, don't re-upload it into the database
+                  inputPhotoId = inputImage.split('=')[1];
+                } else if (inputImage !== '') {
+                  inputPhotoId = await uploadImage(inputImage);
+                  if (inputPhotoId === null) return;
+                } else {
+                  // If no image is provided, use a default image
+                  inputPhotoId = '110eef21-e1df-4f07-9442-44cbca0b42fc';
+                }
+
+                await updateDish(formData, dish._id, rating, inputPhotoId);
+                setShowEditModal(false);
+              }} className="p-4 flex flex-col">
                 <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
-                <input id="dish-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
-                  className="w-full px-2 py-1 mb-6 border border-charcoal border-solid rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+                <input id="dish-name" name="dish-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
+                  className="w-full px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
                 <label htmlFor="dish-rating" className="pb-1 font-semibold">Rating</label>
                 <div id="dish-rating" className="w-fit mb-6" onMouseEnter={() => setRatingHover(true)} onMouseLeave={() => setRatingHover(false)}>
                   {ratingHover
@@ -202,29 +159,31 @@ export const DishCard: React.FC<Props> = ({ restaurant, dish, fetchRestaurant, m
                   }
                 </div>
                 <label htmlFor="dish-note" className="pb-1 font-semibold">Note</label>
-                <textarea id="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
-                  className="px-2 py-1 border border-charcoal border-solid rounded-sm mb-6 focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
+                <textarea id="dish-note" name="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
+                  className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors" onClick={handleUpdateClick}>Update</button>
-              </div>
+                <button type="submit" className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors">
+                  Update
+                </button>
+              </form>
             </div>
           </div>
         )
       }
       { // Alert for deleting a dish
         showDeleteAlert && (
-          <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
             <div role="alert" className="relative px-6 py-8 w-1/5 bg-snowwhite rounded-lg">
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this dish?</h3>
               <div className="flex">
                 <button type="button"
                   className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                  onClick={handleDeleteClick}>
+                  onClick={() => { deleteDish(restaurant._id, dish._id) }}>
                   Yes
                 </button>
                 <button type="button"
                   className="px-8 py-1.5 text-sm text-darkpink font-semibold text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
-                  onClick={() => setShowDeleteAlert(false)}>
+                  onClick={() => { setShowDeleteAlert(false) }}>
                   No
                 </button>
               </div>

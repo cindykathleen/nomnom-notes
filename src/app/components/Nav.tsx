@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export const Nav = () => {
+export default function Nav() {
   return (
     <div className="fixed top-0 h-[80px] w-full flex items-center justify-center z-99 bg-coolbeige">
       <div className="max-w-[1440px] w-full px-8 flex justify-between">

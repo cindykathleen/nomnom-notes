@@ -2,12 +2,7 @@
 
 import { useState } from 'react';
 
-interface Props {
-  currImage: string;
-  setNewImage: (newImage: string) => void;
-}
-
-export const ImageInput: React.FC<Props> = ({ currImage, setNewImage }) => {
+export default function ImageInput({ currImage, setNewImage }: { currImage: string, setNewImage: (newImage: string) => void }) {
   const [showUploadInput, setShowUploadInput] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string>(currImage);
 

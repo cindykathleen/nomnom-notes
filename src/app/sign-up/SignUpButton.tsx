@@ -1,4 +1,4 @@
-import { useFormStatus } from "react-dom";
+import { useFormStatus } from 'react-dom';
 
 interface Props {
   disabled: boolean;

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { SignUpButton } from '@/app/components/SignUpButton';
-import { signUp } from '@/app/actions/actions';
+import { SignUpButton } from './SignUpButton';
+import { signUp } from '@/app/actions/authentication';
 
 export const SignUpForm = () => {
   const [displayName, setDisplayName] = useState<string>('');
@@ -51,7 +51,7 @@ export const SignUpForm = () => {
       <SignUpButton disabled={!formIsValid} />
       { // Alert for errors
         errorMessage && (
-          <div className="fixed flex items-center justify-center inset-0 w-full h-full bg-(--modal-background)">
+          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
             <div role="alert" className="relative px-6 py-8 w-1/5 text-center bg-snowwhite rounded-lg">
               <p className="mb-4 text-lg font-semibold">{errorMessage}</p>
               <button type="button"
@@ -63,6 +63,7 @@ export const SignUpForm = () => {
           </div>
         )
       }
+
     </form>
   );
 }

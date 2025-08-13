@@ -2,17 +2,12 @@
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Nav } from './Nav';
-import { CustomLists } from './CustomLists';
 
-export const DndWrapper = () => {
+export default function DndWrapper({ children }: { children: React.ReactNode }) {
   return (
-    // Wrap the entire application in the DndProvider for drag-and-drop functionality
+    // Wrap in DndProvider for drag-and-drop functionality
     <DndProvider backend={HTML5Backend}>
-      <div>
-        <Nav />
-        <CustomLists />
-      </div>
+      {children}
     </DndProvider>
   );
 }

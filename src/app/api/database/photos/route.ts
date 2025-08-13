@@ -1,9 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { Database } from '@/app/lib/database';
+import { db } from '@/app/lib/database';
 import { fileTypeFromBuffer } from 'file-type';
-import { v4 as uuidv4 } from 'uuid';
-
-const db = new Database('nomnom_notes');
 
 export const GET = async (request: NextRequest) => {
   const id = request.nextUrl.searchParams.get('id');
@@ -38,40 +35,5 @@ export const GET = async (request: NextRequest) => {
     });
   } catch (err) {
     return NextResponse.json({ error: `Error fetching photo: ${err}` }, { status: 500 });
-  }
-}
-
-export const POST = async (request: NextRequest) => {
-  const formData = await request.formData();
-
-  const file = formData.get('file') as File;
-  const url = formData.get('url') as string;
-
-  const fileName = uuidv4();
-
-  try {
-    if (file) {
-      const bytes = await file.arrayBuffer(); // binary data which represents the image
-      const buffer = Buffer.from(bytes); // convert to a Node.js Buffer
-
-      await db.uploadPhoto(fileName, buffer);
-    } else if (url) {
-      const response = await fetch(url);
-      const bytes = await response.arrayBuffer(); // binary data which represents the image
-      const buffer = Buffer.from(bytes); // convert to a Node.js Buffer
-
-      await db.uploadPhoto(fileName, buffer);
-    } else {
-      return NextResponse.json({ error: 'No image received' }, { status: 400 });
-    }
-
-    return NextResponse.json({
-      message: 'Success uploading the image',
-      fileName,
-      status: 201,
-    });
-
-  } catch (err) {
-    return NextResponse.json({ error: `Error uploading image: ${err}` }, { status: 500 });
   }
 }
