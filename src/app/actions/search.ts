@@ -50,7 +50,7 @@ export const addPlace = async (listId: string, place: Place) => {
   } else {
     // Use a placeholder image if no photo is available from Google
     // There is a placeholder image in the database
-    place.photoId = '110eef21-e1df-4f07-9442-44cbca0b42fc';
+    place.photoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
   }
 
   const newRestaurant: Restaurant = {

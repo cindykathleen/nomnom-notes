@@ -90,7 +90,7 @@ export default function RestaurantCard({ listId, restaurant }: { listId: string,
               <div className="flex">
                 <button type="button"
                   className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                  onClick={() => { deleteRestaurant(listId, restaurant._id) }}>
+                  onClick={() => { deleteRestaurant(listId, restaurant._id); setShowDeleteAlert(false); }}>
                   Yes
                 </button>
                 <button type="button"

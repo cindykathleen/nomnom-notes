@@ -142,7 +142,7 @@ export default function DishCard({ restaurant, dish }: { restaurant: Restaurant,
                   if (inputPhotoId === null) return;
                 } else {
                   // If no image is provided, use a default image
-                  inputPhotoId = '110eef21-e1df-4f07-9442-44cbca0b42fc';
+                  inputPhotoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
                 }
 
                 await updateDish(formData, dish._id, rating, inputPhotoId);
