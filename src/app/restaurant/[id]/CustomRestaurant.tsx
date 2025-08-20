@@ -48,6 +48,8 @@ export default async function CustomRestaurant({ id }: { id: string }) {
     return <div>Error fetching dishes</div>;
   }
 
+  dishes.sort((a, b) => a.index - b.index);
+
   return (
     <div className="relative h-full w-screen p-16 mt-[80px] flex justify-center">
       <div className="max-w-[1440px] w-full px-8 flex flex-col space-y-6">

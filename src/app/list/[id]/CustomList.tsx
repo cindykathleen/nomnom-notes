@@ -1,8 +1,7 @@
 import { db } from '@/app/lib/database';
 import { Restaurant } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
-import SortList from './SortList';
-import RestaurantCard from './RestaurantCard';
+import RestaurantDisplay from './RestaurantDisplay';
 import GoogleMap from './GoogleMap';
 
 export default async function CustomList({ id }: { id: string }) {
@@ -48,20 +47,8 @@ export default async function CustomList({ id }: { id: string }) {
         </div>
         <h1 className="text-4xl font-semibold">{list.name}</h1>
         <div className="max-h-full flex gap-8 overflow-y-auto">
-          <div className="w-1/2 flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">{`${restaurants.length} Places`}</h2>
-              <SortList />
-            </div>
-            <div className="max-h-[80vh] pr-4 flex flex-col gap-8 overflow-y-auto">
-              {restaurants.map((restaurant: Restaurant) => (
-                <RestaurantCard key={restaurant._id} listId={list._id} restaurant={restaurant} />
-              ))}
-            </div>
-          </div>
-          <div className="w-1/2">
-            <GoogleMap restaurants={restaurants} />
-          </div>
+          <RestaurantDisplay list={list} restaurants={restaurants} />
+          <GoogleMap restaurants={restaurants} />
         </div>
       </div>
     </div>
