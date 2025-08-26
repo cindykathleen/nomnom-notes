@@ -5,14 +5,14 @@ import { List } from "@/app/interfaces/interfaces";
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
 
-export const addList = async (formData: FormData, photoId: string) => {
+export const addList = async (userId: string, formData: FormData, photoId: string) => {
   const name = formData.get('list-name') as string;
   const description = formData.get('list-description') as string;
 
   let lists;
 
   try {
-    lists = await db.getLists();
+    lists = await db.getLists(userId);
 
     if (!lists) {
       return { error: 'Error fetching lists' };
@@ -34,7 +34,7 @@ export const addList = async (formData: FormData, photoId: string) => {
   };
 
   try {
-    await db.addList(newList);
+    await db.addList(userId, newList);
     revalidatePath('/lists');
     return { message: 'List added successfully' };
   } catch (err) {
@@ -42,12 +42,12 @@ export const addList = async (formData: FormData, photoId: string) => {
   }
 }
 
-export const updateList = async (formData: FormData, id: string, photoId: string) => {
+export const updateList = async (userId: string, formData: FormData, listId: string, photoId: string) => {
   const name = formData.get('list-name') as string;
   const description = formData.get('list-description') as string;
 
   try {
-    const existingList = await db.getList(id);
+    const existingList = await db.getList(userId, listId);
 
     if (!existingList) {
       return { error: 'List not found' };
@@ -61,7 +61,7 @@ export const updateList = async (formData: FormData, id: string, photoId: string
       photoUrl: `/api/database/photos?id=${photoId}`,
     };
 
-    await db.updateList(updatedList);
+    await db.updateList(userId, updatedList);
     revalidatePath('/lists');
     return { message: 'List updated successfully' };
   } catch (err) {
@@ -69,9 +69,9 @@ export const updateList = async (formData: FormData, id: string, photoId: string
   }
 }
 
-export const deleteList = async (id: string) => {
+export const deleteList = async (userId: string, listId: string) => {
   try {
-    await db.deleteList(id);
+    await db.deleteList(userId, listId);
     revalidatePath('/lists');
     return { message: 'List deleted successfully' };
   } catch (err) {
@@ -79,9 +79,9 @@ export const deleteList = async (id: string) => {
   }
 }
 
-export const moveList = async (dragIndex: number, hoverIndex: number) => {
+export const moveList = async (userId: string, dragIndex: number, hoverIndex: number) => {
   try {
-    await db.moveItem('lists', dragIndex, hoverIndex);
+    await db.moveList(userId, dragIndex, hoverIndex);
     revalidatePath('/lists');
     return { message: 'Drag & drop implemented successfully' };
   } catch (err) {

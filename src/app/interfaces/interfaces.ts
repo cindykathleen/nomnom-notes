@@ -1,6 +1,9 @@
 import { Binary } from 'mongodb';
 
-export type Lists = List[];
+export interface Lists {
+  userId: string;
+  lists: List[];
+} 
 
 export interface List {
   _id: string;

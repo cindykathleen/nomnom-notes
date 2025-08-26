@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Lists, Place } from '@/app/interfaces/interfaces';
+import { List, Place } from '@/app/interfaces/interfaces';
 import { searchQuery } from '@/app/actions/search';
 import SearchResults from './SearchResults';
 
-export default function SearchForm({ lists }: { lists: Lists }) {
+export default function SearchForm({ lists }: { lists: List[] }) {
   const [results, setResults] = useState<Place[]>([]);
 
   return (

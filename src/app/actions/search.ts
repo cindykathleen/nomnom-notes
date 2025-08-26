@@ -1,9 +1,11 @@
 'use server';
 
 import { db } from '@/app/lib/database';
+import getCurrentUser from '@/app/lib/getCurrentUser';
 import { searchPlace } from '@/app/lib/GooglePlacesAPI';
 import { Place, Restaurant } from '@/app/interfaces/interfaces';
 import { getGooglePhoto } from './images';
+import { v4 as uuidv4 } from 'uuid';
 
 export const searchQuery = async (formData: FormData) => {
   const searchQuery = formData.get('search-query') as string;
@@ -32,7 +34,9 @@ export const searchQuery = async (formData: FormData) => {
 }
 
 export const addPlace = async (listId: string, place: Place) => {
-  const lists = await db.getLists();
+  const userId = await getCurrentUser();
+
+  const lists = await db.getLists(userId);
 
   // Check if the restaurant is already in the list
   const currentList = lists.find((list) => list._id === listId);
@@ -54,7 +58,7 @@ export const addPlace = async (listId: string, place: Place) => {
   }
 
   const newRestaurant: Restaurant = {
-    _id: place._id,
+    _id: uuidv4(),
     name: place.name,
     type: place.type,
     address: place.address,
@@ -68,5 +72,5 @@ export const addPlace = async (listId: string, place: Place) => {
     dateAdded: new Date()
   }
 
-  await db.addRestaurant(listId, newRestaurant);
+  await db.addRestaurant(userId, listId, newRestaurant);
 }

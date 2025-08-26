@@ -5,11 +5,11 @@ import RatingDisplay from '@/app/components/RatingDisplay';
 import DishCard from './DishCard';
 import DishAddCard from './DishAddCard';
 
-export default async function CustomRestaurant({ id }: { id: string }) {
+export default async function CustomRestaurant({ userId, restaurantId }: { userId: string, restaurantId: string }) {
   let list;
 
   try {
-    list = await db.getListByRestaurantId(id);
+    list = await db.getListByRestaurantId(userId, restaurantId);
 
     if (!list) {
       return <div>Error fetching list</div>;
@@ -21,7 +21,7 @@ export default async function CustomRestaurant({ id }: { id: string }) {
   let restaurant;
 
   try {
-    restaurant = await db.getRestaurant(id);
+    restaurant = await db.getRestaurant(restaurantId);
 
     if (!restaurant) {
       return <div>Error fetching restaurant</div>;

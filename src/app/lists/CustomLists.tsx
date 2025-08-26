@@ -3,11 +3,11 @@ import { List } from '@/app/interfaces/interfaces';
 import ListCard from './ListCard';
 import ListAddCard from './ListAddCard';
 
-export default async function CustomLists() {
+export default async function CustomLists({ userId }: { userId: string }) {
   let lists;
 
   try {
-    lists = await db.getLists();
+    lists = await db.getLists(userId);
 
     if (!lists) {
       return <div>Error fetching lists</div>;
@@ -22,9 +22,9 @@ export default async function CustomLists() {
         <h1 className="text-4xl font-semibold">My lists</h1>
         <div className="grid grid-cols-4 gap-16">
           {lists.map((list: List) => (
-            <ListCard key={list._id} list={list} />
+            <ListCard key={list._id} userId={userId} list={list} />
           ))}
-          <ListAddCard />
+          <ListAddCard userId={userId} />
         </div>
       </div>
     </div>

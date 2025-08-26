@@ -13,7 +13,7 @@ interface DragItem {
   index: number;
 }
 
-export default function ListCard({ list }: { list: List }) {
+export default function ListCard({ userId, list }: { userId: string, list: List }) {
   // States for modals & alerts
   const [showMenuModal, setShowMenuModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -66,7 +66,7 @@ export default function ListCard({ list }: { list: List }) {
         return;
       }
 
-      moveList(dragIndex, hoverIndex);
+      moveList(userId, dragIndex, hoverIndex);
       item.index = hoverIndex;
     }
   })
@@ -144,7 +144,7 @@ export default function ListCard({ list }: { list: List }) {
                   inputPhotoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
                 }
 
-                await updateList(formData, list._id, inputPhotoId);
+                await updateList(userId, formData, list._id, inputPhotoId);
                 setShowEditModal(false);
               }} className="p-4 flex flex-col">
                 <label htmlFor="list-name" className="pb-1 font-semibold">Name</label>
@@ -170,7 +170,7 @@ export default function ListCard({ list }: { list: List }) {
               <div className="flex">
                 <button type="button"
                   className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                  onClick={() => { deleteList(list._id) }}>
+                  onClick={() => { deleteList(userId, list._id) }}>
                   Yes
                 </button>
                 <button type="button"

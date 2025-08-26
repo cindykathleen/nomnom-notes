@@ -1,11 +1,11 @@
 'use client';
 
-import { Lists, Place } from '@/app/interfaces/interfaces';
+import { List, Place } from '@/app/interfaces/interfaces';
 import { useState } from 'react';
 import Link from 'next/link';
 import { addPlace } from '@/app/actions/search';
 
-export default function SearchResults({ lists, places }: { lists: Lists, places: Place[] }) {
+export default function SearchResults({ lists, places }: { lists: List[], places: Place[] }) {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
   // State for modal

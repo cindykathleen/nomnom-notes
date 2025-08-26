@@ -1,5 +1,5 @@
 import { MongoClient, Db, Binary } from 'mongodb';
-import { List, Restaurant, Dish, Place, SearchResult, Photo } from "@/app/interfaces/interfaces";
+import { Lists, List, Restaurant, Dish, Place, SearchResult, Photo } from "@/app/interfaces/interfaces";
 
 export class Database {
   client: MongoClient;
@@ -11,39 +11,89 @@ export class Database {
   }
 
   // Lists function
-  async getLists() {
-    return await this.db.collection<List>('lists').find({}).sort({ index: 1 }).toArray();
+  async getLists(userId: string) {
+    const doc = await this.db.collection<Lists>('lists').findOne({ userId });
+    return doc?.lists?.sort((a, b) => a.index - b.index) ?? [];
   }
 
   // List functions
-  async getList(listId: string) {
-    return await this.db.collection<List>('lists').findOne({ _id: listId });
+  async getList(userId: string, listId: string) {
+    const doc = await this.db.collection<Lists>('lists').findOne(
+      { userId, 'lists._id': listId },
+      { projection: { 'lists.$': 1 } }
+    );
+
+    return doc?.lists?.[0] ?? null;
   }
 
-  async getListByRestaurantId(restaurantId: string) {
-    return await this.db.collection<List>('lists').findOne({ restaurants: restaurantId });
+  async getListByRestaurantId(userId: string, restaurantId: string) {
+    const doc = await this.db.collection<Lists>('lists').findOne(
+      { userId, 'lists.restaurants': restaurantId },
+      { projection: { 'lists.$': 1 } }
+    );
+
+    return doc?.lists?.[0] ?? null;
   }
 
-  async addList(list: List) {
-    await this.db.collection<List>('lists').insertOne(list);
+  async addList(userId: string, list: List) {
+    await this.db.collection<Lists>('lists').updateOne(
+      { userId },
+      { $push: { lists: list } },
+      { upsert: true }
+    );
   }
 
-  async updateList(list: List) {
-    await this.db.collection<List>('lists').updateOne(
-      { _id: list._id },
+  async updateList(userId: string, list: List) {
+    await this.db.collection<Lists>('lists').updateOne(
+      { userId, 'lists._id': list._id },
       {
         $set: {
-          name: list.name,
-          description: list.description,
-          photoId: list.photoId,
-          photoUrl: list.photoUrl
+          'lists.$.name': list.name,
+          'lists.$.description': list.description,
+          'lists.$.photoId': list.photoId,
+          'lists.$.photoUrl': list.photoUrl
         }
       }
     );
   }
 
-  async deleteList(listId: string) {
-    await this.db.collection<List>('lists').deleteOne({ _id: listId });
+  async deleteList(userId: string, listId: string) {
+    await this.db.collection<Lists>('lists').updateOne(
+      { userId },
+      { $pull: { lists: { _id: listId } } }
+    );
+  }
+
+  async moveList(userId: string, dragIndex: number, hoverIndex: number) {
+    const collection = this.db.collection<Lists>('lists');
+
+    const dragItem = await collection.findOne(
+      { userId, 'lists.index': dragIndex },
+      { projection: { 'lists.$': 1 } }
+    );
+
+    await collection.updateMany(
+      { userId },
+      dragIndex > hoverIndex
+        // Moving item from the right to the left
+        ? { $inc: { 'lists.$[elem].index': 1 } }
+        // Moving item from left to right
+        : { $inc: { 'lists.$[elem].index': -1 } },
+      {
+        arrayFilters: dragIndex > hoverIndex
+          // Shift items from hoverIndex to dragIndex - 1
+          ? [{ 'elem.index': { $gte: hoverIndex, $lt: dragIndex } }]
+          // Shift items from dragIndex + 1 to hoverIndex
+          : [{ 'elem.index': { $gt: dragIndex, $lte: hoverIndex } }]
+      }
+    )
+    // If dragIndex and hoverIndex are the same, it is already being taken care of in ListCard.tsx
+
+    // Update the item to its new index position
+    await collection.updateOne(
+      { userId, 'lists._id': dragItem?.lists?.[0]._id },
+      { $set: { 'lists.$.index': hoverIndex } }
+    )
   }
 
   // Restaurant functions
@@ -51,7 +101,7 @@ export class Database {
     return await this.db.collection<Restaurant>('restaurants').findOne({ _id: restaurantId });
   }
 
-  async addRestaurant(listId: string, restaurant: Restaurant) {
+  async addRestaurant(userId: string, listId: string, restaurant: Restaurant) {
     // Only add the restaurant if it doesn't already exist inside of the restaraunts collection
     await this.db.collection<Restaurant>('restaurants').updateOne(
       { _id: restaurant._id },
@@ -61,8 +111,8 @@ export class Database {
 
     // Add the restaurant ID to the specified list
     await this.db.collection<List>('lists').updateOne(
-      { _id: listId },
-      { $push: { restaurants: restaurant._id } }
+      { userId, 'lists._id': listId },
+      { $push: { 'lists.$.restaurants': restaurant._id } }
     );
   }
 
@@ -166,16 +216,8 @@ export class Database {
     return result.length > 0 ? result[0].maxIndex : null;
   }
 
-  async moveItem(collectionName: string, dragIndex: number, hoverIndex: number) {
-    let collection = null;
-
-    if (collectionName === 'lists') {
-      collection = this.db.collection<List>('lists');
-    } else if (collectionName === 'dishes') {
-      collection = this.db.collection<Dish>('dishes');
-    } else {
-      return;
-    }
+  async moveDish(dragIndex: number, hoverIndex: number) {
+    const collection = this.db.collection<Dish>('dishes');
 
     const dragItem = await collection.findOne({ index: dragIndex });
     if (!dragItem) return;
@@ -196,7 +238,7 @@ export class Database {
         { $inc: { index: -1 } }
       );
     }
-    // If dragIndex and hoverIndex are the same, it is already being taken care of in ListCard.tsx and DishCard.tsx
+    // If dragIndex and hoverIndex are the same, it is already being taken care of in DishCard.tsx
 
     // Update the item to its new index position
     await collection.updateOne(
