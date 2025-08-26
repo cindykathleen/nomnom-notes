@@ -1,6 +1,4 @@
-import { auth } from '@/app/lib/auth';
-import { headers } from 'next/headers';
-import { redirect } from "next/navigation";
+import getCurrentUser from '@/app/lib/getCurrentUser';
 import Nav from '@/app/components/Nav';
 import DndWrapper from '@/app/components/DndWrapper';
 import CustomRestaurant from './CustomRestaurant';
@@ -8,19 +6,13 @@ import CustomRestaurant from './CustomRestaurant';
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = await params;
   
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
-  
-  if (!session) {
-    redirect('/sign-in');
-  }
+  const userId = await getCurrentUser();
 
   return (
     <div>
       <Nav />
       <DndWrapper>
-        <CustomRestaurant id={id} />
+        <CustomRestaurant userId={userId} restaurantId={id} />
       </DndWrapper>
     </div>
   );

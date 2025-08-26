@@ -5,7 +5,7 @@ import ImageInput from '@/app/components/ImageInput';
 import { addList } from '@/app/actions/list';
 import { uploadImage } from '@/app/lib/uploadImage';
 
-export default function ListAddCard() {
+export default function ListAddCard({ userId }: { userId: string }) {
   // State for modal
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
 
@@ -44,7 +44,7 @@ export default function ListAddCard() {
                   inputPhotoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
                 }
 
-                await addList(formData, inputPhotoId);
+                await addList(userId, formData, inputPhotoId);
                 setShowAddModal(false);
               }} className="p-4 flex flex-col">
                 <label htmlFor="list-name" className="pb-1 font-semibold">Name</label>

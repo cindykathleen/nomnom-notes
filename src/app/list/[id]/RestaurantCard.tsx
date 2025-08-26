@@ -82,7 +82,7 @@ export default function RestaurantCard({ listId, restaurant }: { listId: string,
           </div>
         )
       }
-      { // Alert for deleting lists
+      { // Alert for deleting restaurants
         showDeleteAlert && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
             <div role="alert" className="relative px-6 py-8 w-1/5 bg-snowwhite rounded-lg">
@@ -90,7 +90,7 @@ export default function RestaurantCard({ listId, restaurant }: { listId: string,
               <div className="flex">
                 <button type="button"
                   className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                  onClick={() => { deleteRestaurant(listId, restaurant._id); setShowDeleteAlert(false); }}>
+                  onClick={() => { deleteRestaurant(listId, restaurant._id) }}>
                   Yes
                 </button>
                 <button type="button"

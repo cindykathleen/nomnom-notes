@@ -82,7 +82,7 @@ export const deleteDish = async (restaurantId: string, dishId: string) => {
 
 export const moveDish = async (dragIndex: number, hoverIndex: number) => {
   try {
-    await db.moveItem('dishes', dragIndex, hoverIndex);
+    await db.moveDish(dragIndex, hoverIndex);
     revalidatePath('/restaurant');
     return { message: 'Drag & drop implemented successfully' };
   } catch (err) {

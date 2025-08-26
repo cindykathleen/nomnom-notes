@@ -4,14 +4,14 @@ import Link from 'next/link';
 import RestaurantDisplay from './RestaurantDisplay';
 import GoogleMap from './GoogleMap';
 
-export default async function CustomList({ id }: { id: string }) {
+export default async function CustomList({ userId, listId }: { userId: string, listId: string }) {
   let list;
 
   try {
-    list = await db.getList(id);
+    list = await db.getList(userId, listId);
 
     if (!list) {
-      return <div>Error fetching list</div>;
+      return <div>error: {userId}, {listId}</div>;
     }
   } catch (err) {
     return <div>Error fetching list</div>;

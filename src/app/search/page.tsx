@@ -1,23 +1,15 @@
-import { auth } from '@/app/lib/auth';
-import { headers } from 'next/headers';
-import { redirect } from "next/navigation";
+import getCurrentUser from '@/app/lib/getCurrentUser';
 import { db } from '@/app/lib/database';
 import Nav from '@/app/components/Nav';
 import SearchForm from './SearchForm';
 
 export default async function Page() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
-  
-  if (!session) {
-    redirect('/sign-in');
-  }
+  const userId = await getCurrentUser();
 
   let lists;
 
   try {
-    lists = await db.getLists();
+    lists = await db.getLists(userId);
 
     if (!lists) {
       return <div>Error fetching lists</div>;
