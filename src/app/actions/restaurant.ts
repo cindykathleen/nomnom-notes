@@ -28,9 +28,9 @@ export const editRestaurant = async (formData: FormData, id: string, rating: num
   }
 }
 
-export const deleteRestaurant = async (listId: string, restaurantId: string) => {
+export const deleteRestaurant = async (userId: string, listId: string, restaurantId: string) => {
   try {
-    await db.deleteRestaurant(listId, restaurantId);
+    await db.deleteRestaurant(userId, listId, restaurantId);
     revalidatePath('/list');
     return { message: 'Restaurant deleted successfully' };
   } catch (err) {
