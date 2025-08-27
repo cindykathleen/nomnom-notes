@@ -7,7 +7,19 @@ import { editRestaurant, deleteRestaurant } from '@/app/actions/restaurant';
 import RatingDisplay from '@/app/components/RatingDisplay';
 import RatingSystem from '@/app/components/RatingSystem';
 
-export default function RestaurantCard({ listId, restaurant }: { listId: string, restaurant: Restaurant }) {
+export default function RestaurantCard({
+  userId,
+  listId,
+  restaurant,
+  onUpdate,
+  onDelete
+}: {
+  userId: string,
+  listId: string,
+  restaurant: Restaurant,
+  onUpdate: (updated: Restaurant) => void,
+  onDelete: (deletedId: string) => void
+}) {
   // States for modals & alerts
   const [showMenuModal, setShowMenuModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -64,6 +76,11 @@ export default function RestaurantCard({ listId, restaurant }: { listId: string,
               <hr className="border-slategray" />
               <form action={async (formData) => {
                 await editRestaurant(formData, restaurant._id, rating);
+                onUpdate({
+                  ...restaurant,
+                  rating,
+                  description: inputDescription,
+                });
                 setShowEditModal(false);
               }} className="p-4 flex flex-col">
                 <label htmlFor="restaurant-rating" className="pb-1 font-semibold">Rating</label>
@@ -90,7 +107,10 @@ export default function RestaurantCard({ listId, restaurant }: { listId: string,
               <div className="flex">
                 <button type="button"
                   className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                  onClick={() => { deleteRestaurant(listId, restaurant._id) }}>
+                  onClick={async () => { 
+                    await deleteRestaurant(userId, listId, restaurant._id); 
+                    onDelete(restaurant._id);
+                  }}>
                   Yes
                 </button>
                 <button type="button"

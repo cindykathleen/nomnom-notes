@@ -9,25 +9,39 @@ enum SortType {
   Name = 'name'
 }
 
-export default function RestaurantDisplay({ list, restaurants }: { list: List, restaurants: Restaurant[] }) {
+export default function RestaurantDisplay({ userId, list, initialRestaurants }: { userId: string, list: List, initialRestaurants: Restaurant[] }) {
   const [sort, setSort] = useState<SortType>(SortType.RecentlyAdded);
-  const [sortedRestaurants, setSortedRestaurants] = useState<Restaurant[]>(restaurants);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(initialRestaurants);
 
   const sortRestaurants = () => {
     if (sort === SortType.RecentlyAdded) {
-      sortedRestaurants.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
+      restaurants.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
     } else if (sort === SortType.Name) {
-      sortedRestaurants.sort((a, b) => a.name.localeCompare(b.name));
+      restaurants.sort((a, b) => a.name.localeCompare(b.name));
     }
 
     // Using the spread operator to ensure a new array reference
     // This is important for React to detect changes and re-render components
-    setSortedRestaurants([...sortedRestaurants]);
+    setRestaurants([...restaurants]);
   }
 
   useEffect(() => {
     sortRestaurants();
   }, [sort]);
+
+  const onUpdate = (updatedRestaurant: Restaurant) => {
+    const updatedRestaurants = restaurants.map((restaurant) =>
+      restaurant._id === updatedRestaurant._id ? updatedRestaurant : restaurant
+    );
+
+    setRestaurants(updatedRestaurants);
+  }
+
+  const onDelete = (deletedRestaurantId: string) => {
+    const updatedRestaurants = restaurants.filter((restaurant) => restaurant._id !== deletedRestaurantId);
+    
+    setRestaurants(updatedRestaurants);
+  }
 
   return (
     <div className="w-1/2 flex flex-col gap-2">
@@ -46,8 +60,15 @@ export default function RestaurantDisplay({ list, restaurants }: { list: List, r
         </form>
       </div>
       <div className="max-h-[80vh] pr-4 flex flex-col gap-8 overflow-y-auto">
-        {sortedRestaurants.map((restaurant: Restaurant) => (
-          <RestaurantCard key={restaurant._id} listId={list._id} restaurant={restaurant} />
+        {restaurants.map((restaurant: Restaurant) => (
+          <RestaurantCard 
+            key={restaurant._id} 
+            userId={userId} 
+            listId={list._id} 
+            restaurant={restaurant}
+            onUpdate={onUpdate}
+            onDelete={onDelete}
+          />
         ))}
       </div>
     </div>

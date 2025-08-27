@@ -47,7 +47,7 @@ export default async function CustomList({ userId, listId }: { userId: string, l
         </div>
         <h1 className="text-4xl font-semibold">{list.name}</h1>
         <div className="max-h-full flex gap-8 overflow-y-auto">
-          <RestaurantDisplay list={list} restaurants={restaurants} />
+          <RestaurantDisplay userId={userId} list={list} initialRestaurants={restaurants} />
           <GoogleMap restaurants={restaurants} />
         </div>
       </div>

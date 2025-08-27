@@ -128,19 +128,14 @@ export class Database {
     );
   }
 
-  async deleteRestaurant(listId: string, restaurantId: string) {
+  async deleteRestaurant(userId: string, listId: string, restaurantId: string) {
+    await this.db.collection<Restaurant>('restaurants').deleteOne({ _id: restaurantId });
+    
     // Delete the restaurant ID from the specified list
     await this.db.collection<List>('lists').updateOne(
-      { _id: listId },
-      { $pull: { restaurants: restaurantId } }
+      { userId, 'lists._id': listId },
+      { $pull: { 'lists.$.restaurants': restaurantId } }
     );
-
-    // Only delete the restaurant if the ID is not found in any list
-    const foundList = await this.db.collection<List>('lists').findOne({ restaurants: restaurantId });
-
-    if (!foundList) {
-      await this.db.collection<Restaurant>('restaurants').deleteOne({ _id: restaurantId });
-    }
   }
 
   // Dish functions
