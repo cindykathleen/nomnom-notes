@@ -9,6 +9,7 @@ export interface List {
   _id: string;
   index: number;
   name: string;
+  visibility: 'private' | 'public';
   description: string;
   photoId: string;
   photoUrl: string;

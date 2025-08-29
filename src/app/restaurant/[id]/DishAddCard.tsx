@@ -50,7 +50,7 @@ export default function DishAddCard({ restaurantId }: { restaurantId: string }) 
                 setShowAddModal(false);
               }} className="p-4 flex flex-col">
                 <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
-                <input id="dish-name" name="dish-name" type="text"
+                <input id="dish-name" name="dish-name" type="text" required
                   className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
                 <label htmlFor="dish-name" className="pb-1 font-semibold">Rating</label>
                 <RatingSystem currRating={0} setNewRating={(newRating) => setRating(newRating)} />

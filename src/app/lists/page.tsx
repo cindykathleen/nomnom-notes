@@ -4,7 +4,7 @@ import DndWrapper from '@/app/components/DndWrapper';
 import CustomLists from '@/app/lists/CustomLists';
 
 export default async function Page() {
-  const userId = await getCurrentUser();
+  const userId = await getCurrentUser(false);
 
   return (
     <div>

@@ -21,6 +21,7 @@ export default function ListCard({ userId, list }: { userId: string, list: List 
 
   // States for the input fields in the edit modal
   const [inputName, setInputName] = useState(list.name);
+  const [inputVisibility, setInputVisibility] = useState(list.visibility);
   const [inputDescription, setInputDescription] = useState(list.description);
   const [inputImage, setInputImage] = useState(list.photoUrl);
 
@@ -150,6 +151,17 @@ export default function ListCard({ userId, list }: { userId: string, list: List 
                 <label htmlFor="list-name" className="pb-1 font-semibold">Name</label>
                 <input id="list-name" name="list-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
                   className="w-full px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+                <fieldset className="mb-4">
+                  <legend className="pb-1 font-semibold">List visibility</legend>
+                  <label className="mr-4">
+                    <input type="radio" name="list-visibility" value="private" className="mr-1" 
+                      checked={inputVisibility === 'private'} onChange={() => setInputVisibility('private')} />Private
+                  </label>
+                  <label>
+                    <input type="radio" name="list-visibility" value="public" className="mr-1"
+                      checked={inputVisibility === 'public'} onChange={() => setInputVisibility('public')} />Public
+                  </label>
+                </fieldset>
                 <label htmlFor="list-description" className="pb-1 font-semibold">Description</label>
                 <textarea id="list-description" name="list-description" placeholder="Add a description for this list" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
                   className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>

@@ -17,22 +17,40 @@ export class Database {
   }
 
   // List functions
-  async getList(userId: string, listId: string) {
+  async getList(listId: string) {
     const doc = await this.db.collection<Lists>('lists').findOne(
-      { userId, 'lists._id': listId },
+      { 'lists._id': listId },
       { projection: { 'lists.$': 1 } }
     );
 
     return doc?.lists?.[0] ?? null;
   }
 
-  async getListByRestaurantId(userId: string, restaurantId: string) {
+  async getListByRestaurantId(restaurantId: string) {
     const doc = await this.db.collection<Lists>('lists').findOne(
-      { userId, 'lists.restaurants': restaurantId },
+      { 'lists.restaurants': restaurantId },
       { projection: { 'lists.$': 1 } }
     );
 
     return doc?.lists?.[0] ?? null;
+  }
+
+  async getListVisibility(listId: string) {
+    const doc = await this.db.collection<Lists>('lists').findOne(
+      { 'lists._id': listId },
+      { projection: { 'lists.$': 1 } }
+    );
+
+    return doc?.lists?.[0].visibility ?? null;
+  }
+
+  async isOwner(userId: string, listId: string) {
+    const doc = await this.db.collection<Lists>('lists').findOne(
+      { userId, 'lists._id': listId },
+      { projection: { 'lists.$': 1 } }
+    );
+
+    return doc?.lists?.length === 1;
   }
 
   async addList(userId: string, list: List) {
@@ -49,6 +67,7 @@ export class Database {
       {
         $set: {
           'lists.$.name': list.name,
+          'lists.$.visibility': list.visibility,
           'lists.$.description': list.description,
           'lists.$.photoId': list.photoId,
           'lists.$.photoUrl': list.photoUrl

@@ -1,23 +1,11 @@
 import { db } from '@/app/lib/database';
-import { Dish } from '@/app/interfaces/interfaces';
+import { List, Dish } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import RatingDisplay from '@/app/components/RatingDisplay';
 import DishCard from './DishCard';
 import DishAddCard from './DishAddCard';
 
-export default async function CustomRestaurant({ userId, restaurantId }: { userId: string, restaurantId: string }) {
-  let list;
-
-  try {
-    list = await db.getListByRestaurantId(userId, restaurantId);
-
-    if (!list) {
-      return <div>Error fetching list</div>;
-    }
-  } catch (err) {
-    return <div>Error fetching list</div>;
-  }
-
+export default async function CustomRestaurant({ userId, list, restaurantId }: { userId: string, list: List, restaurantId: string }) {
   let restaurant;
 
   try {
@@ -50,14 +38,21 @@ export default async function CustomRestaurant({ userId, restaurantId }: { userI
 
   dishes.sort((a, b) => a.index - b.index);
 
+  const isOwner = await db.isOwner(userId, list._id);
+
   return (
     <div className="relative h-full w-screen p-16 mt-[80px] flex justify-center">
       <div className="max-w-[1440px] w-full px-8 flex flex-col space-y-6">
         <div className="flex gap-2">
-          <Link href="/lists/" className="font-semibold hover:text-mauve transition-colors">
-            Lists
-          </Link>
-          <p className="font-semibold">/</p>
+          { // Don't display private pages for anyone other than the list owner
+            isOwner && (
+              <>
+                <Link href="/lists/" className="font-semibold hover:text-mauve transition-colors">
+                  Lists
+                </Link>
+                <p className="font-semibold">/</p>
+              </>
+            )}
           <Link href={`/list/${list._id}`} className="font-semibold hover:text-mauve transition-colors">
             {list!.name}
           </Link>
@@ -72,11 +67,20 @@ export default async function CustomRestaurant({ userId, restaurantId }: { userI
         <div className="">
           <h2 className="text-3xl font-semibold">Dishes</h2>
         </div>
+        { // Display an error message if there are no dishes and the user is not the list owner
+          (dishes.length === 0 && !isOwner) && (
+            <p className="text-lg">The owner of this list has not added any dishes.</p>
+          )
+        }
         <div className="grid grid-cols-4 gap-16">
           {dishes.map((dish) => (
-            <DishCard key={dish._id} restaurant={restaurant} dish={dish} />
+            <DishCard key={dish._id} isOwner={isOwner} restaurant={restaurant} dish={dish} />
           ))}
-          <DishAddCard restaurantId={restaurant._id} />
+          { // Don't display dish add card for anyone other than the list owner
+            isOwner && (
+              <DishAddCard restaurantId={restaurant._id} />
+            )
+          }
         </div>
       </div>
     </div>

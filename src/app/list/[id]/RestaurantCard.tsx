@@ -9,12 +9,14 @@ import RatingSystem from '@/app/components/RatingSystem';
 
 export default function RestaurantCard({
   userId,
+  isOwner,
   listId,
   restaurant,
   onUpdate,
   onDelete
 }: {
   userId: string,
+  isOwner: boolean,
   listId: string,
   restaurant: Restaurant,
   onUpdate: (updated: Restaurant) => void,
@@ -40,11 +42,15 @@ export default function RestaurantCard({
             <RatingDisplay rating={restaurant.rating} />
             <p className="text-lg whitespace-pre-line">{restaurant.description}</p>
           </div>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-            className="size-8 cursor-pointer"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(!showMenuModal); }}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-          </svg>
+          { // Don't display menu options for anyone other than the list owner
+            isOwner && (
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+                className="size-8 cursor-pointer"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(!showMenuModal); }}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+              </svg>
+            )
+          }
           { // Modal for menu options
             showMenuModal && (
               <div className="absolute right-8 top-16 min-w-30 p-2 flex flex-col bg-snowwhite border border-lightgray rounded-sm">
@@ -107,8 +113,8 @@ export default function RestaurantCard({
               <div className="flex">
                 <button type="button"
                   className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                  onClick={async () => { 
-                    await deleteRestaurant(userId, listId, restaurant._id); 
+                  onClick={async () => {
+                    await deleteRestaurant(userId, listId, restaurant._id);
                     onDelete(restaurant._id);
                   }}>
                   Yes

@@ -8,10 +8,10 @@ export default async function CustomList({ userId, listId }: { userId: string, l
   let list;
 
   try {
-    list = await db.getList(userId, listId);
+    list = await db.getList(listId);
 
     if (!list) {
-      return <div>error: {userId}, {listId}</div>;
+      return <div>error: {listId}</div>;
     }
   } catch (err) {
     return <div>Error fetching list</div>;
@@ -35,20 +35,29 @@ export default async function CustomList({ userId, listId }: { userId: string, l
     return <div>Error fetching restaurants</div>;
   }
 
+  const isOwner = await db.isOwner(userId, listId);
+
   return (
     <div className="fixed top-[80px] h-[calc(100vh-80px)] w-screen box-border p-16 flex justify-center">
       <div className="max-w-[1440px] w-full px-8 flex flex-col space-y-6">
-        <div className="flex gap-2">
-          <Link href="/lists" className="font-semibold hover:text-mauve transition-colors">
-            Lists
-          </Link>
-          <p className="font-semibold">/</p>
-          <p>{list.name}</p>
-        </div>
+        { // Don't display private pages for anyone other than the list owner
+          isOwner && (
+            <div className="flex gap-2">
+              <Link href="/lists" className="font-semibold hover:text-mauve transition-colors">
+                Lists
+              </Link>
+              <p className="font-semibold">/</p>
+              <p>{list.name}</p>
+            </div>
+          )}
         <h1 className="text-4xl font-semibold">{list.name}</h1>
         <div className="max-h-full flex gap-8 overflow-y-auto">
-          <RestaurantDisplay userId={userId} list={list} initialRestaurants={restaurants} />
-          <GoogleMap restaurants={restaurants} />
+          <RestaurantDisplay userId={userId} isOwner={isOwner} list={list} initialRestaurants={restaurants} />
+          { // Don't display a map for public users
+            (userId !== 'public') && (
+              <GoogleMap restaurants={restaurants} />
+            )
+          }
         </div>
       </div>
     </div>

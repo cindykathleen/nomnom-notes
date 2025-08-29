@@ -14,7 +14,7 @@ interface DragItem {
   index: number;
 }
 
-export default function DishCard({ restaurant, dish }: { restaurant: Restaurant, dish: Dish }) {
+export default function DishCard({ isOwner, restaurant, dish }: { isOwner: boolean, restaurant: Restaurant, dish: Dish }) {
   // States for modals & alerts
   const [showMenuModal, setShowMenuModal] = useState<boolean>(false);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -89,17 +89,21 @@ export default function DishCard({ restaurant, dish }: { restaurant: Restaurant,
   drag(drop(ref));
 
   return (
-    <div key={dish._id} ref={ref} data-handler-id={handlerId}
+    <div key={dish._id} {...(isOwner ? { ref, "data-handler-id": handlerId } : {})}
       className="flex flex-col relative bg-snowwhite rounded-sm">
-      <img src={dish.photoUrl} alt={dish.name} className="aspect-square rounded-lg" />
+      <img src={dish.photoUrl} alt={dish.name} className="aspect-square object-cover rounded-lg" />
       <div className="flex flex-col gap-2 py-4">
         <div className="flex justify-between relative">
           <h3 className="text-xl font-semibold">{dish.name}</h3>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-            className="ml-4 size-8 cursor-pointer"
-            onClick={() => setShowMenuModal(!showMenuModal)}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-          </svg>
+          { // Don't display menu options for anyone other than the list owner
+            isOwner && (
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+                className="ml-4 size-8 cursor-pointer"
+                onClick={() => setShowMenuModal(!showMenuModal)}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+              </svg>
+            )
+          }
           { // Modal for menu options
             showMenuModal && (
               <div className="absolute right-0 top-8 min-w-30 p-2 flex flex-col bg-snowwhite border border-lightgray rounded-sm">
