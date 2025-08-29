@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const addList = async (userId: string, formData: FormData, photoId: string) => {
   const name = formData.get('list-name') as string;
+  const visibility = formData.get('list-visibility') as 'private' | 'public';
   const description = formData.get('list-description') as string;
 
   let lists;
@@ -27,6 +28,7 @@ export const addList = async (userId: string, formData: FormData, photoId: strin
     _id: uuidv4(),
     index: highestIndex + 1,
     name: name,
+    visibility: visibility,
     description: description,
     photoId: photoId,
     photoUrl: `/api/database/photos?id=${photoId}`,
@@ -44,10 +46,11 @@ export const addList = async (userId: string, formData: FormData, photoId: strin
 
 export const updateList = async (userId: string, formData: FormData, listId: string, photoId: string) => {
   const name = formData.get('list-name') as string;
+  const visibility = formData.get('list-visibility') as 'private' | 'public';
   const description = formData.get('list-description') as string;
 
   try {
-    const existingList = await db.getList(userId, listId);
+    const existingList = await db.getList(listId);
 
     if (!existingList) {
       return { error: 'List not found' };
@@ -56,6 +59,7 @@ export const updateList = async (userId: string, formData: FormData, listId: str
     const updatedList: List = {
       ...existingList,
       name: name,
+      visibility: visibility,
       description: description,
       photoId: photoId,
       photoUrl: `/api/database/photos?id=${photoId}`,

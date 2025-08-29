@@ -8,8 +8,8 @@ export default function Nav() {
           <Link href="/" className="text-2xl font-bold">NomNom Notes</Link>
         </div>
         <ul className="flex flex-row items-center gap-6 text-lg font-semibold">
-          <li><Link href="/lists">Lists</Link></li>
-          <li><Link href="/search">Search</Link></li>
+          <li><Link href="/sign-in">Sign In</Link></li>
+          <li><Link href="/sign-up">Sign Up</Link></li>
         </ul>
       </div>
     </div>

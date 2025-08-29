@@ -47,14 +47,24 @@ export default function ListAddCard({ userId }: { userId: string }) {
                 await addList(userId, formData, inputPhotoId);
                 setShowAddModal(false);
               }} className="p-4 flex flex-col">
-                <label htmlFor="list-name" className="pb-1 font-semibold">Name</label>
-                <input id="list-name" name="list-name" type="text"
+                <label htmlFor="list-name" className="pb-1 font-semibold">Name *</label>
+                <input id="list-name" name="list-name" type="text" required
                   className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+                <fieldset className="mb-4">
+                  <legend className="pb-1 font-semibold">List visibility *</legend>
+                  <label className="mr-4">
+                    <input type="radio" name="list-visibility" value="private" className="mr-1" defaultChecked />Private
+                  </label>
+                  <label>
+                    <input type="radio" name="list-visibility" value="public" className="mr-1" />Public
+                  </label>
+                </fieldset>
                 <label htmlFor="list-description" className="pb-1 font-semibold">Description</label>
                 <textarea id="list-description" name="list-description" placeholder="Add a description for this list"
                   className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
                 <button type="submit" className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors">Create</button>
+                <p className="mt-6 text-sm font-semibold">* Required fields</p>              
               </form>
             </div>
           </div>

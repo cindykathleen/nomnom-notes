@@ -9,7 +9,7 @@ enum SortType {
   Name = 'name'
 }
 
-export default function RestaurantDisplay({ userId, list, initialRestaurants }: { userId: string, list: List, initialRestaurants: Restaurant[] }) {
+export default function RestaurantDisplay({ userId, isOwner, list, initialRestaurants }: { userId: string, isOwner: boolean, list: List, initialRestaurants: Restaurant[] }) {
   const [sort, setSort] = useState<SortType>(SortType.RecentlyAdded);
   const [restaurants, setRestaurants] = useState<Restaurant[]>(initialRestaurants);
 
@@ -39,12 +39,12 @@ export default function RestaurantDisplay({ userId, list, initialRestaurants }: 
 
   const onDelete = (deletedRestaurantId: string) => {
     const updatedRestaurants = restaurants.filter((restaurant) => restaurant._id !== deletedRestaurantId);
-    
+
     setRestaurants(updatedRestaurants);
   }
 
   return (
-    <div className="w-1/2 flex flex-col gap-2">
+    <div className={`${userId === 'public' ? "w-full" : "w-1/2"} flex flex-col gap-2`}>
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">{`${restaurants.length} Places`}</h2>
         <form className="flex items-center w-fit my-2">
@@ -59,12 +59,16 @@ export default function RestaurantDisplay({ userId, list, initialRestaurants }: 
           </svg>
         </form>
       </div>
-      <div className="max-h-[80vh] pr-4 flex flex-col gap-8 overflow-y-auto">
+      <div
+        className={`max-h-[80vh] overflow-y-auto gap-8 
+        ${userId === "public" ? "grid grid-cols-2" : "pr-4 flex flex-col"}`}
+      >
         {restaurants.map((restaurant: Restaurant) => (
-          <RestaurantCard 
-            key={restaurant._id} 
-            userId={userId} 
-            listId={list._id} 
+          <RestaurantCard
+            key={restaurant._id}
+            userId={userId}
+            isOwner={isOwner}
+            listId={list._id}
             restaurant={restaurant}
             onUpdate={onUpdate}
             onDelete={onDelete}

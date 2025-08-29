@@ -4,7 +4,7 @@ import Nav from '@/app/components/Nav';
 import SearchForm from './SearchForm';
 
 export default async function Page() {
-  const userId = await getCurrentUser();
+  const userId = await getCurrentUser(false);
 
   let lists;
 
