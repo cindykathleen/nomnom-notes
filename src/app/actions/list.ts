@@ -10,25 +10,11 @@ export const addList = async (userId: string, formData: FormData, photoId: strin
   const visibility = formData.get('list-visibility') as 'private' | 'public';
   const description = formData.get('list-description') as string;
 
-  let lists;
-
-  try {
-    lists = await db.getLists(userId);
-
-    if (!lists) {
-      return { error: 'Error fetching lists' };
-    }
-  } catch (err) {
-    return { error: `Error fetching lists: ${err}` };
-  }
-
-  const highestIndex = lists.length === 0 ? 0 : Math.max(...lists.map((list: List) => list.index));
-
   const newList: List = {
     _id: uuidv4(),
-    index: highestIndex + 1,
-    name: name,
+    owner: userId,
     visibility: visibility,
+    name: name,
     description: description,
     photoId: photoId,
     photoUrl: `/api/database/photos?id=${photoId}`,
@@ -73,13 +59,23 @@ export const updateList = async (userId: string, formData: FormData, listId: str
   }
 }
 
-export const deleteList = async (userId: string, listId: string) => {
+export const deleteList = async (listId: string) => {
   try {
-    await db.deleteList(userId, listId);
+    await db.deleteList(listId);
     revalidatePath('/lists');
     return { message: 'List deleted successfully' };
   } catch (err) {
     return { error: `Error deleting list: ${err}` };
+  }
+}
+
+export const removeList = async (userId: string, listId: string) => {
+  try {
+    await db.removeList(userId, listId);
+    revalidatePath('/lists');
+    return { message: 'List removed successfully' };
+  } catch (err) {
+    return { error: `Error removing list: ${err}` };
   }
 }
 

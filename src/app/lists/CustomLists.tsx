@@ -2,18 +2,35 @@ import { db } from '@/app/lib/database';
 import { List } from '@/app/interfaces/interfaces';
 import ListCard from './ListCard';
 import ListAddCard from './ListAddCard';
+import { getAllUsers } from '@/app/actions/user';
 
 export default async function CustomLists({ userId }: { userId: string }) {
-  let lists;
+  let listIds = await db.getListIds(userId);
+  let lists: List[] = [];
 
   try {
-    lists = await db.getLists(userId);
+    lists = await Promise.all(
+      listIds.map(async (listId) => {
+        const list = await db.getList(listId);
 
-    if (!lists) {
-      return <div>Error fetching lists</div>;
-    }
+        if (!list) {
+          throw new Error(`List with ID ${listId} not found`);
+        }
+
+        return list;
+      })
+    );
   } catch (err) {
-    return <div>Error fetching lists</div>;
+    throw new Error(`Error fetching lists: ${err}`);
+  }
+
+  const getRole = async (listId: string) => {
+    const isOwner = await db.isOwner(userId, listId);
+    return isOwner ? 'owner' : 'collaborator';
+  }
+
+  const getUsers = async (listId: string) => {
+    return await getAllUsers(listId);
   }
 
   return (
@@ -21,9 +38,11 @@ export default async function CustomLists({ userId }: { userId: string }) {
       <div className="max-w-[1440px] w-full px-8 flex flex-col space-y-8">
         <h1 className="text-4xl font-semibold">My lists</h1>
         <div className="grid grid-cols-4 gap-16">
-          {lists.map((list: List) => (
-            <ListCard key={list._id} userId={userId} list={list} />
-          ))}
+          {lists.map(async (list: List) => {
+            const role = await getRole(list._id);
+            const users = await getUsers(list._id);
+            return <ListCard key={list._id} userId={userId} role={role} list={list} users={users} />;
+          })}
           <ListAddCard userId={userId} />
         </div>
       </div>

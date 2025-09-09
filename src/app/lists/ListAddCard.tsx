@@ -51,7 +51,7 @@ export default function ListAddCard({ userId }: { userId: string }) {
                 <input id="list-name" name="list-name" type="text" required
                   className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
                 <fieldset className="mb-4">
-                  <legend className="pb-1 font-semibold">List visibility *</legend>
+                  <legend className="pb-1 font-semibold">Visibility *</legend>
                   <label className="mr-4">
                     <input type="radio" name="list-visibility" value="private" className="mr-1" defaultChecked />Private
                   </label>

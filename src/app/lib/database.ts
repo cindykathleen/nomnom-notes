@@ -1,5 +1,5 @@
 import { MongoClient, Db, Binary } from 'mongodb';
-import { Lists, List, Restaurant, Dish, Place, SearchResult, Photo } from "@/app/interfaces/interfaces";
+import { User, List, Restaurant, Dish, Place, SearchResult, Photo, Invitation } from "@/app/interfaces/interfaces";
 
 export class Database {
   client: MongoClient;
@@ -10,20 +10,42 @@ export class Database {
     this.db = this.client.db(databaseName);
   }
 
-  // Lists function
-  async getLists(userId: string) {
-    const doc = await this.db.collection<Lists>('lists').findOne({ userId });
-    return doc?.lists?.sort((a, b) => a.index - b.index) ?? [];
+  // Users functions
+  async getUser(userId: string) {
+    return await this.db.collection<User>('users').findOne({ _id: userId });
+  }
+  
+  async getUsers(listId: string) {
+    return await this.db.collection<User>('users').find({ lists: listId }).toArray();
   }
 
-  // List functions
-  async getList(listId: string) {
-    const doc = await this.db.collection<Lists>('lists').findOne(
-      { 'lists._id': listId },
-      { projection: { 'lists.$': 1 } }
-    );
+  async getUserByToken(token: string) {
+    const doc = await this.db.collection<Invitation>('invitations').findOne({ token: token });
+    
+    if (!doc) return null;
+    
+    return await this.db.collection<User>('users').findOne({ _id: doc.invitedBy });
+  }
 
-    return doc?.lists?.[0] ?? null;
+  async getListIds(userId: string) {
+    const doc = await this.db.collection<User>('users').findOne({ _id: userId });
+    return doc?.lists ?? [];
+  }
+
+  async addUser(userId: string, name: string, email: string) {
+    await this.db.collection<User>('users').insertOne({ _id: userId, name: name, email: email, lists: [] });
+  }
+
+  async removeUser(userId: string, listId: string) {
+    await this.db.collection<User>('users').updateOne(
+      { _id: userId },
+      { $pull: { lists: listId } }
+    )
+  }
+
+  // Lists functions
+  async getList(listId: string) {
+    return await this.db.collection<List>('lists').findOne({ _id: listId });
   }
 
   async getListByRestaurantId(restaurantId: string) {
@@ -33,6 +55,14 @@ export class Database {
     );
 
     return doc?.lists?.[0] ?? null;
+  }
+
+  async getListByToken(token: string) {
+    const doc = await this.db.collection<Invitation>('invitations').findOne({ token: token });
+    
+    if (!doc) return null;
+    
+    return await this.getList(doc.listId);
   }
 
   async getListVisibility(listId: string) {
@@ -45,19 +75,18 @@ export class Database {
   }
 
   async isOwner(userId: string, listId: string) {
-    const doc = await this.db.collection<Lists>('lists').findOne(
-      { userId, 'lists._id': listId },
-      { projection: { 'lists.$': 1 } }
-    );
+    const doc = await this.db.collection<List>('lists').findOne({ _id: listId });
 
-    return doc?.lists?.length === 1;
+    return doc?.owner === userId;
   }
 
   async addList(userId: string, list: List) {
-    await this.db.collection<Lists>('lists').updateOne(
-      { userId },
-      { $push: { lists: list } },
-      { upsert: true }
+    await this.db.collection<List>('lists').insertOne(list);
+
+    // Add the list ID to the specified user
+    await this.db.collection<User>('users').updateOne(
+      { _id: userId },
+      { $push: { lists: list._id } }
     );
   }
 
@@ -76,11 +105,21 @@ export class Database {
     );
   }
 
-  async deleteList(userId: string, listId: string) {
-    await this.db.collection<Lists>('lists').updateOne(
-      { userId },
-      { $pull: { lists: { _id: listId } } }
+  async deleteList(listId: string) {
+    await this.db.collection<List>('lists').deleteOne({ _id: listId });
+
+    // Remove the list ID from ALL users
+    await this.db.collection<User>('users').updateMany(
+      {},
+      { $pull: { lists: listId } }
     );
+  }
+
+  async removeList(userId: string, listId: string) {
+    await this.db.collection<User>('users').updateOne(
+      { _id: userId },
+      { $pull: { lists: listId } }
+    )
   }
 
   async moveList(userId: string, dragIndex: number, hoverIndex: number) {
@@ -149,7 +188,7 @@ export class Database {
 
   async deleteRestaurant(userId: string, listId: string, restaurantId: string) {
     await this.db.collection<Restaurant>('restaurants').deleteOne({ _id: restaurantId });
-    
+
     // Delete the restaurant ID from the specified list
     await this.db.collection<List>('lists').updateOne(
       { userId, 'lists._id': listId },
@@ -280,7 +319,7 @@ export class Database {
     await this.db.collection<SearchResult>('places').insertOne(newSearch);
   }
 
-  //Photo functions
+  // Photo functions
   async getPhoto(photoId: string) {
     return await this.db.collection<Photo>('photos').findOne({ _id: photoId });
   }
@@ -292,6 +331,94 @@ export class Database {
     }
 
     await this.db.collection<Photo>('photos').insertOne(newPhoto);
+  }
+
+  // Invitation functions
+  async getToken(invitation: Invitation) {
+    await this.db.collection<Invitation>('invitations').insertOne(invitation);
+  }
+
+  async getExistingInvitation(listId: string) {
+    const invitation = await this.db.collection<Invitation>('invitations').findOne({ listId: listId });
+
+    // Check if the invitation exists
+    if (!invitation) return null;
+
+    // Check if the invitation has already been used
+    if (invitation.usedBy !== '') return null;
+
+    // Check if the invitation expires in at least 2 days
+    const expiresAt = new Date(invitation.expiresAt);
+    const now = new Date();
+    const minTwoDays = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
+
+    return expiresAt > minTwoDays ? invitation : null;
+  }
+
+  async getInvitationByToken(token: string) {
+    const invitation = await this.db.collection<Invitation>('invitations').findOne({ token: token });
+
+    // Check to make sure the invitation exists
+    if (!invitation) {
+      throw new Error('Not a valid invitation link');
+    }
+
+    // Check to make sure the invitation hasn't already been used
+    if (invitation.usedBy !== '') {
+      throw new Error('Invitation link has already been used');
+    }
+
+    // Check to make sure the invitation hasn't expired
+    if (new Date(invitation.expiresAt) < new Date()) {
+      throw new Error('Invitation link has expired');
+    }
+
+    return invitation;
+  }
+
+  async acceptInvitation(userId: string, token: string) {
+    const invitation = await this.db.collection<Invitation>('invitations').findOne({ token: token });
+
+    // Check to make sure the invitation exists
+    if (!invitation) throw new Error('Invitation not found');
+
+    // Check to make sure the user doesn't already collaborate on this list
+    const user = await this.db.collection<User>('users').findOne({ _id: userId });
+
+    if (user!.lists.includes(invitation.listId)) {
+      throw new Error('User is already a collaborator on this list');
+    }
+
+    // Check to make sure the user hasn't already used this invitation
+    if (invitation.usedBy === userId) {
+      throw new Error('Invitation already used by this user');
+    }
+
+    // Add the user ID to the usedBy field of the invitation
+    await this.db.collection<Invitation>('invitations').updateOne(
+      { token: token },
+      { $set: { usedBy: userId } }
+    );
+
+    // Add the list ID to the specified user's lists
+    await this.db.collection<User>('users').updateOne(
+      { _id: userId },
+      { $push: { lists: invitation.listId } }
+    );
+  }
+
+  async declineInvitation(token: string) {
+    const invitation = await this.db.collection<Invitation>('invitations').findOne({ token: token });
+
+    // Check to make sure the invitation exists
+    if (!invitation) throw new Error('Invitation not found');
+
+    // Void the invitation
+    await this.db.collection<Invitation>('invitations').updateOne(
+      { token: token },
+      { $set: { usedBy: 'Declined' } }
+    );
+
   }
 }
 

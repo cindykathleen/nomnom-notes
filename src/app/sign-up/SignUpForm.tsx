@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SignUpButton } from './SignUpButton';
 import { signUp } from '@/app/actions/authentication';
+import { addUserToDB } from '@/app/actions/user';
 
 export const SignUpForm = () => {
   const [displayName, setDisplayName] = useState<string>('');
@@ -29,6 +30,7 @@ export const SignUpForm = () => {
     if (result.error) {
       setErrorMessage(result.error);
     } else {
+      await addUserToDB();
       router.push('/lists');
     }
   }
@@ -63,7 +65,6 @@ export const SignUpForm = () => {
           </div>
         )
       }
-
     </form>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { SignInButton } from './SignInButton';
 import { signIn } from '@/app/actions/authentication';
 
@@ -15,6 +15,8 @@ export const SignInForm = () => {
     password.trim() !== '';
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/lists';
   
     const handleSubmit = async (formData: FormData) => {
       const result = await signIn(formData);
@@ -22,7 +24,7 @@ export const SignInForm = () => {
       if (result.error) {
         setErrorMessage(result.error);
       } else {
-        router.push('/lists');
+        router.push(redirect);
       }
     }
 

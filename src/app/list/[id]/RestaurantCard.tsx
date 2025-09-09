@@ -30,7 +30,7 @@ export default function RestaurantCard({
   // States for the input fields in the edit modal
   const [rating, setRating] = useState<number>(restaurant.rating);
   const [ratingHover, setRatingHover] = useState<boolean>(false);
-  const [inputDescription, setInputDescription] = useState<string>(restaurant.description);
+  const [inputNote, setInputNote] = useState<string>(restaurant.description);
 
   return (
     <div>
@@ -85,7 +85,7 @@ export default function RestaurantCard({
                 onUpdate({
                   ...restaurant,
                   rating,
-                  description: inputDescription,
+                  description: inputNote,
                 });
                 setShowEditModal(false);
               }} className="p-4 flex flex-col">
@@ -96,8 +96,8 @@ export default function RestaurantCard({
                     : <RatingDisplay rating={rating} />
                   }
                 </div>
-                <label htmlFor="restaurant-description" className="pb-1 font-semibold">Description</label>
-                <textarea id="restaurant-description" name="restaurant-description" placeholder="Add a description for this restaurant" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
+                <label htmlFor="restaurant-note" className="pb-1 font-semibold">Note</label>
+                <textarea id="restaurant-note" name="restaurant-note" placeholder="Add a note for this restaurant" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="px-2 py-1 border border-charcoal border-solid rounded-sm mb-6 focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
                 <button className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors">Update</button>
               </form>

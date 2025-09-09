@@ -2,6 +2,7 @@
 
 import { auth } from '@/app/lib/auth';
 
+
 export const signUp = async (formData: FormData) => {
   const name = formData.get('display-name') as string;
   const email = formData.get('email') as string;
