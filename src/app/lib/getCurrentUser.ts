@@ -4,9 +4,9 @@ import { redirect } from 'next/navigation';
 
 export default async function getCurrentUser(isPublic: boolean) {
   const session = await auth.api.getSession({
-      headers: await headers()
-    });
- 
+    headers: await headers()
+  });
+
   if (!isPublic) {
     if (!session) {
       redirect('/sign-in');

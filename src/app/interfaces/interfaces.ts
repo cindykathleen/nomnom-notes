@@ -1,15 +1,17 @@
 import { Binary } from 'mongodb';
 
-export interface Lists {
-  userId: string;
-  lists: List[];
-} 
+export interface User {
+  _id: string;
+  name: string;
+  email: string;
+  lists: string[];
+}
 
 export interface List {
   _id: string;
-  index: number;
-  name: string;
+  owner: string;
   visibility: 'private' | 'public';
+  name: string;
   description: string;
   photoId: string;
   photoUrl: string;
@@ -30,8 +32,7 @@ export interface Place {
 
 export interface Restaurant extends Place {
   photoUrl: string;
-  rating: number;
-  description: string;
+  reviews: Review[];
   dateAdded: Date;
   dishes: string[];
 }
@@ -40,10 +41,16 @@ export interface Dish {
   _id: string;
   index: number;
   name: string;
-  note: string;
-  rating: number;
+  reviews: Review[];
   photoId: string;
   photoUrl: string;
+}
+
+export interface Review {
+  _id: string;
+  createdBy: string;
+  rating: number;
+  note: string;
 }
 
 export interface SearchResult {
@@ -54,4 +61,14 @@ export interface SearchResult {
 export interface Photo {
   _id: string;
   data: Binary;
+}
+
+export interface Invitation {
+  _id: string;
+  listId: string;
+  invitedBy: string;
+  token: string;
+  createdAt: Date;
+  expiresAt: Date;
+  usedBy: string;
 }
