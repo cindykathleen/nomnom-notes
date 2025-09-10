@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { SignUpButton } from './SignUpButton';
 import { signUp } from '@/app/actions/authentication';
 import { addUserToDB } from '@/app/actions/user';
@@ -23,6 +23,8 @@ export const SignUpForm = () => {
     passwordMatch;
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/lists';
 
   const handleSubmit = async (formData: FormData) => {
     const result = await signUp(formData);
@@ -31,7 +33,7 @@ export const SignUpForm = () => {
       setErrorMessage(result.error);
     } else {
       await addUserToDB();
-      router.push('/lists');
+      router.push(redirect);
     }
   }
 

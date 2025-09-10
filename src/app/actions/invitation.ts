@@ -58,9 +58,9 @@ export const acceptInvitation = async (userId: string, token: string) => {
   }
 }
 
-export const declineInvitation = async (token: string) => {
+export const declineInvitation = async (userId: string, token: string) => {
   try {
-    await db.declineInvitation(token);
+    await db.declineInvitation(userId, token);
     return { success: true };
   } catch (err: any) {
     return { error: err?.response?.data?.message || err.message || 'Error declining invitation' };

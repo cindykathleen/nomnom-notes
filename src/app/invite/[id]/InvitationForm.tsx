@@ -33,7 +33,7 @@ export default function InvitationForm({ user, owner, list, token }: { user: Use
   }
 
   const handleDecline = async () => {
-    const invitation = await declineInvitation(token);
+    const invitation = await declineInvitation(user._id, token);
 
     setShowButtons(false);
 
