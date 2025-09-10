@@ -407,11 +407,18 @@ export class Database {
     );
   }
 
-  async declineInvitation(token: string) {
+  async declineInvitation(userId: string, token: string) {
     const invitation = await this.db.collection<Invitation>('invitations').findOne({ token: token });
 
     // Check to make sure the invitation exists
     if (!invitation) throw new Error('Invitation not found');
+
+    // Check to make sure the user doesn't already collaborate on this list
+    const user = await this.db.collection<User>('users').findOne({ _id: userId });
+
+    if (user!.lists.includes(invitation.listId)) {
+      throw new Error('You are already a collaborator on this list');
+    }
 
     // Void the invitation
     await this.db.collection<Invitation>('invitations').updateOne(
