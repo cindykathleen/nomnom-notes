@@ -6,15 +6,6 @@ import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 
 export const getToken = async (userId: string, listId: string) => {
-  // Check if there is already a valid invitation for this list created by this user
-  // To be considered valid, it must not expire for at least another 2 days
-  const existingInvitation = await db.getExistingInvitation(listId);
-
-  if (existingInvitation) {
-    return existingInvitation.token;
-  }
-
-  // If there isn't, create a new one
   const token = crypto.randomBytes(16).toString('base64url');
 
   const newInvitation: Invitation = {
@@ -23,7 +14,7 @@ export const getToken = async (userId: string, listId: string) => {
     invitedBy: userId,
     token: token,
     createdAt: new Date(),
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Expires in 7 days
+    expiresAt: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // Expires in 1 day
     usedBy: ''
   }
 

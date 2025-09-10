@@ -22,6 +22,7 @@ export default function ListCard({
   const [showShareModal, setShowShareModal] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [showRemoveAlert, setShowRemoveAlert] = useState(false);
+  const [collaboratorToRemove, setCollaboratorToRemove] = useState<User | null>(null);
 
   // States for the input fields in the edit modal
   const [inputName, setInputName] = useState(list.name);
@@ -148,7 +149,7 @@ export default function ListCard({
       { // Modal for sharing lists
         showShareModal && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
+            <div className="relative px-6 py-8 min-w-fit w-1/4 bg-snowwhite rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-darkpink">Share {list.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => { setShowShareModal(false) }}>
@@ -168,16 +169,16 @@ export default function ListCard({
               <div className="p-4">
                 <h4 className="mb-4 text-xl font-semibold">People with access</h4>
                 {users.map((user: User) => (
-                  <div key={user._id} className="w-full flex items-center justify-between">
+                  <div key={user._id} className="w-full mb-2 flex items-center justify-between">
                     <p>
                       <span className="font-semibold">{user.name}</span>
-                      {role === 'owner' && (<span className="font-semibold"> (you)</span>)}<br />
+                      {user._id === list.owner && (<span className="font-semibold"> (you)</span>)}<br />
                       <span className="opacity-75">{user.email}</span>
                     </p>
-                    {role === 'owner' && (<p className="opacity-75">Owner</p>)}
-                    {role !== 'owner' && (
+                    {user._id === list.owner && (<p className="opacity-75">Owner</p>)}
+                    {user._id !== list.owner && (
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
-                        className="size-6 cursor-pointer" onClick={() => { removeUser(user._id, list._id) }}>
+                        className="size-6 opacity-75 cursor-pointer" onClick={() => { setCollaboratorToRemove(user); }}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                       </svg>
                     )}
@@ -228,6 +229,27 @@ export default function ListCard({
                 <button type="button"
                   className="px-8 py-1.5 text-sm text-darkpink font-semibold text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
                   onClick={() => { setShowRemoveAlert(false) }}>
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+      { // Alert for removing collaborators
+        collaboratorToRemove && (
+          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
+            <div role="alert" className="relative px-6 py-8 w-1/5 bg-snowwhite rounded-lg">
+              <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to remove this user as a collaborator?</h3>
+              <div className="flex">
+                <button type="button"
+                  className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
+                  onClick={() => { removeUser(collaboratorToRemove._id, list._id); setCollaboratorToRemove(null); }}>
+                  Yes
+                </button>
+                <button type="button"
+                  className="px-8 py-1.5 text-sm text-darkpink font-semibold text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
+                  onClick={() => { setCollaboratorToRemove(null) }}>
                   No
                 </button>
               </div>
