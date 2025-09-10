@@ -17,16 +17,16 @@ export const SignInForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/lists';
-  
-    const handleSubmit = async (formData: FormData) => {
-      const result = await signIn(formData);
-  
-      if (result.error) {
-        setErrorMessage(result.error);
-      } else {
-        router.push(redirect);
-      }
+
+  const handleSubmit = async (formData: FormData) => {
+    const result = await signIn(formData);
+
+    if (result.error) {
+      setErrorMessage(result.error);
+    } else {
+      router.push(redirect);
     }
+  }
 
   return (
     <form action={formData => { handleSubmit(formData) }} className="p-4 flex flex-col">

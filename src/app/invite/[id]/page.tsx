@@ -9,9 +9,10 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   const userId = await getCurrentUser(false);
   const user = await db.getUser(userId);
+  const owner = await db.getOwnerByToken(id);
   const list = await db.getListByToken(id);
 
-  if (!user || !list) {
+  if (!user || !owner || !list) {
     return;
   }
 
@@ -27,7 +28,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       <div className="max-w-[1440px] w-full flex flex-col items-center">
         { // No error found and invitation is valid
           validInvitation && (
-            <InvitationForm user={user} list={list} token={id} />
+            <InvitationForm user={user} owner={owner} list={list} token={id} />
           )}
         { // Error found and invitation is not valid
           !validInvitation && (

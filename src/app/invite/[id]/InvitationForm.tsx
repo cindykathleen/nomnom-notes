@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { User, List } from '@/app/interfaces/interfaces';
 import { acceptInvitation, declineInvitation } from '@/app/actions/invitation';
 
-export default function InvitationForm({ user, list, token }: { user: User, list: List, token: string }) {
+export default function InvitationForm({ user, owner, list, token }: { user: User, owner: User, list: List, token: string }) {
   const [heading, setHeading] = useState<string>('Share your notes');
-  const [message, setMessage] = useState<string | React.ReactNode>(`${user.name} has invited you to collaborate on their list, ${list.name}.`);
+  const [message, setMessage] = useState<string | React.ReactNode>(`${owner.name} has invited you to collaborate on their list, ${list.name}.`);
   const [showButtons, setShowButtons] = useState<boolean>(true);
 
   const handleAccept = async () => {
