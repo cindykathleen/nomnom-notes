@@ -330,23 +330,6 @@ export class Database {
     await this.db.collection<Invitation>('invitations').insertOne(invitation);
   }
 
-  async getExistingInvitation(listId: string) {
-    const invitation = await this.db.collection<Invitation>('invitations').findOne({ listId: listId });
-
-    // Check if the invitation exists
-    if (!invitation) return null;
-
-    // Check if the invitation has already been used
-    if (invitation.usedBy !== '') return null;
-
-    // Check if the invitation expires in at least 2 days
-    const expiresAt = new Date(invitation.expiresAt);
-    const now = new Date();
-    const minTwoDays = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
-
-    return expiresAt > minTwoDays ? invitation : null;
-  }
-
   async getInvitationByToken(token: string) {
     const invitation = await this.db.collection<Invitation>('invitations').findOne({ token: token });
 
