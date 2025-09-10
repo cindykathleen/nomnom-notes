@@ -9,7 +9,11 @@ export default async function getCurrentUser(isPublic: boolean) {
 
   if (!isPublic) {
     if (!session) {
-      redirect('/sign-in');
+      const h = await headers();
+      const path = h.get('x-invoke-path') || '';
+      const redirectUrl = encodeURIComponent(`/${path}`);
+
+      redirect(`/sign-in?redirect=${redirectUrl}`);
     }
 
     return session.user.id;

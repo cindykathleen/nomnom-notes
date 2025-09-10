@@ -14,17 +14,9 @@ export class Database {
   async getUser(userId: string) {
     return await this.db.collection<User>('users').findOne({ _id: userId });
   }
-  
+
   async getUsers(listId: string) {
     return await this.db.collection<User>('users').find({ lists: listId }).toArray();
-  }
-
-  async getUserByToken(token: string) {
-    const doc = await this.db.collection<Invitation>('invitations').findOne({ token: token });
-    
-    if (!doc) return null;
-    
-    return await this.db.collection<User>('users').findOne({ _id: doc.invitedBy });
   }
 
   async getListIds(userId: string) {
@@ -59,9 +51,9 @@ export class Database {
 
   async getListByToken(token: string) {
     const doc = await this.db.collection<Invitation>('invitations').findOne({ token: token });
-    
+
     if (!doc) return null;
-    
+
     return await this.getList(doc.listId);
   }
 
@@ -376,6 +368,14 @@ export class Database {
     return invitation;
   }
 
+  async getOwnerByToken(token: string) {
+    const doc = await this.db.collection<Invitation>('invitations').findOne({ token: token });
+
+    if (!doc) return null;
+
+    return await this.db.collection<User>('users').findOne({ _id: doc.invitedBy });
+  }
+
   async acceptInvitation(userId: string, token: string) {
     const invitation = await this.db.collection<Invitation>('invitations').findOne({ token: token });
 
@@ -386,7 +386,7 @@ export class Database {
     const user = await this.db.collection<User>('users').findOne({ _id: userId });
 
     if (user!.lists.includes(invitation.listId)) {
-      throw new Error('User is already a collaborator on this list');
+      throw new Error('You are already a collaborator on this list');
     }
 
     // Check to make sure the user hasn't already used this invitation
