@@ -205,8 +205,7 @@ export class Database {
       {
         $set: {
           name: dish.name,
-          note: dish.note,
-          rating: dish.rating,
+          reviews: dish.reviews,
           photoId: dish.photoId,
           photoUrl: dish.photoUrl
         }
@@ -408,9 +407,18 @@ export class Database {
   }
 
   // Review functions
-  async getExistingReview(userId: string, restaurantId: string) {
+  async getExistingRestaurantReview(userId: string, restaurantId: string) {
     const doc = await this.db.collection<Restaurant>('restaurants').findOne(
       { _id: restaurantId, 'reviews.createdBy': userId },
+      { projection: { 'reviews.$': 1 } }
+    );
+
+    return doc?.reviews?.[0] || null;
+  }
+
+  async getExistingDishReview(userId: string, dishId: string) {
+    const doc = await this.db.collection<Dish>('dishes').findOne(
+      { _id: dishId, 'reviews.createdBy': userId },
       { projection: { 'reviews.$': 1 } }
     );
 

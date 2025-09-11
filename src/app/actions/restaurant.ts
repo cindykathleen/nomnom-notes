@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const updateReview = async (formData: FormData, userId: string, restaurantId: string, rating: number) => {
   const note = formData.get('restaurant-note') as string;
 
-  const existingReview = await db.getExistingReview(userId, restaurantId);
+  const existingReview = await db.getExistingRestaurantReview(userId, restaurantId);
   let updatedReview: Review;
 
   if (!existingReview) {
@@ -36,7 +36,7 @@ export const updateReview = async (formData: FormData, userId: string, restauran
 
 export const updateRestaurant = async (userId: string, restaurantId: string, updatedReview: Review) => {
   try {
-    const existingReview = await db.getExistingReview(userId, restaurantId);
+    const existingReview = await db.getExistingRestaurantReview(userId, restaurantId);
     const existingRestaurant = await db.getRestaurant(restaurantId);
 
     if (!existingRestaurant) {
@@ -47,10 +47,10 @@ export const updateRestaurant = async (userId: string, restaurantId: string, upd
 
     if (!existingReview) {
       // Add the new review
-      updatedReviews = [...(existingRestaurant.reviews || []), updatedReview];
+      updatedReviews = [...existingRestaurant.reviews, updatedReview];
     } else {
       // Replace the existing review
-      updatedReviews = (existingRestaurant.reviews || []).map((review) =>
+      updatedReviews = (existingRestaurant.reviews).map((review) =>
         review.createdBy === userId ? updatedReview : review
       );
     }
