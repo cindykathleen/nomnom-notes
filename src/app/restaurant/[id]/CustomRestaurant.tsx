@@ -1,11 +1,14 @@
 import { db } from '@/app/lib/database';
 import { List, Dish } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
+import getAvgRating from '@/app/lib/getAvgRating';
 import RatingDisplay from '@/app/components/RatingDisplay';
 import DishCard from './DishCard';
 import DishAddCard from './DishAddCard';
 
 export default async function CustomRestaurant({ userId, list, restaurantId }: { userId: string, list: List, restaurantId: string }) {
+  const isOwnerOrCollaborator = await db.isOwnerOrCollaborator(userId, list._id);
+  
   let restaurant;
 
   try {
@@ -38,14 +41,12 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
 
   dishes.sort((a, b) => a.index - b.index);
 
-  const isOwner = await db.isOwner(userId, list._id);
-
   return (
     <div className="relative h-full w-screen p-16 mt-[80px] flex justify-center">
       <div className="max-w-[1440px] w-full px-8 flex flex-col space-y-6">
         <div className="flex gap-2">
-          { // Don't display private pages for anyone other than the list owner
-            isOwner && (
+          { // Don't display private pages for anyone other than the list owner / collaborator
+            isOwnerOrCollaborator && (
               <>
                 <Link href="/lists/" className="font-semibold hover:text-mauve transition-colors">
                   Lists
@@ -61,24 +62,23 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
         </div>
         <div className="flex flex-col gap-2">
           <h1 className="text-4xl font-semibold">{restaurant.name}</h1>
-          <RatingDisplay rating={restaurant.rating} />
-          <p className="whitespace-pre-line">{restaurant.description}</p>
+          <RatingDisplay rating={getAvgRating(restaurant.reviews)} />
         </div>
         <div className="">
           <h2 className="text-3xl font-semibold">Dishes</h2>
         </div>
         { // Display an error message if there are no dishes and the user is not the list owner
-          (dishes.length === 0 && !isOwner) && (
+          (dishes.length === 0 && !isOwnerOrCollaborator) && (
             <p className="text-lg">The owner of this list has not added any dishes.</p>
           )
         }
         <div className="grid grid-cols-4 gap-16">
           {dishes.map((dish) => (
-            <DishCard key={dish._id} isOwner={isOwner} restaurant={restaurant} dish={dish} />
+            <DishCard key={dish._id} userId={userId} isOwnerOrCollaborator={isOwnerOrCollaborator} restaurant={restaurant} dish={dish} />
           ))}
-          { // Don't display dish add card for anyone other than the list owner
-            isOwner && (
-              <DishAddCard restaurantId={restaurant._id} />
+          { // Don't display dish add card for anyone other than the list owner / collaborator
+            isOwnerOrCollaborator && (
+              <DishAddCard userId={userId} restaurantId={restaurant._id} />
             )
           }
         </div>

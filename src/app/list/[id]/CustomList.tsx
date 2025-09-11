@@ -6,6 +6,7 @@ import GoogleMap from './GoogleMap';
 
 export default async function CustomList({ userId, listId }: { userId: string, listId: string }) {
   const isOwnerOrCollaborator = await db.isOwnerOrCollaborator(userId, listId);
+  
   let list;
 
   try {
@@ -39,7 +40,7 @@ export default async function CustomList({ userId, listId }: { userId: string, l
   return (
     <div className="fixed top-[80px] h-[calc(100vh-80px)] w-screen box-border p-16 flex justify-center">
       <div className="max-w-[1440px] w-full px-8 flex flex-col space-y-6">
-        { // Don't display private pages for anyone other than the list owner
+        { // Don't display private pages for anyone other than the list owner / collaborator
           isOwnerOrCollaborator && (
             <div className="flex gap-2">
               <Link href="/lists" className="font-semibold hover:text-mauve transition-colors">

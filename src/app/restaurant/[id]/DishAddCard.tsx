@@ -6,7 +6,7 @@ import RatingSystem from '@/app/components/RatingSystem';
 import ImageInput from '@/app/components/ImageInput';
 import { uploadImage } from '@/app/lib/uploadImage';
 
-export default function DishAddCard({ restaurantId }: { restaurantId: string }) {
+export default function DishAddCard({ userId, restaurantId }: { userId: string, restaurantId: string }) {
   // State for modal
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
 
@@ -46,7 +46,7 @@ export default function DishAddCard({ restaurantId }: { restaurantId: string }) 
                   inputPhotoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
                 }
 
-                await addDish(formData, restaurantId, rating, inputPhotoId);
+                await addDish(formData, userId, restaurantId, rating, inputPhotoId);
                 setShowAddModal(false);
               }} className="p-4 flex flex-col">
                 <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>

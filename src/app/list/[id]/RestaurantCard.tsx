@@ -7,7 +7,7 @@ import { updateReview, updateRestaurant, deleteRestaurant } from '@/app/actions/
 import getAvgRating from '@/app/lib/getAvgRating';
 import RatingDisplay from '@/app/components/RatingDisplay';
 import RatingSystem from '@/app/components/RatingSystem';
-import ReviewCard from './ReviewCard';
+import ReviewCard from '@/app/components/ReviewCard';
 
 export default function RestaurantCard({
   userId,
