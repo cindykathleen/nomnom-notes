@@ -19,6 +19,11 @@ export class Database {
     return await this.db.collection<User>('users').find({ lists: listId }).toArray();
   }
 
+  async getUserName(userId: string) {
+    const doc = await this.db.collection<User>('users').findOne({ _id: userId });
+    return doc?.name ?? '';
+  }
+
   async getListIds(userId: string) {
     const doc = await this.db.collection<User>('users').findOne({ _id: userId });
     return doc?.lists ?? [];
@@ -41,12 +46,7 @@ export class Database {
   }
 
   async getListByRestaurantId(restaurantId: string) {
-    const doc = await this.db.collection<Lists>('lists').findOne(
-      { 'lists.restaurants': restaurantId },
-      { projection: { 'lists.$': 1 } }
-    );
-
-    return doc?.lists?.[0] ?? null;
+    return await this.db.collection<List>('lists').findOne({ restaurants: restaurantId });
   }
 
   async getListByToken(token: string) {
@@ -58,18 +58,24 @@ export class Database {
   }
 
   async getListVisibility(listId: string) {
-    const doc = await this.db.collection<Lists>('lists').findOne(
-      { 'lists._id': listId },
-      { projection: { 'lists.$': 1 } }
-    );
+    const doc = await this.db.collection<List>('lists').findOne({ _id: listId });
 
-    return doc?.lists?.[0].visibility ?? null;
+    return doc?.visibility ?? null;
   }
 
   async isOwner(userId: string, listId: string) {
     const doc = await this.db.collection<List>('lists').findOne({ _id: listId });
 
     return doc?.owner === userId;
+  }
+
+  async isOwnerOrCollaborator(userId: string, listId: string) {
+    const users = await this.db.collection<User>('users').find(
+      { lists: listId },
+      { projection: { _id: 1 } })
+      .toArray();
+
+    return users.some(user => user._id === userId);
   }
 
   async addList(userId: string, list: List) {
@@ -82,16 +88,16 @@ export class Database {
     );
   }
 
-  async updateList(userId: string, list: List) {
-    await this.db.collection<Lists>('lists').updateOne(
-      { userId, 'lists._id': list._id },
+  async updateList(list: List) {
+    await this.db.collection<List>('lists').updateOne(
+      { _id: list._id },
       {
         $set: {
-          'lists.$.name': list.name,
-          'lists.$.visibility': list.visibility,
-          'lists.$.description': list.description,
-          'lists.$.photoId': list.photoId,
-          'lists.$.photoUrl': list.photoUrl
+          name: list.name,
+          visibility: list.visibility,
+          description: list.description,
+          photoId: list.photoId,
+          photoUrl: list.photoUrl
         }
       }
     );
@@ -151,40 +157,30 @@ export class Database {
     return await this.db.collection<Restaurant>('restaurants').findOne({ _id: restaurantId });
   }
 
-  async addRestaurant(userId: string, listId: string, restaurant: Restaurant) {
-    // Only add the restaurant if it doesn't already exist inside of the restaraunts collection
-    await this.db.collection<Restaurant>('restaurants').updateOne(
-      { _id: restaurant._id },
-      { $setOnInsert: restaurant },
-      { upsert: true }
-    )
+  async addRestaurant(listId: string, restaurant: Restaurant) {
+    await this.db.collection<Restaurant>('restaurants').insertOne(restaurant);
 
     // Add the restaurant ID to the specified list
     await this.db.collection<List>('lists').updateOne(
-      { userId, 'lists._id': listId },
-      { $push: { 'lists.$.restaurants': restaurant._id } }
+      { _id: listId },
+      { $push: { restaurants: restaurant._id } }
     );
   }
 
   async updateRestaurant(restaurant: Restaurant) {
     await this.db.collection<Restaurant>('restaurants').updateOne(
       { _id: restaurant._id },
-      {
-        $set: {
-          rating: restaurant.rating,
-          description: restaurant.description
-        }
-      }
+      { $set: { reviews: restaurant.reviews } }
     );
   }
 
-  async deleteRestaurant(userId: string, listId: string, restaurantId: string) {
+  async deleteRestaurant(listId: string, restaurantId: string) {
     await this.db.collection<Restaurant>('restaurants').deleteOne({ _id: restaurantId });
 
     // Delete the restaurant ID from the specified list
     await this.db.collection<List>('lists').updateOne(
-      { userId, 'lists._id': listId },
-      { $pull: { 'lists.$.restaurants': restaurantId } }
+      { _id: listId },
+      { $pull: { restaurants: restaurantId } }
     );
   }
 
@@ -409,6 +405,16 @@ export class Database {
       { $set: { usedBy: 'Declined' } }
     );
 
+  }
+
+  // Review functions
+  async getExistingReview(userId: string, restaurantId: string) {
+    const doc = await this.db.collection<Restaurant>('restaurants').findOne(
+      { _id: restaurantId, 'reviews.createdBy': userId },
+      { projection: { 'reviews.$': 1 } }
+    );
+
+    return doc?.reviews?.[0] || null;
   }
 }
 

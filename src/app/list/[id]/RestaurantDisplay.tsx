@@ -9,7 +9,17 @@ enum SortType {
   Name = 'name'
 }
 
-export default function RestaurantDisplay({ userId, isOwner, list, initialRestaurants }: { userId: string, isOwner: boolean, list: List, initialRestaurants: Restaurant[] }) {
+export default function RestaurantDisplay({ 
+  userId, 
+  isOwnerOrCollaborator, 
+  list, 
+  initialRestaurants 
+}: { 
+  userId: string, 
+  isOwnerOrCollaborator: boolean, 
+  list: List, 
+  initialRestaurants: Restaurant[] 
+}) {
   const [sort, setSort] = useState<SortType>(SortType.RecentlyAdded);
   const [restaurants, setRestaurants] = useState<Restaurant[]>(initialRestaurants);
 
@@ -67,7 +77,7 @@ export default function RestaurantDisplay({ userId, isOwner, list, initialRestau
           <RestaurantCard
             key={restaurant._id}
             userId={userId}
-            isOwner={isOwner}
+            isOwnerOrCollaborator={isOwnerOrCollaborator}
             listId={list._id}
             restaurant={restaurant}
             onUpdate={onUpdate}

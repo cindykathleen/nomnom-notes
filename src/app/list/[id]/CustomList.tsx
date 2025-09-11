@@ -5,6 +5,7 @@ import RestaurantDisplay from './RestaurantDisplay';
 import GoogleMap from './GoogleMap';
 
 export default async function CustomList({ userId, listId }: { userId: string, listId: string }) {
+  const isOwnerOrCollaborator = await db.isOwnerOrCollaborator(userId, listId);
   let list;
 
   try {
@@ -35,13 +36,11 @@ export default async function CustomList({ userId, listId }: { userId: string, l
     return <div>Error fetching restaurants</div>;
   }
 
-  const isOwner = await db.isOwner(userId, listId);
-
   return (
     <div className="fixed top-[80px] h-[calc(100vh-80px)] w-screen box-border p-16 flex justify-center">
       <div className="max-w-[1440px] w-full px-8 flex flex-col space-y-6">
         { // Don't display private pages for anyone other than the list owner
-          isOwner && (
+          isOwnerOrCollaborator && (
             <div className="flex gap-2">
               <Link href="/lists" className="font-semibold hover:text-mauve transition-colors">
                 Lists
@@ -52,12 +51,12 @@ export default async function CustomList({ userId, listId }: { userId: string, l
           )}
         <h1 className="text-4xl font-semibold">{list.name}</h1>
         <div className="max-h-full flex gap-8 overflow-y-auto">
-          <RestaurantDisplay userId={userId} isOwner={isOwner} list={list} initialRestaurants={restaurants} />
-          { // Don't display a map for public users
+          <RestaurantDisplay userId={userId} isOwnerOrCollaborator={isOwnerOrCollaborator} list={list} initialRestaurants={restaurants} />
+          {/* { // Don't display a map for public users
             (userId !== 'public') && (
               <GoogleMap restaurants={restaurants} />
             )
-          }
+          } */}
         </div>
       </div>
     </div>

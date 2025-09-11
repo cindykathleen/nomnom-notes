@@ -33,8 +33,8 @@ export interface Place {
 export interface Restaurant extends Place {
   photoUrl: string;
   reviews: Review[];
-  dateAdded: Date;
   dishes: string[];
+  dateAdded: Date;
 }
 
 export interface Dish {
@@ -49,6 +49,7 @@ export interface Dish {
 export interface Review {
   _id: string;
   createdBy: string;
+  name: string;
   rating: number;
   note: string;
 }

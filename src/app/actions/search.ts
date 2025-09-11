@@ -34,15 +34,7 @@ export const searchQuery = async (formData: FormData) => {
 }
 
 export const addPlace = async (listId: string, place: Place) => {
-  const userId = await getCurrentUser();
-
-  const lists = await db.getLists(userId);
-
-  // Check if the restaurant is already in the list
-  const currentList = lists.find((list) => list._id === listId);
-  if (currentList!.restaurants.find((restaurant) => restaurant === place._id)) {
-    return;
-  }
+  // TODO: Check if the restaurant is already in the list
 
   // Get the restaurant cover photo from Google
   if (place.photoId !== '') {
@@ -66,11 +58,10 @@ export const addPlace = async (listId: string, place: Place) => {
     mapsUrl: place.mapsUrl,
     photoId: place.photoId,
     photoUrl: `/api/database/photos?id=${place.photoId}`,
-    rating: 0,
-    description: '',
+    reviews: [],
     dishes: [],
     dateAdded: new Date()
   }
 
-  await db.addRestaurant(userId, listId, newRestaurant);
+  await db.addRestaurant(listId, newRestaurant);
 }
