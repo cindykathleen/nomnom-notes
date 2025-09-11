@@ -117,7 +117,7 @@ export default function ListCard({
                   inputPhotoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
                 }
 
-                await updateList(userId, formData, list._id, inputPhotoId);
+                await updateList(formData, list._id, inputPhotoId);
                 setShowEditModal(false);
               }} className="p-4 flex flex-col">
                 <label htmlFor="list-name" className="pb-1 font-semibold">Name</label>

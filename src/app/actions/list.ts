@@ -30,7 +30,7 @@ export const addList = async (userId: string, formData: FormData, photoId: strin
   }
 }
 
-export const updateList = async (userId: string, formData: FormData, listId: string, photoId: string) => {
+export const updateList = async (formData: FormData, listId: string, photoId: string) => {
   const name = formData.get('list-name') as string;
   const visibility = formData.get('list-visibility') as 'private' | 'public';
   const description = formData.get('list-description') as string;
@@ -51,7 +51,7 @@ export const updateList = async (userId: string, formData: FormData, listId: str
       photoUrl: `/api/database/photos?id=${photoId}`,
     };
 
-    await db.updateList(userId, updatedList);
+    await db.updateList(updatedList);
     revalidatePath('/lists');
     return { message: 'List updated successfully' };
   } catch (err) {

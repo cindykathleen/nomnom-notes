@@ -1,21 +1,28 @@
 import getCurrentUser from '@/app/lib/getCurrentUser';
 import { db } from '@/app/lib/database';
+import { List } from '@/app/interfaces/interfaces';
 import Nav from '@/app/components/Nav';
 import SearchForm from './SearchForm';
 
 export default async function Page() {
   const userId = await getCurrentUser(false);
-
-  let lists;
+  let listIds = await db.getListIds(userId);
+  let lists: List[] = [];
 
   try {
-    lists = await db.getLists(userId);
+    lists = await Promise.all(
+      listIds.map(async (listId) => {
+        const list = await db.getList(listId);
 
-    if (!lists) {
-      return <div>Error fetching lists</div>;
-    }
+        if (!list) {
+          throw new Error(`List with ID ${listId} not found`);
+        }
+
+        return list;
+      })
+    );
   } catch (err) {
-    return <div>Error fetching lists</div>;
+    throw new Error(`Error fetching lists: ${err}`);
   }
 
   return (
