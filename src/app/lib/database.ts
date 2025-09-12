@@ -121,36 +121,25 @@ export class Database {
   }
 
   async moveList(userId: string, dragIndex: number, hoverIndex: number) {
-    const collection = this.db.collection<Lists>('lists');
+  const user = await this.db.collection<User>('users').findOne({ _id: userId });
+  
+  if (!user) return null;
 
-    const dragItem = await collection.findOne(
-      { userId, 'lists.index': dragIndex },
-      { projection: { 'lists.$': 1 } }
-    );
+  // Make a copy of the user's lists to avoid mutating the original
+  const lists = [...user.lists];
 
-    await collection.updateMany(
-      { userId },
-      dragIndex > hoverIndex
-        // Moving item from the right to the left
-        ? { $inc: { 'lists.$[elem].index': 1 } }
-        // Moving item from left to right
-        : { $inc: { 'lists.$[elem].index': -1 } },
-      {
-        arrayFilters: dragIndex > hoverIndex
-          // Shift items from hoverIndex to dragIndex - 1
-          ? [{ 'elem.index': { $gte: hoverIndex, $lt: dragIndex } }]
-          // Shift items from dragIndex + 1 to hoverIndex
-          : [{ 'elem.index': { $gt: dragIndex, $lte: hoverIndex } }]
-      }
-    )
-    // If dragIndex and hoverIndex are the same, it is already being taken care of in ListCard.tsx
+  // Remove the dragged item
+  const [dragItem] = lists.splice(dragIndex, 1);
 
-    // Update the item to its new index position
-    await collection.updateOne(
-      { userId, 'lists._id': dragItem?.lists?.[0]._id },
-      { $set: { 'lists.$.index': hoverIndex } }
-    )
-  }
+  // Insert the dragged item at the new position
+  lists.splice(hoverIndex, 0, dragItem);
+
+  // Save the reordered lists
+  await this.db.collection<User>('users').updateOne(
+    { _id: userId },
+    { $set: { lists } }
+  );
+}
 
   // Restaurant functions
   async getRestaurant(restaurantId: string) {

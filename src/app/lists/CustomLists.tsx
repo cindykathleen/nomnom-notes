@@ -41,7 +41,7 @@ export default async function CustomLists({ userId }: { userId: string }) {
           {lists.map(async (list: List) => {
             const role = await getRole(list._id);
             const users = await getUsers(list._id);
-            return <ListCard key={list._id} userId={userId} role={role} list={list} users={users} />;
+            return <ListCard key={list._id} userId={userId} role={role} list={list} lists={lists} users={users} />;
           })}
           <ListAddCard userId={userId} />
         </div>

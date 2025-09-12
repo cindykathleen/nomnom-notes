@@ -11,10 +11,14 @@ import { removeUser } from '@/app/actions/user';
 import { updateList, deleteList, removeList, moveList } from '@/app/actions/list';
 import { getToken } from '@/app/actions/invitation';
 
+interface DragItem {
+  index: number;
+}
+
 export default function ListCard({
-  userId, role, list, users
+  userId, role, list, lists, users
 }: {
-  userId: string, role: string, list: List, users: User[]
+  userId: string, role: string, list: List, lists:List[], users: User[]
 }) {
   // States for modals & alerts
   const [showMenuModal, setShowMenuModal] = useState(false);
@@ -39,8 +43,69 @@ export default function ListCard({
     setShowShareModal(true);
   }
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
+    accept: "list",
+    // A collecting function that keeps track of the drop target/zone
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId()
+      }
+    },
+    hover(item: DragItem, monitor) {
+      // Checking to make sure ref is not null
+      if (!ref.current) {
+        return;
+      }
+
+      const dragIndex = item.index;
+      const hoverIndex = lists.indexOf(list);
+
+      // Don't call moveList if the item is hovering over itself
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      // Get the bounding rect of the hovered item
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      // Get the middle of the hovered item
+      const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+      // Get the mouse position
+      const clientOffset = monitor.getClientOffset();
+      // Get the pixels to the left
+      const hoverClientX = (clientOffset as XYCoord).x - hoverBoundingRect.left;
+
+      // Don't call moveList if the item did not pass the middle while dragging to the right
+      if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
+        return;
+      }
+      // Don't call moveList if the item did not pass the middle while dragging to the left
+      if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
+        return;
+      }
+
+      moveList(userId, dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    }
+  })
+
+  const [{ isDragging }, drag] = useDrag({
+    type: "list",
+    item: () => {
+      return { id: list._id, index: lists.indexOf(list) }
+    },
+    // A collecting function that keeps track of the dragging state
+    collect: (monitor: any) => ({
+      isDragging: monitor.isDragging()
+    }),
+  })
+
+  // Setting ref to act as both a drag source and a drop target
+  drag(drop(ref));
+
   return (
-    <div key={list._id}
+    <div key={list._id} ref={ref} data-handler-id={handlerId}
       className="relative flex flex-col bg-snowwhite rounded-sm">
       <Link href={`/list/${list._id}`}>
         <img src={list.photoUrl} alt={list.name} className="aspect-square rounded-lg" />
