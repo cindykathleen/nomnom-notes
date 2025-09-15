@@ -60,7 +60,7 @@ export default function DishCard({
       const dragIndex = item.index;
       const hoverIndex = dish.index;
 
-      // Don't call moveList if the item is hovering over itself
+      // Don't call moveDish if the item is hovering over itself
       if (dragIndex === hoverIndex) {
         return;
       }
@@ -74,11 +74,11 @@ export default function DishCard({
       // Get the pixels to the left
       const hoverClientX = (clientOffset as XYCoord).x - hoverBoundingRect.left;
 
-      // Don't call moveList if the item did not pass the middle while dragging to the right
+      // Don't call moveDish if the item did not pass the middle while dragging to the right
       if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
         return;
       }
-      // Don't call moveList if the item did not pass the middle while dragging to the left
+      // Don't call moveDish if the item did not pass the middle while dragging to the left
       if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
         return;
       }
@@ -253,7 +253,7 @@ export default function DishCard({
         showAllReviews && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
             <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
-              <div className="p-4 flex items-center justify-between">
+              <div className="p-4 flex items-center justify-between gap-2">
                 <h2 className="text-3xl font-semibold text-darkpink">Reviews for {dish.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => { setShowAllReviews(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
