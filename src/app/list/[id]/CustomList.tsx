@@ -53,11 +53,11 @@ export default async function CustomList({ userId, listId }: { userId: string, l
         <h1 className="text-4xl font-semibold">{list.name}</h1>
         <div className="max-h-full flex gap-8 overflow-y-auto">
           <RestaurantDisplay userId={userId} isOwnerOrCollaborator={isOwnerOrCollaborator} list={list} initialRestaurants={restaurants} />
-          {/* { // Don't display a map for public users
+          { // Don't display a map for public users
             (userId !== 'public') && (
               <GoogleMap restaurants={restaurants} />
             )
-          } */}
+          }
         </div>
       </div>
     </div>

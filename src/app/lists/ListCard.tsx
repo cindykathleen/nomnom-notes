@@ -18,12 +18,13 @@ interface DragItem {
 export default function ListCard({
   userId, role, list, lists, users
 }: {
-  userId: string, role: string, list: List, lists:List[], users: User[]
+  userId: string, role: string, list: List, lists: List[], users: User[]
 }) {
   // States for modals & alerts
   const [showMenuModal, setShowMenuModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showLinkCopied, setShowLinkCopied] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [showRemoveAlert, setShowRemoveAlert] = useState(false);
   const [collaboratorToRemove, setCollaboratorToRemove] = useState<User | null>(null);
@@ -34,13 +35,11 @@ export default function ListCard({
   const [inputDescription, setInputDescription] = useState(list.description);
   const [inputImage, setInputImage] = useState(list.photoUrl);
 
-  const [invitationUrl, setInvitationUrl] = useState('');
-
   const handleShareClick = async () => {
-    setShowMenuModal(false);
     const token = await getToken(userId, list._id);
-    setInvitationUrl(`${window.location.protocol}//${window.location.host}/invite/${token}`);
-    setShowShareModal(true);
+    await navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}/invite/${token}`);
+    setShowLinkCopied(true);
+    setTimeout(() => setShowLinkCopied(false), 3000);
   }
 
   const ref = useRef<HTMLDivElement>(null);
@@ -132,7 +131,7 @@ export default function ListCard({
                 </button>
                 <button
                   className="px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink"
-                  onClick={handleShareClick}>
+                  onClick={() => { setShowMenuModal(false); setShowShareModal(true); }}>
                   Share
                 </button>
                 <button
@@ -214,7 +213,7 @@ export default function ListCard({
       { // Modal for sharing lists
         showShareModal && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div className="relative px-6 py-8 min-w-fit w-1/4 bg-snowwhite rounded-lg">
+            <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-darkpink">Share {list.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => { setShowShareModal(false) }}>
@@ -222,15 +221,6 @@ export default function ListCard({
                 </svg>
               </div>
               <hr className="border-slategray" />
-              <div className="p-4 mt-2 flex gap-2">
-                <p className="w-full px-2 py-1 text-lg border border-charcoal rounded-sm">{invitationUrl}</p>
-                <button className="w-fit px-2 py-1 border border-charcoal rounded-sm cursor-pointer"
-                  title="Copy link" onClick={() => { navigator.clipboard.writeText(invitationUrl) }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
-                  </svg>
-                </button>
-              </div>
               <div className="p-4">
                 <h4 className="mb-4 text-xl font-semibold">People with access</h4>
                 {users.map((user: User) => (
@@ -250,12 +240,27 @@ export default function ListCard({
                   </div>
                 ))}
               </div>
-              <button type="button"
-                className="px-4 py-2 mt-4 ml-4 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                onClick={() => { setShowShareModal(false) }}>
-                Done
-              </button>
+              <div className="px-4 flex justify-between">
+                <button type="button"
+                  className="px-4 py-2 self-start flex items-center gap-2 text-darkpink font-bold bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
+                  onClick={handleShareClick}>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                  </svg>
+                  <span>Copy invitation link</span>
+                </button>
+                <button type="button"
+                  className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
+                  onClick={() => { setShowShareModal(false) }}>
+                  Done
+                </button>
+              </div>
             </div>
+            {showLinkCopied && (
+              <div className="absolute px-4 py-2 bg-(--modal-background) rounded-lg">
+                <p className="text-snowwhite font-bold">Link copied</p>
+              </div>
+            )}
           </div>
         )
       }
