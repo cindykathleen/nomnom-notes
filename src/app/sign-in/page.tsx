@@ -21,7 +21,7 @@ export default async function Page({ searchParams }: { searchParams?: { [key: st
   return (
     <div className="relative h-screen w-screen p-16 flex items-center justify-center bg-coolbeige">
       <div className="max-w-[1440px] w-full flex flex-col items-center">
-        <div className="h-fit w-2xl px-12 py-10 bg-snowwhite rounded-3xl">
+        <div className="h-fit max-w-3xl px-12 py-10 bg-snowwhite rounded-3xl">
           <h2 className="pb-2 text-3xl font-semibold text-center">Sign in</h2>
           { // If the user was redirected from an invitation link, show this message
             redirect && owner && (
