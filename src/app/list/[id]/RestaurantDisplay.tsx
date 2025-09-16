@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { List, Restaurant } from '@/app/interfaces/interfaces';
 import RestaurantCard from "./RestaurantCard";
 
@@ -35,7 +35,7 @@ export default function RestaurantDisplay({
     setRestaurants([...restaurants]);
   }
 
-  useEffect(() => {
+  useMemo(() => {
     sortRestaurants();
   }, [sort]);
 
