@@ -33,7 +33,7 @@ export default async function Page() {
           <div>
             <h1 className="text-4xl font-semibold">Search</h1>
           </div>
-          <SearchForm lists={lists} />
+          <SearchForm userId={userId} lists={lists} />
         </div>
       </div >
     </div>

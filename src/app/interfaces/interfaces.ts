@@ -56,6 +56,10 @@ export interface Review {
   note: string;
 }
 
+export type SearchQueryResult =
+  | { kind: 'error'; message: string }
+  | { kind: 'success'; places: Place[] };
+
 export interface SearchResult {
   _id: string;
   result: Place[];

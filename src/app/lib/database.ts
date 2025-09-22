@@ -40,6 +40,30 @@ export class Database {
     )
   }
 
+  async getRate(userId: string, feature: 'search' | 'map') {
+    const doc = await this.db.collection<User>('users').findOne({ _id: userId });
+
+    if (feature === 'search') {
+      return doc?.searchRate ?? [];
+    } else {
+      return doc?.mapRate ?? [];
+    }
+  }
+
+  async addTimestamp(userId: string, feature: 'search' | 'map', timestamp: Date) {
+    if (feature === 'search') {
+      await this.db.collection<User>('users').updateOne(
+        { _id: userId },
+        { $push: { searchRate: timestamp } }
+      );
+    } else if (feature === 'map') {
+      await this.db.collection<User>('users').updateOne(
+        { _id: userId },
+        { $push: { mapRate: timestamp } }
+      );
+    }
+  }
+
   // Lists functions
   async getList(listId: string) {
     return await this.db.collection<List>('lists').findOne({ _id: listId });
@@ -121,25 +145,25 @@ export class Database {
   }
 
   async moveList(userId: string, dragIndex: number, hoverIndex: number) {
-  const user = await this.db.collection<User>('users').findOne({ _id: userId });
-  
-  if (!user) return null;
+    const user = await this.db.collection<User>('users').findOne({ _id: userId });
 
-  // Make a copy of the user's lists to avoid mutating the original
-  const lists = [...user.lists];
+    if (!user) return null;
 
-  // Remove the dragged item
-  const [dragItem] = lists.splice(dragIndex, 1);
+    // Make a copy of the user's lists to avoid mutating the original
+    const lists = [...user.lists];
 
-  // Insert the dragged item at the new position
-  lists.splice(hoverIndex, 0, dragItem);
+    // Remove the dragged item
+    const [dragItem] = lists.splice(dragIndex, 1);
 
-  // Save the reordered lists
-  await this.db.collection<User>('users').updateOne(
-    { _id: userId },
-    { $set: { lists } }
-  );
-}
+    // Insert the dragged item at the new position
+    lists.splice(hoverIndex, 0, dragItem);
+
+    // Save the reordered lists
+    await this.db.collection<User>('users').updateOne(
+      { _id: userId },
+      { $set: { lists } }
+    );
+  }
 
   // Restaurant functions
   async getRestaurant(restaurantId: string) {
