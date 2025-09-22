@@ -30,7 +30,7 @@ export class Database {
   }
 
   async addUser(userId: string, name: string, email: string) {
-    await this.db.collection<User>('users').insertOne({ _id: userId, name: name, email: email, lists: [] });
+    await this.db.collection<User>('users').insertOne({ _id: userId, name: name, email: email, lists: [], searchRate: [], mapRate: [] });
   }
 
   async removeUser(userId: string, listId: string) {
