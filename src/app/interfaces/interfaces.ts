@@ -5,6 +5,8 @@ export interface User {
   name: string;
   email: string;
   lists: string[];
+  searchRate: Date[];
+  mapRate: Date[];
 }
 
 export interface List {
