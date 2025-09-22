@@ -1,18 +1,18 @@
 'use server';
 
+import checkRate from '@/app/lib/checkRate';
 import { db } from '@/app/lib/database';
-import getCurrentUser from '@/app/lib/getCurrentUser';
 import { searchPlace } from '@/app/lib/GooglePlacesAPI';
-import { Place, Restaurant } from '@/app/interfaces/interfaces';
+import { Place, Restaurant, SearchQueryResult } from '@/app/interfaces/interfaces';
 import { getGooglePhoto } from './images';
 import { v4 as uuidv4 } from 'uuid';
 
-export const searchQuery = async (formData: FormData) => {
+export const searchQuery = async (formData: FormData, userId: string): Promise<SearchQueryResult> => {
   const searchQuery = formData.get('search-query') as string;
 
   // Make sure the input is not null
   if (!searchQuery) {
-    return [];
+    return { kind: 'error', message: 'Please enter a valid search query.' };
   }
 
   const query = searchQuery.toLowerCase();
@@ -21,7 +21,14 @@ export const searchQuery = async (formData: FormData) => {
   const storedPlaces = await db.getSearchResults(query);
 
   if (storedPlaces) {
-    return storedPlaces;
+    return { kind: 'success', places: storedPlaces };
+  }
+
+  // Check if the user has passed their rate limit before allowing them to send in a new search request
+  const featureAccessAllowed = checkRate(userId, 'search');
+
+  if (!featureAccessAllowed) {
+    return { kind: 'error', message: 'You have exceeded your search rate limit. Please try again later.' };
   }
 
   // Send a new search request
@@ -30,7 +37,7 @@ export const searchQuery = async (formData: FormData) => {
   // Store the new search into the database
   await db.addSearchResult(query, searchedPlaces);
 
-  return searchedPlaces;
+  return { kind: 'success', places: searchedPlaces };
 }
 
 export const addPlace = async (listId: string, place: Place) => {
