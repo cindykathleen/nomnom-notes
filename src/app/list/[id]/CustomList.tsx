@@ -2,6 +2,7 @@ import { db } from '@/app/lib/database';
 import { Restaurant } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import RestaurantDisplay from './RestaurantDisplay';
+import checkRate from '@/app/lib/checkRate';
 import GoogleMap from './GoogleMap';
 
 export default async function CustomList({ userId, listId }: { userId: string, listId: string }) {
@@ -37,6 +38,9 @@ export default async function CustomList({ userId, listId }: { userId: string, l
     return <div>Error fetching restaurants</div>;
   }
 
+  // Check if the user has passed their rate limit before allowing them to send in a new search request
+  const featureAccessAllowed = await checkRate(userId, 'map');
+
   return (
     <div className="fixed top-[80px] h-[calc(100vh-80px)] w-screen box-border p-16 flex justify-center">
       <div className="max-w-[1440px] w-full px-8 flex flex-col space-y-6">
@@ -52,9 +56,15 @@ export default async function CustomList({ userId, listId }: { userId: string, l
           )}
         <h1 className="text-4xl font-semibold">{list.name}</h1>
         <div className="max-h-full flex gap-8 overflow-y-auto">
-          <RestaurantDisplay userId={userId} isOwnerOrCollaborator={isOwnerOrCollaborator} list={list} initialRestaurants={restaurants} />
-          { // Don't display a map for public users
-            (userId !== 'public') && (
+          <RestaurantDisplay 
+            userId={userId} 
+            isOwnerOrCollaborator={isOwnerOrCollaborator} 
+            featureAccessAllowed={featureAccessAllowed} 
+            list={list} 
+            initialRestaurants={restaurants} 
+          />
+          { // Don't display a map for public users or if the user has passed their rate limit
+            (userId !== 'public') && featureAccessAllowed && (
               <GoogleMap restaurants={restaurants} />
             )
           }
