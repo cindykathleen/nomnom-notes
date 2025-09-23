@@ -25,7 +25,7 @@ export const searchQuery = async (formData: FormData, userId: string): Promise<S
   }
 
   // Check if the user has passed their rate limit before allowing them to send in a new search request
-  const featureAccessAllowed = checkRate(userId, 'search');
+  const featureAccessAllowed = await checkRate(userId, 'search');
 
   if (!featureAccessAllowed) {
     return { kind: 'error', message: 'You have exceeded your search rate limit. Please try again later.' };

@@ -45,11 +45,11 @@ export const searchPlace = async (query: string): Promise<Place[]> => {
     return {
       _id: place.id,
       name: place.displayName.text,
-      type: place.primaryTypeDisplayName.text,
+      type: place.primaryTypeDisplayName?.text ?? "",
       address: place.formattedAddress,
       location: place.location,
       mapsUrl: place.googleMapsUri,
-      photoId: place.photos?.[0]?.name || ""
+      photoId: place.photos?.[0]?.name ?? ""
     }
   });
 
