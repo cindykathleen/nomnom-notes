@@ -33,9 +33,13 @@ export const searchQuery = async (formData: FormData, userId: string): Promise<S
 
   // Send a new search request
   const searchedPlaces = await searchPlace(query);
-
+  
   // Store the new search into the database
   await db.addSearchResult(query, searchedPlaces);
+
+  if (searchedPlaces.length === 0) {
+    return { kind: 'error', message: 'No results found. Please try a different search query.' };
+  }
 
   return { kind: 'success', places: searchedPlaces };
 }

@@ -41,6 +41,11 @@ export const searchPlace = async (query: string): Promise<Place[]> => {
   const data = await response.json();
   const places = data.places;
 
+  // Return an empty array if no places found
+  if (!places || places.length === 0) {
+    return [];
+  }
+
   const results = places.map((place: any) => {
     return {
       _id: place.id,
