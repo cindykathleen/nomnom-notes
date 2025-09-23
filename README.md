@@ -20,6 +20,7 @@ This full-stack web application enables users to create and manage personalized 
 * User can see basic restaurant details (name, restaurant type, address, cover photo)
 * User can view the restaurant in Google Maps
 * User can choose what list to save the restaurant to
+* User can only submit 100 new search queries per 24 hours
 
 ### Restaurant features
 * User can add a review for each restaurant
@@ -29,6 +30,7 @@ This full-stack web application enables users to create and manage personalized 
 
 ### Map features
 * An interactive map will show the locations of the restaurants in each list
+* User can only load the map 250 times per 24 hours
 
 ### Collaboration features
 * User can choose to share their lists with other registered users
@@ -80,4 +82,3 @@ A pop-up modal that shows all of the reviews for a restaurant or dish.
 ## Future improvements
 * **Responsive design:** Make the web application dynamically adapt to various screen sizes and devices for optimal user experience and accessibility. 
 * **Host the site:** Deploy the web application to make it publicly accessible in a live environment.
-* **User authentication:** Search rates will also be limited per account.
