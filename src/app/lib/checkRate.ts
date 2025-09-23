@@ -1,10 +1,13 @@
 import { db } from './database';
 
 export default async function checkRate(userId: string, feature: 'search' | 'map') {
-  const limit = feature === 'search' ? 100 : 250;
   const rateArr = await db.getRate(userId, feature);
+  const limit = feature === 'search' 
+    ? parseInt(process.env.SEARCH_LIMIT || '100') 
+    : parseInt(process.env.MAP_LIMIT || '250');
+  
 
-  const window = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+  const window = parseInt(process.env.WINDOW_MS || '86400000'); // 24 hours in milliseconds
   const now = new Date();
   const windowStart = new Date(now.getTime() - window); // Timestamp for the start of the window
 
