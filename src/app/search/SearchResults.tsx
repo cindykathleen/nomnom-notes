@@ -12,8 +12,8 @@ export default function SearchResults({ lists, places }: { lists: List[], places
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
   return (
-    <div className="flex justify-between">
-      <div className="flex flex-col min-w-3xl">
+    <div className="flex gap-8">
+      <div className="w-full flex flex-col">
         {places.map((place) => {
           return (
             <div key={place._id} className="relative mb-8 bg-snowwhite cursor-pointer"
