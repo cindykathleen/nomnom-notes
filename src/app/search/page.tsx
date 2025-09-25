@@ -50,7 +50,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
           { // Default search page
             !results && (
               <>
-                <div className="py-16 space-y-8">
+                <div className="w-3xl mx-auto mb-16 space-y-8">
                   <h1 className="text-4xl font-semibold text-center">Search for a restaurant</h1>
                   <SearchForm />
                 </div>
@@ -64,7 +64,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
           { // Search results page
             results && (
               <div className="flex flex-col space-y-8">
-                <div className="max-w-lg">
+                <div className="w-3xl mx-auto mb-16">
                   <SearchForm query={query} />
                 </div>
                 { // Display an error message if the user has exceeded their rate limit
