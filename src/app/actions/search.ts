@@ -7,14 +7,7 @@ import { Place, Restaurant, SearchQueryResult } from '@/app/interfaces/interface
 import { getGooglePhoto } from './images';
 import { v4 as uuidv4 } from 'uuid';
 
-export const searchQuery = async (formData: FormData, userId: string): Promise<SearchQueryResult> => {
-  const searchQuery = formData.get('search-query') as string;
-
-  // Make sure the input is not null
-  if (!searchQuery) {
-    return { kind: 'error', message: 'Please enter a valid search query.' };
-  }
-
+export const searchQuery = async (searchQuery: string, userId: string): Promise<SearchQueryResult> => {
   const query = searchQuery.toLowerCase();
 
   // Check if the query is already stored in the database
@@ -32,7 +25,7 @@ export const searchQuery = async (formData: FormData, userId: string): Promise<S
   }
 
   // Send a new search request
-  const searchedPlaces = await searchPlace(query);
+  const searchedPlaces = await searchPlace(query, false);
   
   // Store the new search into the database
   await db.addSearchResult(query, searchedPlaces);
@@ -64,6 +57,7 @@ export const addPlace = async (listId: string, place: Place) => {
     _id: uuidv4(),
     name: place.name,
     type: place.type,
+    rating: place.rating,
     address: place.address,
     location: place.location,
     mapsUrl: place.mapsUrl,

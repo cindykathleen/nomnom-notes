@@ -316,7 +316,11 @@ export class Database {
       result: places
     }
 
-    await this.db.collection<SearchResult>('places').insertOne(newSearch);
+    await this.db.collection<SearchResult>('places').updateOne(
+      { _id: query },
+      { $setOnInsert: newSearch },
+      { upsert: true }
+    );
   }
 
   // Photo functions

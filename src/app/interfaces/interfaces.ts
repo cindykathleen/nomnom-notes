@@ -23,6 +23,7 @@ export interface Place {
   _id: string;
   name: string;
   type: string;
+  rating: number;
   address: string;
   location: {
     latitude: number;
@@ -37,6 +38,11 @@ export interface Restaurant extends Place {
   reviews: Review[];
   dishes: string[];
   dateAdded: Date;
+}
+
+export interface Recommendation {
+  _id: string;
+  restaurant: Place;
 }
 
 export interface Dish {

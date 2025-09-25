@@ -12,7 +12,7 @@ export default function SearchResults({ lists, places }: { lists: List[], places
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
   return (
-    <div className="flex">
+    <div className="flex justify-between">
       <div className="flex flex-col min-w-3xl">
         {places.map((place) => {
           return (

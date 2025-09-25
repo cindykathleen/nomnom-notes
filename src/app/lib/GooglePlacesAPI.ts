@@ -1,27 +1,35 @@
 import { Place } from '@/app/interfaces/interfaces';
 
-export const searchPlace = async (query: string): Promise<Place[]> => {
+export const searchPlace = async (query: string, recommendation: boolean): Promise<Place[]> => {
   // Make sure apiKey is not undefined
   const apiKey = process.env.API_SECRET_KEY!;
   const endpoint = 'https://places.googleapis.com/v1/places:searchText';
 
-  const body = {
-    textQuery: query,
-    // maxResultCount: 1,
-    languageCode: 'en'
-  };
+  let body = {};
+
+  if (!recommendation) {
+    body = {
+      textQuery: query,
+      languageCode: 'en'
+    };
+  } else {
+    body = {
+      textQuery: query,
+      minRating: 3.5,
+      languageCode: 'en'
+    };
+  }
 
   // The input has to be a string
   const fieldMask = [
-    'places.id', // Essentials IDs Only SKU
-    'places.displayName', // Pro SKU
-    'places.googleMapsUri', // Pro SKU
-    // 'places.googleMapsLinks', // Pro SKU
-    'places.formattedAddress', // Essentials SKU
-    // 'places.rating', // Enterprise SKU
-    'places.location', // Essentials IDs Only SKU
-    'places.photos', // Essentials IDs Only SKU
-    'places.primaryTypeDisplayName' // Pro SKU
+    'places.id',                      // Essentials IDs Only SKU
+    'places.displayName',             // Pro SKU
+    'places.googleMapsUri',           // Pro SKU
+    'places.formattedAddress',        // Essentials SKU
+    'places.rating',                  // Enterprise SKU
+    'places.location',                // Essentials IDs Only SKU
+    'places.photos',                  // Essentials IDs Only SKU
+    'places.primaryTypeDisplayName'   // Pro SKU
   ].join(',');
 
   const response = await fetch(endpoint, {
@@ -51,6 +59,7 @@ export const searchPlace = async (query: string): Promise<Place[]> => {
       _id: place.id,
       name: place.displayName.text,
       type: place.primaryTypeDisplayName?.text ?? "",
+      rating: place.rating ?? 0,
       address: place.formattedAddress,
       location: place.location,
       mapsUrl: place.googleMapsUri,
