@@ -164,7 +164,8 @@
         "writeAReviewUri": "https://www.google.com/maps/place//data=!4m3!3m2!1s0x808fc9456f00f439:0x1e270c8840346e14!12e1",
         "reviewsUri": "https://www.google.com/maps/place//data=!4m4!3m3!1s0x808fc9456f00f439:0x1e270c8840346e14!9m1!1b1",
         "photosUri": "https://www.google.com/maps/place//data=!4m3!3m2!1s0x808fc9456f00f439:0x1e270c8840346e14!10e5"
-      }
+      },
+      "rating": 4.7
     },
     {
       "id": "ChIJTRDQZ_K1j4ARqdjFU7FbSes",
@@ -330,7 +331,8 @@
         "writeAReviewUri": "https://www.google.com/maps/place//data=!4m3!3m2!1s0x808fb5f267d0104d:0xeb495bb153c5d8a9!12e1",
         "reviewsUri": "https://www.google.com/maps/place//data=!4m4!3m3!1s0x808fb5f267d0104d:0xeb495bb153c5d8a9!9m1!1b1",
         "photosUri": "https://www.google.com/maps/place//data=!4m3!3m2!1s0x808fb5f267d0104d:0xeb495bb153c5d8a9!10e5"
-      }
+      },
+      "rating": 4.4
     }
   ]
 }

@@ -19,7 +19,7 @@ export const getToken = async (userId: string, listId: string) => {
   }
 
   try {
-      await db.getToken(newInvitation);
+      await db.addInvitation(newInvitation);
       return token;
     } catch (err) {
       return 'Error creating invitation';
