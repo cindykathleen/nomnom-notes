@@ -9,11 +9,12 @@ describe('Google Places API', async () => {
     return {
       _id: place.id,
       name: place.displayName.text,
-      type: place.primaryTypeDisplayName.text,
+      type: place.primaryTypeDisplayName?.text ?? "",
+      rating: place.rating ?? 0,
       address: place.formattedAddress,
       location: place.location,
       mapsUrl: place.googleMapsUri,
-      photoId: place.photos?.[0]?.name || ""
+      photoId: place.photos?.[0]?.name ?? ""
     }
   });
 
@@ -22,7 +23,7 @@ describe('Google Places API', async () => {
       new Response(JSON.stringify(testData), { status: 200 })
     )
 
-    const result = await searchPlace('TP TEA')
+    const result = await searchPlace('TP TEA', false)
     expect(result).toEqual(expectedPlaces)
   })
 })

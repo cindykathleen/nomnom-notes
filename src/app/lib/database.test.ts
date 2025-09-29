@@ -1,327 +1,353 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { Database } from '@/app/lib/database';
-import { v4 as uuidv4 } from 'uuid';
+import { Database } from './database';
 
 const testDb = new Database('nomnom_notes_test');
-const listUuid = uuidv4();
-const dishUuid = uuidv4();
-const photoUuid = uuidv4();
 
-const newList = {
-  _id: listUuid,
-  index: 0,
-  name: 'Boba',
-  description: 'Rating all of the boba drinks we have tried',
-  photoId: '48f7b0c4-dfc7-46c4-b85c-c834767e2850',
-  photoUrl: '/uploads/48f7b0c4-dfc7-46c4-b85c-c834767e2850',
-  restaurants: []
-}
-
-const newRestaurant = {
-  _id: 'ChIJTRDQZ_K1j4ARqdjFU7FbSes',
-  name: 'TP Tea',
-  type: 'Tea house',
-  address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
-  location: {
-    latitude: 37.311288,
-    longitude: -122.023624,
-  },
-  mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
-  photoId: '503574d6-db6d-4be7-bec7-1c305686119e',
-  photoUrl: '/uploads/503574d6-db6d-4be7-bec7-1c305686119e',
-  rating: 0,
-  description: '',
-  dateAdded: new Date(),
-  dishes: []
-}
-
-const newDish = {
-  _id: dishUuid,
-  index: 0,
-  name: 'Strawberry Milk Tea w/ boba 50% sweet',
-  note: 'Just ok',
-  rating: 3,
-  photoId: '1d14055a-8402-408a-a67c-800130874c2c',
-  photoUrl: '/uploads/1d14055a-8402-408a-a67c-800130874c2c'
-}
-
-const searchResults = [
-  {
-    _id: 'ChIJTRDQZ_K1j4ARqdjFU7FbSes',
-    name: 'TP Tea',
-    type: 'Tea house',
-    address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
-    location: {
-      latitude: 37.311288,
-      longitude: -122.023624,
-    },
-    mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
-    photoId: '503574d6-db6d-4be7-bec7-1c305686119e'
-  },
-  {
-    _id: 'ChIJZ0uK75gzjoARCoIgh3aIO1M',
-    name: 'TP TEA – San Jose Oakridge',
-    type: 'Tea house',
-    address: '925 Blossom Hill Rd #1228, San Jose, CA 95123, USA',
-    location: {
-      latitude: 37.2520873,
-      longitude: -121.86302269999997,
-    },
-    mapsUrl: 'https://maps.google.com/?cid=5997537371428520458',
-    photoId: 'AXQCQNSkq6kDl4fjCcYGXnnxXS5LvC22oEDkMLOqnRniVljSUe0cV5x'
-  }
-]
-
+// Clear the database before running tests
 beforeAll(async () => {
   await testDb.db.dropDatabase();
 })
 
-describe('Database lists collection', async () => {
-  it('add list', async () => {
-    await testDb.addList(newList);
+describe('Test database creation', async () => {
+  it('add users', async () => {
+    await testDb.addUser('user-1-test', 'Test User 1', 'test1@test.com');
+    await testDb.addUser('user-2-test', 'Test User 2', 'test2@test.com');
+    await testDb.addUser('user-3-test', 'Test User 3', 'test3@test.com');
 
-    const expectedList = {
-      _id: listUuid,
-      index: 0,
+    await testDb.addTimestamp('user-1-test', 'search', new Date());
+    await testDb.addTimestamp('user-1-test', 'map', new Date());
+    await testDb.addTimestamp('user-2-test', 'search', new Date());
+    await testDb.addTimestamp('user-2-test', 'search', new Date());
+
+    const user1 = await testDb.getUser('user-1-test');
+    const user2 = await testDb.getUser('user-2-test');
+    const user3 = await testDb.getUser('user-3-test');
+    expect(user1).not.toBeNull();
+    expect(user2).not.toBeNull();
+    expect(user3).not.toBeNull();
+  })
+  it('add lists', async () => {
+    const testList1 = {
+      _id: 'list-1-test',
+      owner: 'user-1-test',
+      visibility: 'private' as 'private',
       name: 'Boba',
       description: 'Rating all of the boba drinks we have tried',
-      photoId: '48f7b0c4-dfc7-46c4-b85c-c834767e2850',
-      photoUrl: '/uploads/48f7b0c4-dfc7-46c4-b85c-c834767e2850',
+      photoId: 'photo-test',
+      photoUrl: '/api/database/photos?id=photo-test',
       restaurants: []
     }
 
-    const list = await testDb.getList(listUuid);
-    expect(list).not.toBeNull();
-    expect(list).toEqual(expectedList);
+    const testList2 = {
+      _id: 'list-2-test',
+      owner: 'user-1-test',
+      visibility: 'public' as 'public',
+      name: 'Michelin',
+      description: 'Keeping track of all of the Michelin restaurants we have eaten at',
+      photoId: 'photo-test',
+      photoUrl: '/api/database/photos?id=photo-test',
+      restaurants: []
+    }
+
+    await testDb.addList('user-1-test', testList1);
+    await testDb.addList('user-1-test', testList2);
+
+    const list1 = await testDb.getList('list-1-test');
+    const list2 = await testDb.getList('list-2-test');
+    expect(list1).not.toBeNull();
+    expect(list2).not.toBeNull();
   })
-
-  it('update list', async () => {
-    const list = await testDb.getList(listUuid);
-    if (!list) return;
-
-    list.description = 'Updated description for boba drinks';
-    await testDb.updateList(list);
-
-    const updatedList = await testDb.getList(listUuid);
-    if (!updatedList) return;
-
-    expect(updatedList.description).toBe('Updated description for boba drinks');
-  })
-
-  it('delete list', async () => {
-    await testDb.deleteList(listUuid);
-    const list = await testDb.getList(listUuid);
-    expect(list).toBeNull();
-  })
-})
-
-describe('Database restaurants collection', async () => {
   it('add restaurant', async () => {
-    await testDb.addRestaurant(listUuid, newRestaurant);
-    const restaurant = await testDb.getRestaurant(newRestaurant._id);
-
-    const expectedRestaurant = {
-      _id: 'ChIJTRDQZ_K1j4ARqdjFU7FbSes',
+    const testRestaurant = {
+      _id: 'restaurant-test',
       name: 'TP Tea',
       type: 'Tea house',
+      rating: 4.4,
       address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
       location: {
         latitude: 37.311288,
         longitude: -122.023624,
       },
       mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
-      photoId: '503574d6-db6d-4be7-bec7-1c305686119e',
-      photoUrl: '/uploads/503574d6-db6d-4be7-bec7-1c305686119e',
-      rating: 0,
-      description: '',
-      dateAdded: newRestaurant.dateAdded,
-      dishes: []
+      photoId: 'photo-test',
+      photoUrl: '/api/database/photos?id=photo-test',
+      reviews: [],
+      dishes: [],
+      dateAdded: new Date()
     }
 
+    await testDb.addRestaurant('list-1-test', testRestaurant);
+
+    const restaurant = await testDb.getRestaurant('restaurant-test');
     expect(restaurant).not.toBeNull();
-    expect(restaurant).toEqual(expectedRestaurant);
   })
-
-  it('update restaurant', async () => {
-    const restaurant = await testDb.getRestaurant(newRestaurant._id);
-    if (!restaurant) return;
-
-    restaurant.rating = 5;
-    restaurant.description = 'One of our go-to places for boba';
-    await testDb.updateRestaurant(restaurant);
-
-    const updatedRestaurant = await testDb.getRestaurant(newRestaurant._id);
-    if (!updatedRestaurant) return;
-
-    expect(updatedRestaurant.rating).toBe(5);
-    expect(updatedRestaurant.description).toBe('One of our go-to places for boba');
-  })
-
-  it('delete restaurant', async () => {
-    await testDb.deleteRestaurant(listUuid, newRestaurant._id);
-    const restaurant = await testDb.getRestaurant(newRestaurant._id);
-    expect(restaurant).toBeNull();
-  })
-})
-
-describe('Database dishes collection', async () => {
-  it('add dish', async () => {
-    await testDb.addDish(newRestaurant._id, newDish);
-
-    const expectedDish = {
-      _id: dishUuid,
-      index: 0,
+  it('add dishes', async () => {
+    const testDish1 = {
+      _id: 'dish-1-test',
+      index: 1,
       name: 'Strawberry Milk Tea w/ boba 50% sweet',
-      note: 'Just ok',
-      rating: 3,
-      photoId: '1d14055a-8402-408a-a67c-800130874c2c',
-      photoUrl: '/uploads/1d14055a-8402-408a-a67c-800130874c2c'
+      reviews: [],
+      photoId: 'photo-test',
+      photoUrl: '/api/database/photos?id=photo-test'
     }
 
-    const dish = await testDb.getDish(dishUuid);
-    expect(dish).not.toBeNull();
-    expect(dish).toEqual(expectedDish);
-  })
+    const testDish2 = {
+      _id: 'dish-2-test',
+      index: 2,
+      name: 'Milk Tea w/ boba 50% sweet',
+      reviews: [],
+      photoId: 'photo-test',
+      photoUrl: '/api/database/photos?id=photo-test'
+    }
 
-  it('update dish', async () => {
-    const dish = await testDb.getDish(dishUuid);
-    if (!dish) return;
+    const testDish3 = {
+      _id: 'dish-3-test',
+      index: 3,
+      name: 'Peach Milk Tea w/ boba 50% sweet',
+      reviews: [],
+      photoId: 'photo-test',
+      photoUrl: '/api/database/photos?id=photo-test'
+    }
 
-    dish.rating = 4;
-    dish.note = 'Omg, yum!';
-    await testDb.updateDish(dish);
+    await testDb.addDish('restaurant-test', testDish1);
+    await testDb.addDish('restaurant-test', testDish2);
+    await testDb.addDish('restaurant-test', testDish3);
 
-    const updatedDish = await testDb.getDish(dishUuid);
-    if (!updatedDish) return;
+    const dish1 = await testDb.getDish('dish-1-test');
+    const dish2 = await testDb.getDish('dish-2-test');
+    const dish3 = await testDb.getDish('dish-3-test');
+    expect(dish1).not.toBeNull();
+    expect(dish2).not.toBeNull();
+    expect(dish3).not.toBeNull();
 
-    expect(updatedDish.rating).toBe(4);
-    expect(updatedDish.note).toBe('Omg, yum!');
-  })
-
-  it('delete dish', async () => {
-    await testDb.deleteDish(newRestaurant._id, dishUuid);
-    const dish = await testDb.getDish(dishUuid)
-    expect(dish).toBeNull();
-  })
-})
-
-describe('Database drag & drop', async () => {
-  const restaurant = {
-    _id: 'test-restaurant',
-    name: 'TP Tea',
-    type: 'Tea house',
-    address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
-    location: {
-      latitude: 37.311288,
-      longitude: -122.023624,
-    },
-    mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
-    photoId: '503574d6-db6d-4be7-bec7-1c305686119e',
-    photoUrl: '/uploads/503574d6-db6d-4be7-bec7-1c305686119e',
-    rating: 0,
-    description: '',
-    dateAdded: new Date(),
-    dishes: ['test0', 'test1']
-  }
-
-  const dish0 = {
-    _id: 'test0',
-    index: 1,
-    name: 'Strawberry Milk Tea w/ boba 50% sweet',
-    note: 'Yum',
-    rating: 5,
-    photoId: '1d14055a-8402-408a-a67c-800130874c2c',
-    photoUrl: '/uploads/1d14055a-8402-408a-a67c-800130874c2c'
-  }
-
-  const dish1 = {
-    _id: 'test1',
-    index: 2,
-    name: 'Milk Tea w/ boba 50% sweet',
-    note: 'Just ok',
-    rating: 3,
-    photoId: '1d14055a-8402-408a-a67c-800130874c2c',
-    photoUrl: '/uploads/1d14055a-8402-408a-a67c-800130874c2c'
-  }
-
-  const dish2 = {
-    _id: 'test2',
-    index: 3,
-    name: 'Peach Milk Tea w/ boba 50% sweet',
-    note: 'Pretty good',
-    rating: 4,
-    photoId: '1d14055a-8402-408a-a67c-800130874c2c',
-    photoUrl: '/uploads/1d14055a-8402-408a-a67c-800130874c2c'
-  }
-
-  it('get highest index of an array of dish IDs', async () => {
-    await testDb.addRestaurant(listUuid, restaurant);
-    await testDb.addDish('test-restaurant', dish0);
-    await testDb.addDish('test-restaurant', dish1);
-    await testDb.addDish('test-restaurant', dish2);
-
-    const highestIndex = await testDb.getHighestDishIndex('test-restaurant');
+    const highestIndex = await testDb.getHighestDishIndex('restaurant-test');
     expect(highestIndex).toEqual(3);
   })
-
-  it('update collection after drag & drop feature', async () => {
-    await testDb.moveList('dishes', 3, 2);
-
-    const dish = await testDb.getDish('test2');
-    if (!dish) return;
-
-    expect(dish.index).toEqual(2);
-  })
-})
-
-describe('Database search', async () => {
-  it('add & get search result', async () => {
-    await testDb.addSearchResult('TP Tea', searchResults);
-
-    const expectedResults = [
+  it('add search results', async () => {
+    const testSearchResults = [
       {
-        '_id': 'TP Tea',
-        'result': [
-          {
-            _id: 'ChIJTRDQZ_K1j4ARqdjFU7FbSes',
-            name: 'TP Tea',
-            type: 'Tea house',
-            address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
-            mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
-            photoId: '503574d6-db6d-4be7-bec7-1c305686119e'
-          },
-          {
-            _id: 'ChIJZ0uK75gzjoARCoIgh3aIO1M',
-            name: 'TP TEA – San Jose Oakridge',
-            type: 'Tea house',
-            address: '925 Blossom Hill Rd #1228, San Jose, CA 95123, USA',
-            mapsUrl: 'https://maps.google.com/?cid=5997537371428520458',
-            photoId: 'AXQCQNSkq6kDl4fjCcYGXnnxXS5LvC22oEDkMLOqnRniVljSUe0cV5x'
-          }
-        ]
+        _id: 'ChIJTRDQZ_K1j4ARqdjFU7FbSes',
+        name: 'TP Tea',
+        type: 'Tea house',
+        rating: 4.4,
+        address: '10787 S Blaney Ave, Cupertino, CA 95014, USA',
+        location: {
+          latitude: 37.311288,
+          longitude: -122.023624,
+        },
+        mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
+        photoId: '503574d6-db6d-4be7-bec7-1c305686119e'
+      },
+      {
+        _id: 'ChIJZ0uK75gzjoARCoIgh3aIO1M',
+        name: 'TP TEA – San Jose Oakridge',
+        type: 'Tea house',
+        rating: 4.3,
+        address: '925 Blossom Hill Rd #1228, San Jose, CA 95123, USA',
+        location: {
+          latitude: 37.2520873,
+          longitude: -121.86302269999997,
+        },
+        mapsUrl: 'https://maps.google.com/?cid=5997537371428520458',
+        photoId: 'AXQCQNSkq6kDl4fjCcYGXnnxXS5LvC22oEDkMLOqnRniVljSUe0cV5x'
       }
     ]
 
-    const results = await testDb.getSearchResults();
-    expect(results).not.toBeNull();
-    expect(results).toEqual(expectedResults);
-  })
-})
+    await testDb.addSearchResult('tp tea', testSearchResults);
 
-describe('Database photos', async () => {
-  it('upload & get photo', async () => {
+    const searchResults = await testDb.getSearchResults('tp tea');
+    expect(searchResults).not.toBeNull();
+  })
+  it('upload photo', async () => {
     const url = 'https://placehold.co/400';
     const response = await fetch(url);
     const bytes = await response.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await testDb.uploadPhoto(photoUuid, buffer);
 
-    const photo = await testDb.getPhoto(photoUuid);
+    await testDb.uploadPhoto('photo-test', buffer);
+
+    const photo = await testDb.getPhoto('photo-test');
     expect(photo).not.toBeNull();
+  })
+  it('create invitation', async () => {
+    const testInvitation1 = {
+      _id: 'invitation-1-test',
+      listId: 'list-1-test',
+      invitedBy: 'user-1-test',
+      token: 'invitation-1-test-token',
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+      usedBy: ''
+    }
 
-    if (!photo) return;
+    const testInvitation2 = {
+      _id: 'invitation-2-test',
+      listId: 'list-2-test',
+      invitedBy: 'user-1-test',
+      token: 'invitation-2-test-token',
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+      usedBy: ''
+    }
 
-    expect(photo._id).toEqual(photoUuid);
-    expect(photo.data.value()).toEqual(buffer);
+    await testDb.addInvitation(testInvitation1);
+    await testDb.addInvitation(testInvitation2);
+
+    const invitation1 = await testDb.getInvitationByToken('invitation-1-test-token');
+    const invitation2 = await testDb.getInvitationByToken('invitation-2-test-token');
+    expect(invitation1).not.toBeNull();
+    expect(invitation2).not.toBeNull();
+  })
+  it('accept invitation', async () => {
+    await testDb.acceptInvitation('user-2-test', 'invitation-1-test-token');
+
+    const user = await testDb.getUser('user-2-test');
+    if (!user) return;
+
+    expect(user.lists).toContain('list-1-test');
+  })
+  it('decline invitation', async () => {
+    await testDb.declineInvitation('user-3-test', 'invitation-2-test-token');
+
+    const user = await testDb.getUser('user-3-test');
+    if (!user) return;
+
+    expect(user.lists).not.toContain('list-2-test');
+  })
+})
+
+describe('Get database information', async () => {
+  it('user', async () => {
+    const name = await testDb.getUserName('user-1-test');
+    expect(name).toBe('Test User 1');
+
+    const users = await testDb.getUsers('list-1-test');
+    expect(users.length).toBe(2);
+
+    const searchRate = await testDb.getRate('user-2-test', 'search');
+    const mapRate = await testDb.getRate('user-1-test', 'map');
+    expect(searchRate.length).toBe(2);
+    expect(mapRate.length).toBe(1);
+  })
+  it('list', async () => {
+    let list;
+
+    list = await testDb.getListByRestaurantId('restaurant-test');
+    expect(list?._id).toBe('list-1-test');
+
+    list = await testDb.getListByToken('invitation-1-test-token');
+    expect(list?._id).toBe('list-1-test');
+
+    const visibility = await testDb.getListVisibility('list-1-test');
+    expect(visibility).toBe('private');
+
+    expect(await testDb.isOwner('user-1-test', 'list-2-test')).toBe(true);
+    expect(await testDb.isOwner('user-2-test', 'list-2-test')).toBe(false);
+
+    expect(await testDb.isOwnerOrCollaborator('user-2-test', 'list-1-test')).toBe(true);
+    expect(await testDb.isOwnerOrCollaborator('user-2-test', 'list-1-test')).toBe(true);
+  })
+  it('invitation', async () => {
+    const user = await testDb.getOwnerByToken('invitation-1-test-token');
+    expect(user?._id).toBe('user-1-test');
+  })
+})
+
+describe('Update database', async () => {
+  it('update list', async () => {
+    const list = await testDb.getList('list-1-test');
+    if (!list) return;
+
+    list.description = 'Updated description for boba drinks';
+    await testDb.updateList(list);
+
+    const updatedList = await testDb.getList('list-1-test');
+    if (!updatedList) return;
+
+    expect(updatedList.description).toBe('Updated description for boba drinks');
+  })
+  it('move list', async () => {
+    await testDb.moveList('user-1-test', 1, 0);
+
+    const lists = await testDb.getListIds('user-1-test');
+    if (!lists) return;
+
+    expect(lists[0]).toEqual('list-2-test');
+  })
+  it('update restaurant', async () => {
+    const restaurant = await testDb.getRestaurant('restaurant-test');
+    if (!restaurant) return;
+
+    const review = {
+      _id: 'restaurant-review-test',
+      createdBy: 'user-1-test',
+      name: 'Test User 1',
+      rating: 4,
+      note: 'One of our go-to places for boba'
+    }
+
+    restaurant.reviews.push(review);
+    await testDb.updateRestaurant(restaurant);
+
+    const updatedReview = await testDb.getExistingRestaurantReview('user-1-test', 'restaurant-test');
+    if (!updatedReview) return;
+
+    expect(updatedReview.rating).toBe(4);
+    expect(updatedReview.note).toBe('One of our go-to places for boba');
+  })
+  it('update dish', async () => {
+    const dish = await testDb.getDish('dish-1-test');
+    if (!dish) return;
+
+    const review = {
+      _id: 'dish-review-test',
+      createdBy: 'user-1-test',
+      name: 'Test User 1',
+      rating: 4.5,
+      note: 'Omg, yum!'
+    }
+
+    dish.reviews.push(review);
+    await testDb.updateDish(dish);
+
+    const updatedReview = await testDb.getExistingDishReview('user-1-test', 'dish-1-test');
+    if (!updatedReview) return;
+
+    expect(updatedReview.rating).toBe(4.5);
+    expect(updatedReview.note).toBe('Omg, yum!');
+  })
+  it('move dish', async () => {
+    await testDb.moveDish(3, 2);
+
+    const dish = await testDb.getDish('dish-3-test');
+    if (!dish) return;
+
+    expect(dish.index).toEqual(2);
+  })
+  it('remove list', async () => {
+    await testDb.removeList('user-3-test', 'list-1-test');
+    expect(await testDb.isOwnerOrCollaborator('user-3-test', 'list-1-test')).toBe(false);
+  })
+  it('remove user from list', async () => {
+    await testDb.removeUser('user-2-test', 'list-2-test');
+    expect(await testDb.isOwnerOrCollaborator('user-2-test', 'list-2-test')).toBe(false);
+  })
+})
+
+describe('Delete from database', async () => {
+  it('delete dish', async () => {
+    await testDb.deleteDish('restaurant-test', 'dish-3-test');
+    const dish = await testDb.getDish('dish-3-test')
+    expect(dish).toBeNull();
+  })
+  it('delete restaurant', async () => {
+    await testDb.deleteRestaurant('list-1-test', 'restaurant-test');
+    const restaurant = await testDb.getRestaurant('restaurant-test');
+    expect(restaurant).toBeNull();
+  })
+  it('delete list', async () => {
+    await testDb.deleteList('list-1-test');
+    const list = await testDb.getList('list-1-test');
+    expect(list).toBeNull();
   })
 })

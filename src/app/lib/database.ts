@@ -338,7 +338,7 @@ export class Database {
   }
 
   // Invitation functions
-  async getToken(invitation: Invitation) {
+  async addInvitation(invitation: Invitation) {
     await this.db.collection<Invitation>('invitations').insertOne(invitation);
   }
 
