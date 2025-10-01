@@ -5,7 +5,7 @@ import Nav from '@/app/components/Nav';
 import DndWrapper from '@/app/components/DndWrapper';
 import CustomRestaurant from './CustomRestaurant';
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   let list;

@@ -3,8 +3,8 @@ import { User } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import { SignInForm } from './SignInForm';
 
-export default async function Page({ searchParams }: { searchParams?: { [key: string]: string | undefined }; }) {
-  const redirect = searchParams?.redirect;
+export default async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
+  const redirect = (await searchParams)?.redirect;
   const signUpUrl =
     redirect
       ? `/sign-up?redirect=${encodeURIComponent(redirect)}`
@@ -17,7 +17,7 @@ export default async function Page({ searchParams }: { searchParams?: { [key: st
     token = redirect.split("/")[2];
     owner = await db.getOwnerByToken(token);
   }
-  
+
   return (
     <div className="relative h-screen w-screen p-16 flex items-center justify-center bg-coolbeige">
       <div className="max-w-[1440px] w-full flex flex-col items-center">

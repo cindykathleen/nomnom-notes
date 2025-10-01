@@ -7,7 +7,7 @@ export class Database {
 
   constructor(databaseName: string) {
     this.client = new MongoClient('mongodb://localhost:27017');
-    this.db = this.client.db(databaseName);
+    this.db = this.client.db(databaseName + (process.env.MONGODB_DBNAME_SUFFIX || ''));
   }
 
   // Users functions

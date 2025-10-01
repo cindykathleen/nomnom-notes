@@ -3,10 +3,10 @@ import { User } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import { SignUpForm } from './SignUpForm';
 
-export default async function Page({ searchParams }: { searchParams?: { [key: string]: string | undefined }; }) {
-  const redirect = searchParams?.redirect;
+export default async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
+  const redirect = (await searchParams)?.redirect;
   const signInUrl =
-    typeof redirect === 'string'
+    redirect
       ? `/sign-in?redirect=${encodeURIComponent(redirect)}`
       : '/sign-in';
 

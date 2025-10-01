@@ -15,17 +15,21 @@ export default async function HomePage() {
           <p className="mb-6 text-xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris elementum ipsum eget libero iaculis pretium. Sed quis lobortis sapien. Mauris diam justo, ullamcorper sed tortor sit amet, pretium ornare massa.</p>
           { // Set CTA to lists if logged in 
             session && (
-              <Link href="/lists"
-                className="inline-block px-12 py-4 text-xl text-snowwhite font-bold bg-darkpink rounded-lg hover:bg-mauve transition-colors">
-                View your lists
+              <Link href="/lists">
+                <button className="inline-block px-12 py-4 text-xl text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer
+                  hover:bg-mauve transition-colors">
+                  View your lists
+                </button>
               </Link>
             )
           }
           { // Set CTA to sign up if not logged in
             !session && (
-              <Link href="/sign-up"
-                className="inline-block px-12 py-4 text-xl text-snowwhite font-bold bg-darkpink rounded-lg hover:bg-mauve transition-colors">
-                Get started
+              <Link href="/sign-up">
+                <button className="inline-block px-12 py-4 text-xl text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer
+                  hover:bg-mauve transition-colors">
+                  Get started
+                </button>
               </Link>
             )
           }
