@@ -4,7 +4,7 @@ import PublicNav from '@/app/components/PublicNav';
 import Nav from '@/app/components/Nav';
 import CustomList from './CustomList';
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   const isPublic = await db.getListVisibility(id) === 'public';
