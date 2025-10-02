@@ -23,6 +23,16 @@ export default defineConfig({
           await client.close();
           return null;
         },
+        async clearSessions() {
+          const client = new MongoClient('mongodb://localhost:27017');
+          await client.connect();
+
+          const db = client.db('nomnom_notes_auth_test');
+          await db.collection('session').deleteMany({});
+
+          await client.close();
+          return null;
+        }
       });
     },
   },
