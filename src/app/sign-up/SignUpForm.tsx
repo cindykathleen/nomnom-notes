@@ -43,7 +43,8 @@ export const SignUpForm = () => {
       <input id="display-name" name="display-name" type="text" required value={displayName} onChange={e => setDisplayName(e.target.value)}
         className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
       <label htmlFor="email" className="pb-1 font-semibold">Email</label>
-      <input id="email" name="email" type="email" required value={email} onChange={e => setEmail(e.target.value)}
+      <input id="email" name="email" type="email" required value={email} onChange={e => setEmail(e.target.value)} 
+      onInvalid={e => { e.preventDefault(); setErrorMessage('Invalid email address'); }}
         className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
       <label htmlFor="password" className="pb-1 font-semibold">Password</label>
       <input id="password" name="password" type="password" required value={password} onChange={e => setPassword(e.target.value)}
