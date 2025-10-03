@@ -2,7 +2,7 @@ import { defineConfig } from 'cypress';
 import { config } from 'dotenv';
 import { MongoClient } from 'mongodb';
 
-const env = config({path: '.env.test'}).parsed;
+const env = config({ path: '.env.test' }).parsed;
 
 export default defineConfig({
   e2e: {
@@ -16,7 +16,7 @@ export default defineConfig({
 
           const mainDb = client.db('nomnom_notes_test');
           const authDb = client.db('nomnom_notes_auth_test');
-          
+
           await mainDb.dropDatabase();
           await authDb.dropDatabase();
 
@@ -29,6 +29,21 @@ export default defineConfig({
 
           const db = client.db('nomnom_notes_auth_test');
           await db.collection('session').deleteMany({});
+
+          await client.close();
+          return null;
+        },
+        async clearData() {
+          const client = new MongoClient('mongodb://localhost:27017');
+          await client.connect();
+
+          const db = client.db('nomnom_notes_test');
+          await db.collection('users').updateMany(
+            {},
+            { $set: { lists: [] } }
+          );
+          await db.collection('lists').deleteMany({});
+          await db.collection('photos').deleteMany({});
 
           await client.close();
           return null;

@@ -10,12 +10,15 @@ export default function ListAddCard({ userId }: { userId: string }) {
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
 
   // State for the image input field in the add modal
+  const [listName, setListName] = useState('');
   const [inputImage, setInputImage] = useState('');
+
+  const formIsValid = listName.trim() !== '';
 
   return (
     <div className="h-full flex items-start">
       <div className="w-full flex items-center justify-center bg-lightgray aspect-square rounded-lg cursor-pointer"
-        onClick={() => { setShowAddModal(true) }}>
+        onClick={() => { setShowAddModal(true) }} data-cy="add-list-modal-trigger">
         <p className="text-2xl text-slategray">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -24,7 +27,8 @@ export default function ListAddCard({ userId }: { userId: string }) {
       </div>
       { // Modal for creating a new list
         showAddModal && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
+          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
+            data-cy="add-list-modal">
             <div className="relative w-2/5 px-6 py-8  bg-snowwhite rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-darkpink">New list</h2>
@@ -48,7 +52,7 @@ export default function ListAddCard({ userId }: { userId: string }) {
                 setShowAddModal(false);
               }} className="p-4 flex flex-col">
                 <label htmlFor="list-name" className="pb-1 font-semibold">Name *</label>
-                <input id="list-name" name="list-name" type="text" required
+                <input id="list-name" name="list-name" type="text" required value={listName} onChange={e => setListName(e.target.value)}
                   className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
                 <fieldset className="mb-4">
                   <legend className="pb-1 font-semibold">Visibility *</legend>
@@ -63,8 +67,15 @@ export default function ListAddCard({ userId }: { userId: string }) {
                 <textarea id="list-description" name="list-description" placeholder="Add a description for this list"
                   className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button type="submit" className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors">Create</button>
-                <p className="mt-6 text-sm font-semibold">* Required fields</p>              
+                <button type="submit" disabled={!formIsValid}
+                  className={`px-4 py-2 self-start text-snowwhite font-bold rounded-lg
+                  ${!formIsValid
+                    ? 'bg-lightgray cursor-not-allowed'
+                    : 'bg-darkpink cursor-pointer hover:bg-mauve transition-colors'
+                  }`}>
+                  Create
+                </button>
+                <p className="mt-6 text-sm font-semibold">* Required fields</p>
               </form>
             </div>
           </div>
