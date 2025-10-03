@@ -104,7 +104,7 @@ export default function ListCard({
   drag(drop(ref));
 
   return (
-    <div key={list._id} ref={ref} data-handler-id={handlerId}
+    <div key={list._id} ref={ref} data-handler-id={handlerId} data-cy="list"
       className="relative flex flex-col bg-snowwhite rounded-sm">
       <Link href={`/list/${list._id}`}>
         <img src={list.photoUrl} alt={list.name} className="aspect-square rounded-lg" />
@@ -117,14 +117,16 @@ export default function ListCard({
               <span className="text-lg capitalize"> ({role})</span>
             </p>
           </Link>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-9 cursor-pointer"
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+            className="size-9 cursor-pointer" data-cy="list-menu-modal-trigger"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(!showMenuModal); }}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
           </svg>
           { // Modal for owner's menu options
             showMenuModal && role === 'owner' && (
-              <div className="absolute right-0 top-8 min-w-30 p-2 flex flex-col bg-snowwhite border border-lightgray rounded-sm">
-                <button
+              <div className="absolute right-0 top-8 min-w-30 p-2 flex flex-col bg-snowwhite border border-lightgray rounded-sm"
+                data-cy="list-menu-modal">
+                <button data-cy="edit-list-modal-trigger"
                   className="px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink"
                   onClick={() => { setShowMenuModal(false); setShowEditModal(true); }}>
                   Edit
@@ -134,7 +136,7 @@ export default function ListCard({
                   onClick={() => { setShowMenuModal(false); setShowShareModal(true); }}>
                   Share
                 </button>
-                <button
+                <button data-cy="delete-list-modal-trigger"
                   className="px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink"
                   onClick={() => { setShowMenuModal(false); setShowDeleteAlert(true); }}>
                   Delete
@@ -158,7 +160,8 @@ export default function ListCard({
       </div>
       { // Modal for editing lists
         showEditModal && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
+          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
+            data-cy="edit-list-modal">
             <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-3xl font-semibold text-darkpink">Edit {list.name}</h2>
@@ -202,7 +205,8 @@ export default function ListCard({
                 <textarea id="list-description" name="list-description" placeholder="Add a description for this list" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
                   className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button type="submit" className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors">
+                <button type="submit" className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
+                  data-cy="edit-list-submit">
                   Update
                 </button>
               </form>
@@ -266,11 +270,12 @@ export default function ListCard({
       }
       { // Alert for deleting lists
         showDeleteAlert && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
+          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
+            data-cy="delete-list-modal">
             <div role="alert" className="relative px-6 py-8 w-1/5 bg-snowwhite rounded-lg">
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this list?</h3>
               <div className="flex">
-                <button type="button"
+                <button type="button" data-cy="delete-list-button"
                   className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
                   onClick={() => { deleteList(list._id) }}>
                   Yes
