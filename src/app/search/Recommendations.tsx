@@ -38,9 +38,9 @@ export default function SearchResults({ recommendations }: { recommendations: Re
             <Image src={imgUrl} alt={`${type} food`} width={64} height={64} />
             <p className="text-xl font-semibold">{recommendation.restaurant.name}</p>
             <RatingDisplay rating={recommendation.restaurant.rating} />
-            <p className="flex items-center text-lg">
-              {getDisplayAddress(recommendation.restaurant.address)}
-              <span className="mx-2">|</span>
+            <div className="flex items-center text-lg">
+              <p>{getDisplayAddress(recommendation.restaurant.address)}</p>
+              <p className="mx-2">|</p>
               <Link href={recommendation.restaurant.mapsUrl} target="_blank">
                 <div className="group flex items-center gap-2">
                   <p className="text-md group-hover:text-mauve transition-colors">Google Maps</p>
@@ -49,7 +49,7 @@ export default function SearchResults({ recommendations }: { recommendations: Re
                   </svg>
                 </div>
               </Link>
-            </p>
+            </div>
           </div>
         );
       })}

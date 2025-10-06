@@ -12,11 +12,11 @@ export default function SearchResults({ lists, places }: { lists: List[], places
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
   return (
-    <div className="flex gap-8">
+    <div className="flex gap-8" data-cy="search-results">
       <div className="w-full flex flex-col">
         {places.map((place) => {
           return (
-            <div key={place._id} className="relative mb-8 bg-snowwhite cursor-pointer"
+            <div key={place._id} className="relative mb-8 bg-snowwhite cursor-pointer" data-cy="search-result-place"
               onClick={() => setSelectedPlace(place)}>
               <p className="text-xl font-semibold pb-2">{place.name}</p>
               <div className="flex gap-2 pb-2">
@@ -58,7 +58,7 @@ export default function SearchResults({ lists, places }: { lists: List[], places
             <div className="flex flex-col gap-4">
               {lists.map((list) => {
                 return (
-                  <div key={list._id} className="flex gap-4 cursor-pointer" 
+                  <div key={list._id} className="flex gap-4 cursor-pointer" data-cy="search-result-list"
                     onClick={async () => { await addPlace(list._id, selectedPlace); setShowConfirmation(true); }}>
                     <img className="max-w-24 aspect-square rounded-lg mb-4" src={list.photoUrl} alt={list.name} />
                     <div>
@@ -77,7 +77,7 @@ export default function SearchResults({ lists, places }: { lists: List[], places
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
             <div role="alert" className="relative px-6 py-8 w-1/5 border border-lightgray rounded-lg bg-snowwhite">
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">The restaurant has been added to the list</h3>
-              <button type="button"
+              <button type="button" data-cy="search-result-confirmation"
                 className="px-8 py-1.5 text-sm text-darkpink font-semibold text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
                 onClick={() => { setShowConfirmation(false); setSelectedPlace(null); }}>
                 Ok
