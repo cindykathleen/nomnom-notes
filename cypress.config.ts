@@ -1,6 +1,8 @@
 import { defineConfig } from 'cypress';
 import { config } from 'dotenv';
-import { MongoClient } from 'mongodb';
+import { MongoClient } from 'mongodb'
+import { User, List } from './src/app/interfaces/interfaces'
+import { v4 as uuidv4 } from 'uuid';
 
 const env = config({ path: '.env.test' }).parsed;
 
@@ -38,6 +40,7 @@ export default defineConfig({
           await client.connect();
 
           const db = client.db('nomnom_notes_test');
+
           await db.collection('users').updateMany(
             {},
             { $set: { lists: [] } }
@@ -46,6 +49,35 @@ export default defineConfig({
           await db.collection('photos').deleteMany({});
 
           await client.close();
+          return null;
+        },
+        async 'db:seed'() {
+          const client = new MongoClient('mongodb://localhost:27017');
+          await client.connect();
+
+          const db = client.db('nomnom_notes_test');
+
+          const user = await db.collection<User>('users').findOne({});
+          if (!user) return null;
+
+          const list: List = {
+            _id: uuidv4(),
+            owner: user._id,
+            visibility: 'private',
+            name: 'Test List',
+            description: 'This is a test list.',
+            photoId: '',
+            photoUrl: '/api/database/photos?id=',
+            restaurants: []
+          };
+
+          await db.collection<List>('lists').insertOne(list);
+          
+          await db.collection<User>('users').updateOne(
+            { _id: user._id },
+            { $push: { lists: list._id } }
+          );
+
           return null;
         }
       });

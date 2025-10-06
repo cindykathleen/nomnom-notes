@@ -11,7 +11,11 @@ export class Database {
   }
 
   // Users functions
-  async getUser(userId: string) {
+  async getUser(userId?: string) {
+    if (!userId) {
+      return await this.db.collection<User>('users').findOne({ });
+    }
+
     return await this.db.collection<User>('users').findOne({ _id: userId });
   }
 
