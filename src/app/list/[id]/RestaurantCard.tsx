@@ -43,7 +43,7 @@ export default function RestaurantCard({
 
   return (
     <div>
-      <Link key={restaurant._id} href={`/restaurant/${restaurant._id}`}>
+      <Link key={restaurant._id} href={`/restaurant/${restaurant._id}`} data-cy="restaurant">
         <div className="flex relative p-8 border border-lightgray rounded-3xl cursor-pointer">
           <img className="aspect-square object-cover rounded-lg mr-8" src={restaurant.photoUrl} alt={restaurant.name} width={180} height={180} />
           <div className="flex flex-col flex-1 gap-2">

@@ -1,48 +1,56 @@
+import { fillSignInForm } from "../support/utils"
+
 before(() => {
   // Check if we are using the test databases
-  expect(Cypress.env('MONGODB_DBNAME_SUFFIX')).to.equal('_test');
+  expect(Cypress.env('MONGODB_DBNAME_SUFFIX')).to.equal('_test')
 
   // Clear previous sessions
-  cy.task('clearSessions');
+  cy.task('clearSessions')
+})
+
+beforeEach(() => {
+  // Start at the sign-in page
+  cy.visit('/sign-in')
 })
 
 describe('Sign-in page', () => {
   it('Unsuccessfully sign-in with a non-existing account', () => {
-    // Start at the sign-in page
-    cy.visit('/sign-in');
-
     // Fill out the sign-in form
-    cy.get('input[name="email"]').type('test1@test.com');
-    cy.get('input[name="password"]').type('password123');
+    fillSignInForm({
+      email: 'test1@test.com',
+      password: 'password123'
+    })
 
     // Submit the form
-    cy.get('button[type="submit"]').click();
-    cy.get('[role="alert"]').should('contain', 'Invalid email or password');
+    cy.get('button[type="submit"]').click()
+    cy.get('[role="alert"]').should('contain', 'Invalid email or password')
   })
 
   it('Unsuccessfully sign-in the wrong password', () => {
-    // Start at the sign-in page
-    cy.visit('/sign-in');
-
     // Fill out the sign-in form
-    cy.get('input[name="email"]').type('test@test.com');
-    cy.get('input[name="password"]').type('password1234');
+    fillSignInForm({
+      email: 'test@test.com',
+      password: 'password1234'
+    })
 
     // Submit the form
-    cy.get('button[type="submit"]').click();
-    cy.get('[role="alert"]').should('contain', 'Invalid email or password');
+    cy.get('button[type="submit"]').click()
+    cy.get('[role="alert"]').should('contain', 'Invalid email or password')
   })
 
   it('Successfully sign-in with an existing account', () => {
-    // Start at the sign-in page
-    cy.visit('/sign-in');
-
     // Fill out the sign-in form
-    cy.get('input[name="email"]').type('test@test.com');
-    cy.get('input[name="password"]').type('password123');
+    fillSignInForm({
+      email: 'test@test.com',
+      password: 'password123'
+    })
 
     // Submit the form
-    cy.get('button[type="submit"]').click();
-    cy.url().should('include', '/lists');
+    cy.get('button[type="submit"]').click()
+    cy.url().should('include', '/lists')
+
+    // Reload and confirm the user is still logged in
+    cy.reload()
+    cy.url().should('include', '/lists')
   })
 })
