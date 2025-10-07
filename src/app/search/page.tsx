@@ -67,9 +67,10 @@ export default async function Page(props: { searchParams: SearchParams }) {
                 <div className="w-3xl mx-auto mb-16">
                   <SearchForm query={query} />
                 </div>
-                { // Display an error message if the user has exceeded their rate limit
+                { // Display an error message if no results were found
+                  // or if the user has exceeded their rate limit
                   results?.kind === 'error' && (
-                    <p className="text-lg">{results.message}</p>
+                    <p className="text-lg" data-cy="error-message">{results.message}</p>
                   )
                 }
                 { // Display search results

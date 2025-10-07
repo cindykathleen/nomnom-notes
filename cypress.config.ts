@@ -43,9 +43,11 @@ export default defineConfig({
 
           await db.collection('users').updateMany(
             {},
-            { $set: { lists: [] } }
+            { $set: { lists: [], searchRate: [] } }
           );
           await db.collection('lists').deleteMany({});
+          await db.collection('places').deleteMany({});
+          await db.collection('restaurants').deleteMany({});
           await db.collection('photos').deleteMany({});
 
           await client.close();
@@ -72,10 +74,25 @@ export default defineConfig({
           };
 
           await db.collection<List>('lists').insertOne(list);
-          
+
           await db.collection<User>('users').updateOne(
             { _id: user._id },
             { $push: { lists: list._id } }
+          );
+
+          return null;
+        },
+        async addSearches() {
+          const client = new MongoClient('mongodb://localhost:27017');
+          await client.connect();
+
+          const db = client.db('nomnom_notes_test');
+
+          const searches = Array.from({ length: 100 }, () => new Date());
+
+          await db.collection('users').updateOne(
+            {},
+            { $set: { searchRate: searches } }
           );
 
           return null;
