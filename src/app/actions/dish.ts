@@ -5,19 +5,8 @@ import { Dish, Review } from '@/app/interfaces/interfaces';
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
 
-export const addDish = async (formData: FormData, userId: string, restaurantId: string, rating: number, photoId: string) => {
+export const addDish = async (formData: FormData, restaurantId: string, photoId: string) => {
   const name = formData.get('dish-name') as string;
-  const note = formData.get('dish-note') as string;
-
-  const userName = await db.getUserName(userId);
-
-  const newReview: Review = {
-    _id: uuidv4(),
-    createdBy: userId,
-    name: userName,
-    rating: rating,
-    note: note
-  }
 
   let restaurant;
 
@@ -37,7 +26,7 @@ export const addDish = async (formData: FormData, userId: string, restaurantId: 
     _id: uuidv4(),
     index: highestIndex + 1,
     name: name,
-    reviews: [newReview],
+    reviews: [],
     photoId: photoId,
     photoUrl: `/api/database/photos?id=${photoId}`
   };

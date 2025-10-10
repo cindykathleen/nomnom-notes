@@ -29,11 +29,11 @@ describe('List page', () => {
 
     // Fill out the review form
     clickStar(4, 'right');
-    cy.get('textarea[name="restaurant-note"]').type('Great rice bowls.')
+    cy.get('textarea[name="restaurant-note"]').type('Great burrito bowls.')
 
     // Submit the form
     cy.get('button[data-cy="add-review-submit"]').click()
-    cy.get('[data-cy=restaurant]').find('p').should('contain.text', 'Great rice bowls.')
+    cy.get('[data-cy=restaurant]').find('p').should('contain.text', 'Great burrito bowls.')
   })
 
   it('Delete restaurant', () => {
