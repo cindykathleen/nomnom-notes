@@ -58,7 +58,7 @@ export default function RestaurantDisplay({
   return (
     <div className={`${userId === 'public' || !featureAccessAllowed ? "w-full" : "w-1/2"} flex flex-col gap-2`}>
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{`${restaurants.length} Places`}</h2>
+        <h2 className="text-lg font-semibold" data-cy="number-of-restaurants">{`${restaurants.length} ${restaurants.length === 1 ? 'Place' : 'Places'}`}</h2>
         <form className="flex items-center w-fit my-2">
           <p className="text-lg text-nowrap mr-2">Sort by</p>
           <select className="w-full bg-transparent text-lg font-semibold appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer"
