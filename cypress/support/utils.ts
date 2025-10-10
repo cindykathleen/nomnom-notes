@@ -15,15 +15,18 @@ export function fillSignInForm({ email, password }: { email: string, password: s
 }
 
 export function clickStar(index: number, side: 'left' | 'right') {
-  cy.get('svg').eq(index).then($star => {
-    const width = $star.width();
-    const height = $star.height();
+  cy.get('[data-cy=rating-system]')
+    .find('svg')
+    .should('have.length', 5)
+    .eq(index - 1).then($star => {
+      const width = $star.width();
+      const height = $star.height();
 
-    if (!width || !height) return;
+      if (!width || !height) return;
 
-    const x = side === 'left' ? width / 4 : (3 * width) / 4;
-    const y = height / 2;
+      const x = side === 'left' ? width / 4 : (3 * width) / 4;
+      const y = height / 2;
 
-    cy.wrap($star).click(x, y, {force: true});
-  });
+      cy.wrap($star).click(x, y, { force: true });
+    });
 }

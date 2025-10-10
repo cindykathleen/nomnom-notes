@@ -42,6 +42,29 @@ export default function ListCard({
     setTimeout(() => setShowLinkCopied(false), 3000);
   }
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    let inputPhotoId: string | null = '';
+
+    if (inputImage === list.photoUrl) {
+      // If there is no change to the image, don't re-upload it into the database
+      inputPhotoId = inputImage.split('=')[1];
+    } else if (inputImage !== '') {
+      inputPhotoId = await uploadImage(inputImage);
+      if (inputPhotoId === null) return;
+    } else {
+      // If no image is provided, use a default image
+      inputPhotoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
+    }
+
+    await updateList(formData, list._id, inputPhotoId);
+    setShowEditModal(false);
+  }
+
   const ref = useRef<HTMLDivElement>(null);
 
   const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
@@ -117,7 +140,7 @@ export default function ListCard({
               <span className="text-lg capitalize"> ({role})</span>
             </p>
           </Link>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
             className="size-9 cursor-pointer" data-cy="list-menu-modal-trigger"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(!showMenuModal); }}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
@@ -170,23 +193,7 @@ export default function ListCard({
                 </svg>
               </div>
               <hr className="border-slategray" />
-              <form action={async (formData) => {
-                let inputPhotoId: string | null = '';
-
-                if (inputImage === list.photoUrl) {
-                  // If there is no change to the image, don't re-upload it into the database
-                  inputPhotoId = inputImage.split('=')[1];
-                } else if (inputImage !== '') {
-                  inputPhotoId = await uploadImage(inputImage);
-                  if (inputPhotoId === null) return;
-                } else {
-                  // If no image is provided, use a default image
-                  inputPhotoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
-                }
-
-                await updateList(formData, list._id, inputPhotoId);
-                setShowEditModal(false);
-              }} className="p-4 flex flex-col">
+              <form onSubmit={handleSubmit} className="p-4 flex flex-col">
                 <label htmlFor="list-name" className="pb-1 font-semibold">Name</label>
                 <input id="list-name" name="list-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
                   className="w-full px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
