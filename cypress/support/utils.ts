@@ -13,3 +13,17 @@ export function fillSignInForm({ email, password }: { email: string, password: s
   cy.get('input[name="email"]').type(email)
   cy.get('input[name="password"]').type(password)
 }
+
+export function clickStar(index: number, side: 'left' | 'right') {
+  cy.get('svg').eq(index).then($star => {
+    const width = $star.width();
+    const height = $star.height();
+
+    if (!width || !height) return;
+
+    const x = side === 'left' ? width / 4 : (3 * width) / 4;
+    const y = height / 2;
+
+    cy.wrap($star).click(x, y, {force: true});
+  });
+}

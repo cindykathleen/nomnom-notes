@@ -17,7 +17,8 @@ export default function RatingSystem({ currRating, setNewRating }: { currRating:
   };
 
   return (
-    <div className="flex" onMouseLeave={() => { setHoverIndex(null); setHoverHalf(null); }}>
+    <div className="flex" data-cy="rating-system"
+      onMouseLeave={() => { setHoverIndex(null); setHoverHalf(null); }}>
       {[...Array(5)].map((_, i) => {
         const isHovering = hoverIndex !== null;
         const ratingToShow = isHovering ? hoverIndex + (hoverHalf ? 1 : 0.5) : updatedRating ?? 0;

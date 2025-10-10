@@ -37,7 +37,7 @@ describe('Search page', () => {
     cy.get('[data-cy=search-result-confirmation]').click()
 
     // Confirm the restaurant has been added to a list
-    cy.visit('lists')
+    cy.visit('/lists')
     cy.get('[data-cy=list]').click()
     cy.get('[data-cy=restaurant]').should('contain', 'McDonald')
   })

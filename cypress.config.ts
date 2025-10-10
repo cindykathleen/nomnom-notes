@@ -1,7 +1,7 @@
 import { defineConfig } from 'cypress';
 import { config } from 'dotenv';
 import { MongoClient } from 'mongodb'
-import { User, List } from './src/app/interfaces/interfaces'
+import { User, List, Restaurant } from './src/app/interfaces/interfaces'
 import { v4 as uuidv4 } from 'uuid';
 
 const env = config({ path: '.env.test' }).parsed;
@@ -43,10 +43,9 @@ export default defineConfig({
 
           await db.collection('users').updateMany(
             {},
-            { $set: { lists: [], searchRate: [] } }
+            { $set: { lists: [], searchRate: [], mapRate: [] } }
           );
           await db.collection('lists').deleteMany({});
-          await db.collection('places').deleteMany({});
           await db.collection('restaurants').deleteMany({});
           await db.collection('photos').deleteMany({});
 
@@ -62,6 +61,7 @@ export default defineConfig({
           const user = await db.collection<User>('users').findOne({});
           if (!user) return null;
 
+          // Add a list
           const list: List = {
             _id: uuidv4(),
             owner: user._id,
@@ -80,6 +80,32 @@ export default defineConfig({
             { $push: { lists: list._id } }
           );
 
+          // Add a restaurant
+          const restaurant: Restaurant = {
+            _id: "15ebb847-844b-433f-a343-e491ca8452d3",
+            name: "Chipotle Mexican Grill",
+            type: "Mexican restaurant",
+            rating: 3.4,
+            address: "1815 S Bascom Ave, Campbell, CA 95008, USA",
+            location: {
+              latitude: 37.29088,
+              longitude: -121.9320587
+            },
+            mapsUrl: "https://maps.google.com/?cid=5825659302684031711&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            photoId: '',
+            photoUrl: '/api/database/photos?id=',
+            reviews: [],
+            dishes: [],
+            dateAdded: new Date
+          }
+
+          await db.collection<Restaurant>('restaurants').insertOne(restaurant);
+
+          await db.collection<List>('lists').updateOne(
+            { _id: list._id },
+            { $push: { restaurants: restaurant._id } }
+          );
+
           return null;
         },
         async addSearches() {
@@ -93,6 +119,21 @@ export default defineConfig({
           await db.collection('users').updateOne(
             {},
             { $set: { searchRate: searches } }
+          );
+
+          return null;
+        },
+        async addMapViews() {
+          const client = new MongoClient('mongodb://localhost:27017');
+          await client.connect();
+
+          const db = client.db('nomnom_notes_test');
+
+          const mapViews = Array.from({ length: 250 }, () => new Date());
+
+          await db.collection('users').updateOne(
+            {},
+            { $set: { mapRate: mapViews } }
           );
 
           return null;

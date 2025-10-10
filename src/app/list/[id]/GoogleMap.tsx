@@ -50,7 +50,7 @@ export default function GoogleMap({ restaurants }: { restaurants: Restaurant[] }
     : { lat: 0, lng: 0 };
 
   return (
-    <div className="w-1/2">
+    <div className="w-1/2" data-cy="map-display">
       <APIProvider apiKey={process.env.NEXT_PUBLIC_KEY!}>
         <Map defaultZoom={12} defaultCenter={center} mapId={process.env.NEXT_PUBLIC_MAP_ID!}>
           <PoiMarkers pois={locations} />
