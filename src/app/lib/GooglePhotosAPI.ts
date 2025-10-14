@@ -1,6 +1,6 @@
 export const getPhoto = async (photoId: string): Promise<string> => {
   // Make sure apiKey is not undefined
-  const apiKey = process.env.API_SECRET_KEY!;
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY_SECRET!;
   const endpoint = `https://places.googleapis.com/v1/${photoId}/media?maxHeightPx=1600&skipHttpRedirect=true`;
 
   const response = await fetch(endpoint, {
