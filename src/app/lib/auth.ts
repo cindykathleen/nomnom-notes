@@ -10,5 +10,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true
   },
-  plugins: [nextCookies()]
+  plugins: [nextCookies()],
+  secret: process.env.BETTER_AUTH_SECRET
 });
