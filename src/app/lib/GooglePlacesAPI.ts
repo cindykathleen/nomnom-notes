@@ -57,12 +57,12 @@ export const searchPlace = async (query: string, recommendation: boolean): Promi
   const results = places.map((place: any) => {
     return {
       _id: place.id,
-      name: place.displayName.text,
+      name: place.displayName.text ?? "",
       type: place.primaryTypeDisplayName?.text ?? "",
       rating: place.rating ?? 0,
-      address: place.formattedAddress,
-      location: place.location,
-      mapsUrl: place.googleMapsUri,
+      address: place.formattedAddress ?? "",
+      location: place.location ?? { latitude: 0, longitude: 0 },
+      mapsUrl: place.googleMapsUri ?? "",
       photoId: place.photos?.[0]?.name ?? ""
     }
   });
