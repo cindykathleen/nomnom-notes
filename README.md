@@ -45,6 +45,12 @@ This full-stack web application enables users to create and manage personalized 
 
 **APIs:** Google Places API, Google Photos API, Google Maps JavaScript API
 
+**Testing:** Vitest, Cypress
+
+**CI/CD:** GitHub Actions
+
+**Hosting platform:** Vercel
+
 ## Screenshots
 ![A sign up page](./images/signup-page.png)
 A page where users can sign up for an account.
@@ -84,4 +90,6 @@ A pop-up modal that shows all of the reviews for a restaurant or dish.
 
 ## Future improvements
 * **Responsive design:** Make the web application dynamically adapt to various screen sizes and devices for optimal user experience and accessibility. 
-* **Host the site:** Deploy the web application to make it publicly accessible in a live environment.
+* **Security:** Require a code to sign up for an account
+* **Performance:** Optimize image load time
+* **Database:** Cron job to periodically clean up unused data in the database
