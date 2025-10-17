@@ -35,7 +35,7 @@ jobs:
       - name: Wait for deployment to be ready
         uses: jakejarvis/wait-action@v0.1.0
         with:
-          url: ${{ env.DEPLOY_URL }}
+          url: ${{ steps.deploy.outputs.url }}
           timeout: 300
 
       - name: Set up Node
@@ -49,11 +49,13 @@ jobs:
       - name: Run Cypress tests on preview
         uses: cypress-io/github-action@v6
         with:
-          config: baseUrl=${{ env.DEPLOY_URL }}
+          config: baseUrl=${{ steps.deploy.outputs.url }}
           browser: chrome
         env:
+          BASE_URL: ${{ steps.deploy.outputs.url }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           MONGODB_DBNAME_SUFFIX: ${{ secrets.MONGODB_DBNAME_SUFFIX }}
+          BETTER_AUTH_SESSION_TOKEN: ${{ secrets.BETTER_AUTH_SESSION_TOKEN }}
       
       - name: 'notify vercel'
         uses: 'vercel/repository-dispatch/actions/status@v1'

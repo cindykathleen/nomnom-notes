@@ -22,7 +22,7 @@ Cypress.Commands.add('signIn', (email, password) => {
     },
     {
       validate: () => {
-        cy.getCookie(process.env.BETTER_AUTH_SESSION_TOKEN!).should('exist');
+        cy.getCookie(Cypress.env('BETTER_AUTH_SESSION_TOKEN')).should('exist');
       },
     }
   )
