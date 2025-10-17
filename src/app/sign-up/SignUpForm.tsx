@@ -26,7 +26,10 @@ export const SignUpForm = () => {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/lists';
 
-  const handleSubmit = async (formData: FormData) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    
     const result = await signUp(formData);
 
     if (result.error) {
@@ -38,13 +41,13 @@ export const SignUpForm = () => {
   }
 
   return (
-    <form action={formData => { handleSubmit(formData) }} className="p-4 flex flex-col">
+    <form onSubmit={handleSubmit} className="p-4 flex flex-col">
       <label htmlFor="display-name" className="pb-1 font-semibold">Display name</label>
       <input id="display-name" name="display-name" type="text" required value={displayName} onChange={e => setDisplayName(e.target.value)}
         className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
       <label htmlFor="email" className="pb-1 font-semibold">Email</label>
-      <input id="email" name="email" type="email" required value={email} onChange={e => setEmail(e.target.value)} 
-      onInvalid={e => { e.preventDefault(); setErrorMessage('Invalid email address'); }}
+      <input id="email" name="email" type="email" required value={email} onChange={e => setEmail(e.target.value)}
+        onInvalid={e => { e.preventDefault(); setErrorMessage('Invalid email address'); }}
         className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
       <label htmlFor="password" className="pb-1 font-semibold">Password</label>
       <input id="password" name="password" type="password" required value={password} onChange={e => setPassword(e.target.value)}

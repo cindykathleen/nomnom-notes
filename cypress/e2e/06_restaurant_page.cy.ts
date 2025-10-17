@@ -9,7 +9,7 @@ beforeEach(() => {
   cy.signIn('test@test.com', 'password123')
 
   // Start at the lists page, click into a list, click into a restaurant
-  cy.visit('/lists')
+  cy.visit('/lists');
   cy.get('[data-cy=list]').click()
   cy.get('[data-cy=restaurant]').click()
 })
@@ -55,13 +55,16 @@ describe('Restaurant page', () => {
     cy.get('[data-cy=review-dish-modal]').should('be.visible')
 
     // Fill out the review form
-    clickStar(5, 'left');
+    cy.get('#dish-rating').trigger('mouseover')
+    cy.get('[data-cy=rating-system]', { timeout: 10000 }).should('be.visible')
+    clickStar(5, 'left')
     cy.get('textarea[name="dish-note"]')
       .type('Customization: chicken, white rice, pinto beans, fresh tomato salsa, roasted chili-corn salsa, tomatillo-green chili salsa, fajitas, lettuce')
 
     // Submit the form
     cy.get('button[data-cy="add-review-submit"]').click()
-    cy.get('[data-cy=dish]').find('p').should('contain.text', 'Customizaiton')
+    cy.get('[data-cy=dish]').find('p')
+      .should('contain.text', 'Customization: chicken, white rice, pinto beans, fresh tomato salsa, roasted chili-corn salsa, tomatillo-green chili salsa, fajitas, lettuce')
   })
 
   it('Delete dish', () => {

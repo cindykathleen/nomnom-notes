@@ -1,15 +1,22 @@
 import { defineConfig } from 'cypress';
-import { config } from 'dotenv';
+import { config as loadEnv } from 'dotenv';
 import { MongoClient } from 'mongodb'
 import { User, List, Restaurant } from './src/app/interfaces/interfaces'
 import { v4 as uuidv4 } from 'uuid';
 
-const env = config({ path: '.env.test' }).parsed;
+// Only load .env.test when running locally
+if (!process.env.CI) {
+  loadEnv({ path: '.env.test' });
+}
 
 export default defineConfig({
   e2e: {
     baseUrl: process.env.BASE_URL,
-    env: env,
+    env: {
+      MONGODB_URI: process.env.MONGODB_URI,
+      MONGODB_DBNAME_SUFFIX: process.env.MONGODB_DBNAME_SUFFIX,
+      BETTER_AUTH_SESSION_TOKEN: process.env.BETTER_AUTH_SESSION_TOKEN,
+    },
     setupNodeEvents(on, config) {
       on('task', {
         async clearTestDbs() {
@@ -19,8 +26,15 @@ export default defineConfig({
           const mainDb = client.db('nomnom_notes_test');
           const authDb = client.db('nomnom_notes_auth_test');
 
-          await mainDb.dropDatabase();
-          await authDb.dropDatabase();
+          const collections = await mainDb.collections();
+          for (const col of collections) {
+            await col.deleteMany({});
+          }
+
+          const authCollections = await authDb.collections();
+          for (const col of authCollections) {
+            await col.deleteMany({});
+          }
 
           await client.close();
           return null;
