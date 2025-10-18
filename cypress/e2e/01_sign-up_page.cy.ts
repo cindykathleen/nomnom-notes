@@ -2,7 +2,7 @@ import { fillSignUpForm } from "../support/utils"
 
 before(() => {
   // Check if we are using the test databases
-  expect(Cypress.env('MONGODB_DBNAME_SUFFIX')).to.equal('_test')
+  expect(Cypress.env('MONGODB_DBNAME_SUFFIX')).to.equal('_test');
 
   // Clear the databases before running tests
   cy.task('clearTestDbs')
@@ -10,7 +10,7 @@ before(() => {
 
 beforeEach(() => {
   // Start at the sign-up page
-  cy.visit('/sign-up')
+  cy.visit('/sign-up');
 })
 
 describe('Sign-up page', () => {

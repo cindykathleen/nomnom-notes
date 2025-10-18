@@ -7,7 +7,7 @@ beforeEach(() => {
   cy.signIn('test@test.com', 'password123')
 
   // Start at the search page
-  cy.visit('/search')
+  cy.visit('/search');
 })
 
 describe('Search page', () => {
@@ -37,7 +37,7 @@ describe('Search page', () => {
     cy.get('[data-cy=search-result-confirmation]').click()
 
     // Confirm the restaurant has been added to a list
-    cy.visit('/lists')
+    cy.visit('/lists');
     cy.get('[data-cy=list]').click()
     cy.get('[data-cy=restaurant]').should('contain', 'McDonald')
   })
@@ -54,9 +54,9 @@ describe('Search page', () => {
   })
 
   it('Search when the user has already reached the rate limit', async () => {
-   cy.task('addSearches')
+    cy.task('addSearches')
 
-   // Fill out the search form
+    // Fill out the search form
     cy.get('input[name="search-query"]').type('McDonald')
 
     // Submit the form
