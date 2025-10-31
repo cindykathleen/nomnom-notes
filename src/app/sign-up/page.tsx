@@ -1,9 +1,11 @@
 import { db } from '@/app/lib/database';
 import { User } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
+import { SignUpAccessForm } from './SignUpAccessForm';
 import { SignUpForm } from './SignUpForm';
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
+  // Handle redirect
   const redirect = (await searchParams)?.redirect;
   const signInUrl =
     redirect
@@ -38,6 +40,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ [
           <hr className="border-slategray" />
           <SignUpForm />
         </div>
+        <SignUpAccessForm />
       </div>
     </div>
   );

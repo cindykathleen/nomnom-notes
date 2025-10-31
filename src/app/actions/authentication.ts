@@ -2,6 +2,16 @@
 
 import { auth } from '@/app/lib/auth';
 
+export const checkAccessCode = async (formData: FormData) => {
+  const accessCode = formData.get('access-code') as string;
+  const accessSecret = process.env.SIGNUP_ACCESS_SECRET;
+  
+  if (accessCode === accessSecret) {
+    return { success: true };
+  } else {
+    return { error: 'Access denied' };
+  }
+}
 
 export const signUp = async (formData: FormData) => {
   const name = formData.get('display-name') as string;
