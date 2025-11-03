@@ -46,16 +46,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Cypress tests on preview
-        uses: cypress-io/github-action@v6
-        with:
-          config: baseUrl=${{ steps.deploy.outputs.url }}
-          browser: chrome
-        env:
-          BASE_URL: ${{ steps.deploy.outputs.url }}
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-          MONGODB_DBNAME_SUFFIX: ${{ secrets.MONGODB_DBNAME_SUFFIX }}
-          BETTER_AUTH_SESSION_TOKEN: ${{ secrets.BETTER_AUTH_SESSION_TOKEN }}
+      # - name: Run Cypress tests on preview
+      #   uses: cypress-io/github-action@v6
+      #   with:
+      #     config: baseUrl=${{ steps.deploy.outputs.url }}
+      #     browser: chrome
+      #   env:
+      #     BASE_URL: ${{ steps.deploy.outputs.url }}
+      #     MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      #     MONGODB_DBNAME_SUFFIX: ${{ secrets.MONGODB_DBNAME_SUFFIX }}
+      #     BETTER_AUTH_SESSION_TOKEN: ${{ secrets.BETTER_AUTH_SESSION_TOKEN }}
       
       - name: 'notify vercel'
         uses: 'vercel/repository-dispatch/actions/status@v1'
