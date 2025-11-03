@@ -14,7 +14,18 @@ beforeEach(() => {
 })
 
 describe('Sign-up page', () => {
+  it('Denied access to the sign-up form with an invalid access code', () => {
+    // Enter an invalid access code
+    cy.get('input[name="access-code"]').type('invalid')
+    cy.get('button[type="submit"]').click()
+    cy.get('h2').should('contain', 'Access denied')
+  })
+
   it('Unsuccessfully sign-up with an invalid email', () => {
+    // Enter the access code
+    cy.get('input[name="access-code"]').type(Cypress.env('SIGNUP_ACCESS_SECRET'))
+    cy.get('button[type="submit"]').click()
+
     // Fill out the sign-up form
     fillSignUpForm({
       name: 'Test User',
@@ -29,6 +40,10 @@ describe('Sign-up page', () => {
   })
 
   it('Unsuccessfully sign-up with a short password', () => {
+    // Enter the access code
+    cy.get('input[name="access-code"]').type(Cypress.env('SIGNUP_ACCESS_SECRET'))
+    cy.get('button[type="submit"]').click()
+
     // Fill out the sign-up form
     fillSignUpForm({
       name: 'Test User',
@@ -43,6 +58,10 @@ describe('Sign-up page', () => {
   })
 
   it('Successfully sign-up a new user', () => {
+    // Enter the access code
+    cy.get('input[name="access-code"]').type(Cypress.env('SIGNUP_ACCESS_SECRET'))
+    cy.get('button[type="submit"]').click()
+
     // Fill out the sign-up form
     fillSignUpForm({
       name: 'Test User',
@@ -59,6 +78,10 @@ describe('Sign-up page', () => {
   })
 
   it('Unsuccessfully sign-up with an existing email', () => {
+    // Enter the access code
+    cy.get('input[name="access-code"]').type(Cypress.env('SIGNUP_ACCESS_SECRET'))
+    cy.get('button[type="submit"]').click()
+
     // Fill out the sign-up form
     fillSignUpForm({
       name: 'Test User',

@@ -16,6 +16,7 @@ export default defineConfig({
       MONGODB_URI: process.env.MONGODB_URI,
       MONGODB_DBNAME_SUFFIX: process.env.MONGODB_DBNAME_SUFFIX,
       BETTER_AUTH_SESSION_TOKEN: process.env.BETTER_AUTH_SESSION_TOKEN,
+      SIGNUP_ACCESS_SECRET: process.env.SIGNUP_ACCESS_SECRET,
     },
     setupNodeEvents(on, config) {
       on('task', {
