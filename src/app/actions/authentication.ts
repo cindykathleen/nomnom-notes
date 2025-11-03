@@ -2,8 +2,7 @@
 
 import { auth } from '@/app/lib/auth';
 
-export const checkAccessCode = async (formData: FormData) => {
-  const accessCode = formData.get('access-code') as string;
+export const checkAccessCode = async (accessCode: string) => {
   const accessSecret = process.env.SIGNUP_ACCESS_SECRET;
   
   if (accessCode === accessSecret) {
