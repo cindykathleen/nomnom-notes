@@ -1,8 +1,6 @@
 import { db } from '@/app/lib/database';
 import { User } from '@/app/interfaces/interfaces';
-import Link from 'next/link';
-import { SignUpAccessForm } from './SignUpAccessForm';
-import { SignUpForm } from './SignUpForm';
+import { SignUpAccessGate } from './SignUpAccessGate';
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
   // Handle redirect
@@ -23,24 +21,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ [
   return (
     <div className="relative h-screen w-screen p-16 flex items-center justify-center bg-coolbeige">
       <div className="max-w-[1440px] w-full flex flex-col items-center">
-        <div className="h-fit max-w-3xl px-12 py-10 bg-snowwhite rounded-3xl">
-          <h2 className="pb-2 text-3xl font-semibold text-center">Create an account</h2>
-          { // If the user was redirected from an invitation link, show this message
-            redirect && owner && (
-              <p className="pb-2 text-md font-semibold text-center">
-                {owner.name} has invited you to collaborate on their list. Create an account to accept the invitation.
-              </p>
-            )
-          }
-          <p className="pb-4 text-md font-semibold text-center">
-            Already have an account? Click
-            <Link href={signInUrl} className="text-darkpink hover:text-mauve transition-colors"> here </Link>
-            to sign in.
-          </p>
-          <hr className="border-slategray" />
-          <SignUpForm />
-        </div>
-        <SignUpAccessForm />
+        <SignUpAccessGate signInUrl={signInUrl} owner={owner} />
       </div>
     </div>
   );
