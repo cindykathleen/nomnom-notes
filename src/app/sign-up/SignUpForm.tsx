@@ -43,8 +43,8 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
   }
 
   return (
-    <div className="h-fit max-w-3xl px-12 py-10 bg-snowwhite rounded-3xl">
-      <h2 className="pb-2 text-3xl font-semibold text-center">Create an account</h2>
+    <div className="h-fit max-w-3xl px-8 py-6 bg-snowwhite rounded-3xl xl:px-12 xl:py-10">
+      <h2 className="pb-2 text-2xl font-semibold text-center xl:text-3xl">Create an account</h2>
       { // If the user was redirected from an invitation link, show this message
         redirect && owner && (
           <p className="pb-2 text-md font-semibold text-center">

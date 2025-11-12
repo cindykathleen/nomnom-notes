@@ -28,11 +28,11 @@ export const SignUpAccessForm = ({
 
   // If the user is not allowed, display the modal asking for the access code
   return (
-    <div className="h-fit max-w-3xl px-12 py-10 bg-snowwhite rounded-3xl">
+    <div className="h-fit max-w-3xl px-8 py-6 bg-snowwhite rounded-3xl xl:px-12 xl:py-10">
       {
         errorMessage === '' && (
           <>
-            <h2 className="pb-2 text-3xl font-semibold text-center">Please enter the access code</h2>
+            <h2 className="pb-2 text-2xl font-semibold text-center xl:text-3xl">Please enter the access code</h2>
             <p className="pb-4 text-md font-semibold text-center">If you do not have one, please ask the application owner.</p>
           </>
         )

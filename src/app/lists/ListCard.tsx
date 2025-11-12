@@ -133,7 +133,7 @@ export default function ListCard({
         <img src={list.photoUrl} alt={list.name} className="aspect-square rounded-lg" />
       </Link>
       <div className="flex flex-col py-4">
-        <div className="relative flex justify-between">
+        <div className="relative flex justify-between gap-4">
           <Link href={`/list/${list._id}`}>
             <p>
               <span className="text-2xl font-semibold">{list.name}</span>
@@ -185,15 +185,17 @@ export default function ListCard({
         showEditModal && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
             data-cy="edit-list-modal">
-            <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
-              <div className="p-4 flex items-center justify-between">
-                <h2 className="text-3xl font-semibold text-darkpink">Edit {list.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => { setShowEditModal(false) }}>
+            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
+            >
+              <div className="p-2 flex items-center justify-between lg:p-4">
+                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Edit {list.name}</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowEditModal(false) }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
               <hr className="border-slategray" />
-              <form onSubmit={handleSubmit} className="p-4 flex flex-col">
+              <form onSubmit={handleSubmit} className="px-2 py-4 flex flex-col lg:px-4">
                 <label htmlFor="list-name" className="pb-1 font-semibold">Name</label>
                 <input id="list-name" name="list-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
                   className="w-full px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
@@ -224,15 +226,17 @@ export default function ListCard({
       { // Modal for sharing lists
         showShareModal && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
-              <div className="p-4 flex items-center justify-between">
-                <h2 className="text-3xl font-semibold text-darkpink">Share {list.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => { setShowShareModal(false) }}>
+            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
+            >
+              <div className="p-2 flex items-center justify-between lg:p-4">
+                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Share {list.name}</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowShareModal(false) }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
               <hr className="border-slategray" />
-              <div className="p-4">
+              <div className="px-2 py-4 flex flex-col lg:px-4">
                 <h4 className="mb-4 text-xl font-semibold">People with access</h4>
                 {users.map((user: User) => (
                   <div key={user._id} className="w-full mb-2 flex items-center justify-between">
@@ -251,7 +255,7 @@ export default function ListCard({
                   </div>
                 ))}
               </div>
-              <div className="px-4 flex justify-between">
+              <div className="px-2 flex justify-between lg:px-4">
                 <button type="button"
                   className="px-4 py-2 self-start flex items-center gap-2 text-darkpink font-bold bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
                   onClick={handleShareClick}>
@@ -279,7 +283,9 @@ export default function ListCard({
         showDeleteAlert && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
             data-cy="delete-list-modal">
-            <div role="alert" className="relative px-6 py-8 w-1/5 bg-snowwhite rounded-lg">
+            <div role="alert" className="relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5"
+            >
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this list?</h3>
               <div className="flex">
                 <button type="button" data-cy="delete-list-button"
@@ -300,7 +306,9 @@ export default function ListCard({
       { // Alert for removing lists
         showRemoveAlert && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div role="alert" className="relative px-6 py-8 w-1/5 bg-snowwhite rounded-lg">
+            <div role="alert" className="relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5"
+            >
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to remove this list?</h3>
               <div className="flex">
                 <button type="button"
@@ -321,7 +329,9 @@ export default function ListCard({
       { // Alert for removing collaborators
         collaboratorToRemove && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div role="alert" className="relative px-6 py-8 w-1/5 bg-snowwhite rounded-lg">
+            <div role="alert" className="relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5"
+            >
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to remove this user as a collaborator?</h3>
               <div className="flex">
                 <button type="button"

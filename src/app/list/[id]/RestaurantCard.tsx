@@ -62,19 +62,21 @@ export default function RestaurantCard({
   return (
     <div>
       <Link key={restaurant._id} href={`/restaurant/${restaurant._id}`} data-cy="restaurant">
-        <div className="flex relative p-8 border border-lightgray rounded-3xl cursor-pointer">
-          <img className="aspect-square object-cover rounded-lg mr-8" src={restaurant.photoUrl} alt={restaurant.name} width={180} height={180} />
+        <div className="flex gap-4 relative p-4 border border-lightgray rounded-3xl cursor-pointer md:gap-8 md:p-8">
+          <img className="h-[100px] w-[100px] self-center aspect-square object-cover rounded-lg md:h-[180px] md:w-[180px]"
+            src={restaurant.photoUrl} alt={restaurant.name}
+          />
           <div className="flex flex-col flex-1 gap-2">
-            <h3 className="text-xl font-semibold">{restaurant.name}</h3>
+            <h3 className="text-lg font-semibold md:text-lg">{restaurant.name}</h3>
             <RatingDisplay rating={getAvgRating(restaurant.reviews)} />
             { // Display the review note if there is only one
               restaurant.reviews.length === 1 && (
-                <p className="text-lg whitespace-pre-line">{restaurant.reviews[0].note}</p>
+                <p className="text-md whitespace-pre-line md:text-lg">{restaurant.reviews[0].note}</p>
               )
             }
             { // Display the number of reviews if there are multiple
               restaurant.reviews.length > 1 && (
-                <p className="w-fit text-lg hover:text-mauve transition-colors"
+                <p className="w-fit text-md hover:text-mauve transition-colors md:text-lg"
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowAllReviews(true); }}>
                   {restaurant.reviews.length} notes
                 </p>
@@ -92,7 +94,8 @@ export default function RestaurantCard({
           }
           { // Modal for menu options
             showMenuModal && (
-              <div className="absolute right-8 top-16 min-w-30 p-2 flex flex-col bg-snowwhite border border-lightgray rounded-sm"
+              <div className="absolute right-4 top-12 min-w-30 p-2 flex flex-col bg-snowwhite border border-lightgray rounded-sm
+                md:right-8 md:top-16"
                 data-cy="restaurant-menu-modal">
                 <button data-cy="review-restaurant-modal-trigger"
                   className="px-2 py-1 mb-2 text-left rounded-sm cursor-pointer hover:bg-lightpink"
@@ -113,10 +116,12 @@ export default function RestaurantCard({
         showReviewModal && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
             data-cy="review-restaurant-modal">
-            <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
+            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
+            >
               <div className="p-4 flex items-center justify-between">
-                <h2 className="text-3xl font-semibold text-darkpink">Review {restaurant.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => { setShowReviewModal(false); }}>
+                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Review {restaurant.name}</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowReviewModal(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
@@ -134,8 +139,8 @@ export default function RestaurantCard({
                   className="px-2 py-1 border border-charcoal border-solid rounded-sm mb-6 focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
                 <button className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
                   data-cy="add-review-submit">
-                    Update
-                  </button>
+                  Update
+                </button>
               </form>
             </div>
           </div>
@@ -145,7 +150,9 @@ export default function RestaurantCard({
         showDeleteAlert && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
             data-cy="delete-restaurant-modal">
-            <div role="alert" className="relative px-6 py-8 w-1/5 bg-snowwhite rounded-lg">
+            <div role="alert" className="relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5"
+            >
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this restaurant?</h3>
               <div className="flex">
                 <button type="button" data-cy="delete-restaurant-button"
@@ -169,15 +176,17 @@ export default function RestaurantCard({
       { // Modal for all reviews
         showAllReviews && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
+            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
+            >
               <div className="p-4 flex items-center justify-between">
-                <h2 className="text-3xl font-semibold text-darkpink">Reviews for {restaurant.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => { setShowAllReviews(false); }}>
+                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Reviews for {restaurant.name}</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAllReviews(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
               <hr className="border-slategray" />
-              <div className="mt-6 grid grid-cols-2 gap-8">
+              <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
                 {restaurant.reviews.map((review: Review, index: number) => (
                   <ReviewCard key={index} index={index} review={review} />
                 ))}
