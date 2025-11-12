@@ -56,7 +56,7 @@ export default function RestaurantDisplay({
   }
 
   return (
-    <div className={`${userId === 'public' || !featureAccessAllowed ? "w-full" : "w-1/2"} flex flex-col gap-2`}>
+    <div className={`${userId === 'public' || !featureAccessAllowed ? "w-full" : "w-full lg:w-1/2"} flex flex-col gap-2`}>
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold" data-cy="number-of-restaurants">{`${restaurants.length} ${restaurants.length === 1 ? 'Place' : 'Places'}`}</h2>
         <form className="flex items-center w-fit my-2">
@@ -72,7 +72,7 @@ export default function RestaurantDisplay({
         </form>
       </div>
       <div
-        className={`max-h-[80vh] overflow-y-auto gap-8 
+        className={`gap-8 lg:max-h-[80vh] lg:overflow-y-auto
         ${userId === 'public' || !featureAccessAllowed ? "grid grid-cols-2" : "pr-4 flex flex-col"}`}
       >
         {restaurants.map((restaurant: Restaurant) => (

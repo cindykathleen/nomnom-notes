@@ -19,7 +19,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ [
   }
 
   return (
-    <div className="relative h-screen w-screen p-16 flex items-center justify-center bg-coolbeige">
+    <div className="relative min-h-screen h-auto w-screen p-8 flex items-center justify-center bg-coolbeige xl:p-16">
       <div className="max-w-[1440px] w-full flex flex-col items-center">
         <SignUpAccessGate signInUrl={signInUrl} owner={owner} />
       </div>

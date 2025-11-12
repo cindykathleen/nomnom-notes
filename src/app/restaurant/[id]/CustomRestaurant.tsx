@@ -8,7 +8,7 @@ import DishAddCard from './DishAddCard';
 
 export default async function CustomRestaurant({ userId, list, restaurantId }: { userId: string, list: List, restaurantId: string }) {
   const isOwnerOrCollaborator = await db.isOwnerOrCollaborator(userId, list._id);
-  
+
   let restaurant;
 
   try {
@@ -42,8 +42,8 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
   dishes.sort((a, b) => a.index - b.index);
 
   return (
-    <div className="relative h-full w-screen p-16 mt-[80px] flex justify-center">
-      <div className="max-w-[1440px] w-full px-8 flex flex-col space-y-6">
+    <div className="relative top-[80px] min-h-[calc(100vh-80px)] h-auto w-screen box-border p-8 flex justify-center xl:p-16">
+      <div className="max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8">
         <div className="flex gap-2">
           { // Don't display private pages for anyone other than the list owner / collaborator
             isOwnerOrCollaborator && (
@@ -61,18 +61,16 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
           <p>{restaurant.name}</p>
         </div>
         <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-semibold">{restaurant.name}</h1>
+          <h1 className="text-3xl font-semibold xl:text-4xl">{restaurant.name}</h1>
           <RatingDisplay rating={getAvgRating(restaurant.reviews)} />
         </div>
-        <div className="">
-          <h2 className="text-3xl font-semibold">Dishes</h2>
-        </div>
+        <h2 className="text-2xl font-semibold xl:text-3xl">Dishes</h2>
         { // Display an error message if there are no dishes and the user is not the list owner
           (dishes.length === 0 && !isOwnerOrCollaborator) && (
-            <p className="text-lg">The owner of this list has not added any dishes.</p>
+            <p className="text-md md:text-lg">The owner of this list has not added any dishes.</p>
           )
         }
-        <div className="grid grid-cols-4 gap-16">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-16 xl:grid-cols-4">
           {dishes.map((dish) => (
             <DishCard key={dish._id} userId={userId} isOwnerOrCollaborator={isOwnerOrCollaborator} restaurant={restaurant} dish={dish} />
           ))}

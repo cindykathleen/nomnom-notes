@@ -8,16 +8,18 @@ export default async function HomePage() {
   });
 
   return (
-    <div className="relative h-screen w-screen flex flex-col items-center justify-center bg-coolbeige">
+    <div className="relative min-h-screen h-auto w-screen flex flex-col items-center justify-center bg-coolbeige">
       <div className="max-w-[1440px] w-full flex flex-col items-center">
-        <div className="w-1/3 text-center">
-          <h1 className="text-6xl mb-6 font-semibold">NomNom Notes</h1>
-          <p className="mb-6 text-xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris elementum ipsum eget libero iaculis pretium. Sed quis lobortis sapien. Mauris diam justo, ullamcorper sed tortor sit amet, pretium ornare massa.</p>
+        <div className="w-full p-16 text-center xl:w-2/3">
+          <h1 className="text-4xl mb-6 font-semibold xl:text-6xl">NomNom Notes</h1>
+          <p className="text-lg mb-6 xl:text-xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris elementum ipsum eget libero iaculis pretium. Sed quis lobortis sapien. Mauris diam justo, ullamcorper sed tortor sit amet, pretium ornare massa.</p>
           { // Set CTA to lists if logged in 
             session && (
               <Link href="/lists">
-                <button className="inline-block px-12 py-4 text-xl text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer
-                  hover:bg-mauve transition-colors">
+                <button className="inline-block px-12 py-4 text-lg text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer
+                  hover:bg-mauve transition-colors
+                  xl:text-xl"
+                >
                   View your lists
                 </button>
               </Link>
@@ -26,8 +28,10 @@ export default async function HomePage() {
           { // Set CTA to sign up if not logged in
             !session && (
               <Link href="/sign-up">
-                <button className="inline-block px-12 py-4 text-xl text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer
-                  hover:bg-mauve transition-colors">
+                <button className="inline-block px-8 py-2 text-lg text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer
+                  hover:bg-mauve transition-colors
+                  xl:px-12 xl:py-4 xl:text-xl"
+                >
                   Get started
                 </button>
               </Link>

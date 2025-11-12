@@ -7,7 +7,7 @@ import GoogleMap from './GoogleMap';
 
 export default async function CustomList({ userId, listId }: { userId: string, listId: string }) {
   const isOwnerOrCollaborator = await db.isOwnerOrCollaborator(userId, listId);
-  
+
   let list;
 
   try {
@@ -42,8 +42,8 @@ export default async function CustomList({ userId, listId }: { userId: string, l
   const featureAccessAllowed = await checkRate(userId, 'map');
 
   return (
-    <div className="fixed top-[80px] h-[calc(100vh-80px)] w-screen box-border p-16 flex justify-center">
-      <div className="max-w-[1440px] w-full px-8 flex flex-col space-y-6">
+    <div className="relative top-[80px] min-h-[calc(100vh-80px)] h-auto w-screen box-border p-8 flex justify-center xl:p-16">
+      <div className="max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8">
         { // Don't display private pages for anyone other than the list owner / collaborator
           isOwnerOrCollaborator && (
             <div className="flex gap-2">
@@ -54,14 +54,14 @@ export default async function CustomList({ userId, listId }: { userId: string, l
               <p>{list.name}</p>
             </div>
           )}
-        <h1 className="text-4xl font-semibold">{list.name}</h1>
+        <h1 className="text-3xl font-semibold xl:text-4xl">{list.name}</h1>
         <div className="max-h-full flex gap-8 overflow-y-auto">
-          <RestaurantDisplay 
-            userId={userId} 
-            isOwnerOrCollaborator={isOwnerOrCollaborator} 
-            featureAccessAllowed={featureAccessAllowed} 
-            list={list} 
-            initialRestaurants={restaurants} 
+          <RestaurantDisplay
+            userId={userId}
+            isOwnerOrCollaborator={isOwnerOrCollaborator}
+            featureAccessAllowed={featureAccessAllowed}
+            list={list}
+            initialRestaurants={restaurants}
           />
           { // Don't display a map for public users or if the user has passed their rate limit
             (userId !== 'public') && featureAccessAllowed && (

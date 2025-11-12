@@ -139,13 +139,13 @@ export default function DishCard({
     <div key={dish._id} {...(isOwnerOrCollaborator ? { ref, "data-handler-id": handlerId } : {})}
       className="flex flex-col relative bg-snowwhite rounded-sm" data-cy="dish">
       <img src={dish.photoUrl} alt={dish.name} className="aspect-square object-cover rounded-lg" />
-      <div className="flex flex-col gap-2 py-4">
-        <div className="flex justify-between relative">
+      <div className="flex flex-col gap-2 p-4">
+        <div className="relative flex justify-between gap-4">
           <h3 className="text-xl font-semibold">{dish.name}</h3>
           { // Don't display menu options for anyone other than the list owner / collaborator
             isOwnerOrCollaborator && (
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                className="ml-4 size-8 cursor-pointer" data-cy="dish-menu-modal-trigger"
+                className="size-9 cursor-pointer" data-cy="dish-menu-modal-trigger"
                 onClick={() => setShowMenuModal(!showMenuModal)}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
               </svg>
@@ -193,10 +193,12 @@ export default function DishCard({
         showEditModal && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
             data-cy="edit-dish-modal">
-            <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
+            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
+            >
               <div className="p-4 flex items-center justify-between">
-                <h2 className="text-3xl font-semibold text-darkpink">Edit {dish.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => setShowEditModal(false)}>
+                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Edit the dish</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => setShowEditModal(false)}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
@@ -219,10 +221,12 @@ export default function DishCard({
         showReviewModal && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
             data-cy="review-dish-modal">
-            <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
+            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
+            >
               <div className="p-4 flex items-center justify-between">
-                <h2 className="text-3xl font-semibold text-darkpink">Review {dish.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => setShowReviewModal(false)}>
+                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Review the dish</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => setShowReviewModal(false)}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
@@ -251,7 +255,9 @@ export default function DishCard({
         showDeleteAlert && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
             data-cy="delete-dish-modal">
-            <div role="alert" className="relative px-6 py-8 w-1/5 bg-snowwhite rounded-lg">
+            <div role="alert" className="relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5"
+            >
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this dish?</h3>
               <div className="flex">
                 <button type="button" data-cy="delete-dish-button"
@@ -272,15 +278,17 @@ export default function DishCard({
       { // Modal for all reviews
         showAllReviews && (
           <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div className="relative px-6 py-8 w-2/5 bg-snowwhite rounded-lg">
+            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
+              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
+            >
               <div className="p-4 flex items-center justify-between gap-2">
-                <h2 className="text-3xl font-semibold text-darkpink">Reviews for {dish.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 cursor-pointer" onClick={() => { setShowAllReviews(false); }}>
+                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Reviews for {dish.name}</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAllReviews(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
               <hr className="border-slategray" />
-              <div className="mt-6 grid grid-cols-2 gap-8">
+              <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
                 {dish.reviews.map((review: Review, index: number) => (
                   <ReviewCard key={index} index={index} review={review} />
                 ))}
