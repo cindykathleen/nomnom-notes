@@ -48,9 +48,9 @@ export default function InvitationForm({ user, owner, list, token }: { user: Use
   }
 
   return (
-    <div className="h-fit w-2xl px-12 py-10 space-y-4 text-center bg-snowwhite rounded-3xl">
-      <h2 className="text-3xl font-semibold">{heading}</h2>
-      <p className="text-xl">{message}</p>
+    <div className="form-layout space-y-4 text-center">
+      <h2 className="text-2xl font-semibold xl:text-3xl">{heading}</h2>
+      <p className="text-lg xl:text-xl">{message}</p>
       { // Show buttons only if the invitation hasn't been responded to yet
         showButtons && (
           <div className="flex items-center justify-center gap-4">
