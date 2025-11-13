@@ -74,7 +74,7 @@ export default function SearchResults({ lists, places }: { lists: List[], places
       )}
       { // Confirmation that the restaurant has been added to a list
         showConfirmation && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
+          <div className="modal">
             <div role="alert" className="relative px-6 py-8 w-1/5 border border-lightgray rounded-lg bg-snowwhite">
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">The restaurant has been added to the list</h3>
               <button type="button" data-cy="search-result-confirmation"

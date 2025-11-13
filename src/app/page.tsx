@@ -8,9 +8,9 @@ export default async function HomePage() {
   });
 
   return (
-    <div className="relative min-h-screen h-auto w-screen flex flex-col items-center justify-center bg-coolbeige">
-      <div className="max-w-[1440px] w-full flex flex-col items-center">
-        <div className="w-full p-16 text-center xl:w-2/3">
+    <div className="page-layout">
+      <div className="page-layout-inner">
+        <div className="w-full text-center xl:w-2/3">
           <h1 className="text-4xl mb-6 font-semibold xl:text-6xl">NomNom Notes</h1>
           <p className="text-lg mb-6 xl:text-xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris elementum ipsum eget libero iaculis pretium. Sed quis lobortis sapien. Mauris diam justo, ullamcorper sed tortor sit amet, pretium ornare massa.</p>
           { // Set CTA to lists if logged in 

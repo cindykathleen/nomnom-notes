@@ -47,11 +47,8 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
       </div>
       { // Modal for creating a new list
         showAddModal && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
-            data-cy="add-dish-modal">
-            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
-            >
+          <div className="modal" data-cy="add-dish-modal">
+            <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Add a dish</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAddModal(false) }}>
