@@ -51,7 +51,7 @@ export default function ListAddCard({ userId }: { userId: string }) {
             data-cy="add-list-modal">
             <div className="modal-inner">
               <div className="p-2 flex items-center justify-between lg:p-4">
-                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">New list</h2>
+                <h2 className="modal-heading">New list</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAddModal(false) }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
@@ -60,7 +60,7 @@ export default function ListAddCard({ userId }: { userId: string }) {
               <form onSubmit={handleSubmit} className="px-2 py-4 flex flex-col lg:px-4">
                 <label htmlFor="list-name" className="pb-1 font-semibold">Name *</label>
                 <input id="list-name" name="list-name" type="text" required value={listName} onChange={e => setListName(e.target.value)}
-                  className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+                  className="input" autoComplete="off" />
                 <fieldset className="mb-4">
                   <legend className="pb-1 font-semibold">Visibility *</legend>
                   <label className="mr-4">
@@ -72,7 +72,7 @@ export default function ListAddCard({ userId }: { userId: string }) {
                 </fieldset>
                 <label htmlFor="list-description" className="pb-1 font-semibold">Description</label>
                 <textarea id="list-description" name="list-description" placeholder="Add a description for this list"
-                  className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
+                  className="input"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
                 <button type="submit" disabled={!formIsValid}
                   className={`px-4 py-2 self-start text-snowwhite font-bold rounded-lg

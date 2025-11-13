@@ -153,21 +153,20 @@ export default function DishCard({
           }
           { // Modal for menu options
             showMenuModal && (
-              <div className="absolute right-0 top-8 min-w-30 p-2 flex flex-col bg-snowwhite border border-lightgray rounded-sm"
-                data-cy="dish-menu-modal">
-                <button data-cy="edit-dish-modal-trigger"
-                  className="px-2 py-1 mb-2 text-left rounded-sm cursor-pointer hover:bg-lightpink"
-                  onClick={() => { setShowMenuModal(false); setShowEditModal(true); }}>
+              <div className="menu-modal right-0 top-8" data-cy="dish-menu-modal">
+                <button data-cy="edit-dish-modal-trigger" className="menu-modal-item"
+                  onClick={() => { setShowMenuModal(false); setShowEditModal(true); }}
+                >
                   Edit
                 </button>
-                <button data-cy="review-dish-modal-trigger"
-                  className="px-2 py-1 mb-2 text-left rounded-sm cursor-pointer hover:bg-lightpink"
-                  onClick={() => { setShowMenuModal(false); setShowReviewModal(true); }}>
+                <button data-cy="review-dish-modal-trigger" className="menu-modal-item"
+                  onClick={() => { setShowMenuModal(false); setShowReviewModal(true); }}
+                >
                   Review
                 </button>
-                <button data-cy="delete-dish-modal-trigger"
-                  className="px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink"
-                  onClick={() => { setShowMenuModal(false); setShowDeleteAlert(true); }}>
+                <button data-cy="delete-dish-modal-trigger" className="menu-modal-item"
+                  onClick={() => { setShowMenuModal(false); setShowDeleteAlert(true); }}
+                >
                   Delete
                 </button>
               </div>
@@ -194,7 +193,7 @@ export default function DishCard({
           <div className="modal" data-cy="edit-dish-modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Edit the dish</h2>
+                <h2 className="modal-heading">Edit the dish</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => setShowEditModal(false)}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
@@ -203,10 +202,9 @@ export default function DishCard({
               <form onSubmit={handleSubmit} className="p-4 flex flex-col">
                 <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
                 <input id="dish-name" name="dish-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
-                  className="w-full px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+                  className="w-full input" autoComplete="off" />
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button type="submit" className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                  data-cy="edit-dish-submit">
+                <button type="submit" className="button-primary" data-cy="edit-dish-submit">
                   Update
                 </button>
               </form>
@@ -219,7 +217,7 @@ export default function DishCard({
           <div className="modal" data-cy="review-dish-modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Review the dish</h2>
+                <h2 className="modal-heading">Review the dish</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => setShowReviewModal(false)}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
@@ -235,9 +233,8 @@ export default function DishCard({
                 </div>
                 <label htmlFor="dish-note" className="pb-1 font-semibold">Note</label>
                 <textarea id="dish-note" name="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
-                  className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
-                <button type="submit" className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                  data-cy="add-review-submit">
+                  className="input"></textarea>
+                <button type="submit" className="button-primary" data-cy="add-review-submit">
                   Update
                 </button>
               </form>
@@ -249,16 +246,12 @@ export default function DishCard({
         showDeleteAlert && (
           <div className="modal" data-cy="delete-dish-modal">
             <div role="alert" className="modal-alert-inner">
-              <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this dish?</h3>
-              <div className="flex">
-                <button type="button" data-cy="delete-dish-button"
-                  className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                  onClick={() => { deleteDish(restaurant._id, dish._id) }}>
+              <h3 className="modal-alert-heading">Are you sure you want to delete this dish?</h3>
+              <div className="flex gap-4">
+                <button type="button" data-cy="delete-dish-button" className="button-primary" onClick={() => { deleteDish(restaurant._id, dish._id) }}>
                   Yes
                 </button>
-                <button type="button"
-                  className="px-8 py-1.5 text-sm text-darkpink font-semibold text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
-                  onClick={() => { setShowDeleteAlert(false) }}>
+                <button type="button" className="button-secondary" onClick={() => { setShowDeleteAlert(false) }}>
                   No
                 </button>
               </div>
@@ -271,7 +264,7 @@ export default function DishCard({
           <div className="modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between gap-2">
-                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Reviews for {dish.name}</h2>
+                <h2 className="modal-heading">Reviews for {dish.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAllReviews(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>

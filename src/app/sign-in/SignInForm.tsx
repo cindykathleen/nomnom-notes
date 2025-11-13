@@ -35,10 +35,10 @@ export const SignInForm = () => {
     <form onSubmit={handleSubmit} className="p-4 flex flex-col">
       <label htmlFor="email" className="pb-1 font-semibold">Email</label>
       <input id="email" name="email" type="email" required value={email} onChange={e => setEmail(e.target.value)}
-        className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+        className="input" autoComplete="off" />
       <label htmlFor="password" className="pb-1 font-semibold">Password</label>
       <input id="password" name="password" type="password" required value={password} onChange={e => setPassword(e.target.value)}
-        className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+        className="input" autoComplete="off" />
       <SignInButton disabled={!formIsValid} />
       { // Alert for errors
         errorMessage && (

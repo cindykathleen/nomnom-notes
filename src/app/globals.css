@@ -40,10 +40,31 @@
     @apply relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5;
   }
   .modal-alert-inner {
-    @apply relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5;
+    @apply relative w-[90%] px-4 py-4 flex flex-col gap-4 bg-snowwhite rounded-lg overflow-scroll lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5;
+  }
+  .modal-heading {
+    @apply text-2xl font-semibold text-darkpink lg:text-3xl;
+  }
+  .modal-alert-heading {
+    @apply text-2xl font-semibold text-darkpink;
   }
   .cards {
     @apply grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-16 xl:grid-cols-4;
+  }
+  .menu-modal {
+    @apply absolute min-w-30 p-2 flex flex-col gap-2 bg-snowwhite border border-lightgray rounded-sm z-99;
+  }
+  .menu-modal-item {
+    @apply px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink;
+  }
+  .button-primary {
+    @apply min-w-[100px] px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors;
+  }
+  .button-secondary {
+    @apply min-w-[100px] px-4 py-2 self-start text-darkpink font-bold bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors;
+  }
+  .input {
+    @apply px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
   }
 }
 

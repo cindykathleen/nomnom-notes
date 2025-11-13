@@ -50,7 +50,7 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
           <div className="modal" data-cy="add-dish-modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Add a dish</h2>
+                <h2 className="modal-heading">Add a dish</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAddModal(false) }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
@@ -59,7 +59,7 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
               <form onSubmit={handleSubmit} className="p-4 flex flex-col">
                 <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
                 <input id="dish-name" name="dish-name" type="text" required value={dishName} onChange={e => setDishName(e.target.value)}
-                  className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+                  className="input" autoComplete="off" />
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
                 <button type="submit" disabled={!formIsValid}
                   className={`px-4 py-2 self-start text-snowwhite font-bold rounded-lg

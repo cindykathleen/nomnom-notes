@@ -49,7 +49,7 @@ export const SignUpAccessForm = ({
       <form onSubmit={handleSubmit} className="w-full p-4 flex flex-col">
         <label htmlFor="access-code" className="pb-1 font-semibold">Access code</label>
         <input id="access-code" name="access-code" type="access-code" required value={accessCode} onChange={e => setAccessCode(e.target.value)}
-          className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+          className="input" autoComplete="off" />
         <SignUpButton disabled={!formIsValid} />
       </form>
     </div>

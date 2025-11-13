@@ -61,18 +61,18 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
       <form onSubmit={handleSubmit} className="p-4 flex flex-col">
         <label htmlFor="display-name" className="pb-1 font-semibold">Display name</label>
         <input id="display-name" name="display-name" type="text" required value={displayName} onChange={e => setDisplayName(e.target.value)}
-          className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+          className="input" autoComplete="off" />
         <label htmlFor="email" className="pb-1 font-semibold">Email</label>
         <input id="email" name="email" type="email" required value={email} onChange={e => setEmail(e.target.value)}
           onInvalid={e => { e.preventDefault(); setErrorMessage('Invalid email address'); }}
-          className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+          className="input" autoComplete="off" />
         <label htmlFor="password" className="pb-1 font-semibold">Password</label>
         <input id="password" name="password" type="password" required value={password} onChange={e => setPassword(e.target.value)}
-          className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+          className="input" autoComplete="off" />
         <label htmlFor="password-confirmation" className="pb-1 font-semibold">Password confirmation</label>
         {!passwordMatch && confirmation && (<p className="pb-3 text-sm text-red-600 font-semibold">The passwords do not match</p>)}
         <input id="password-confirmation" type="password" required value={confirmation} onChange={e => setConfirmation(e.target.value)}
-          className="px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)" autoComplete="off" />
+          className="input" autoComplete="off" />
         <SignUpButton disabled={!formIsValid} />
         { // Alert for errors
           errorMessage && (

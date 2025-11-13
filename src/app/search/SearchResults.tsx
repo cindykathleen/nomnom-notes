@@ -75,11 +75,11 @@ export default function SearchResults({ lists, places }: { lists: List[], places
       { // Confirmation that the restaurant has been added to a list
         showConfirmation && (
           <div className="modal">
-            <div role="alert" className="relative px-6 py-8 w-1/5 border border-lightgray rounded-lg bg-snowwhite">
-              <h3 className="mb-4 text-2xl font-semibold text-darkpink">The restaurant has been added to the list</h3>
-              <button type="button" data-cy="search-result-confirmation"
-                className="px-8 py-1.5 text-sm text-darkpink font-semibold text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
-                onClick={() => { setShowConfirmation(false); setSelectedPlace(null); }}>
+            <div role="alert" className="modal-alert-inner">
+              <h3 className="modal-alert-heading">The restaurant has been added to the list</h3>
+              <button type="button" data-cy="search-result-confirmation" className="button-primary"
+                onClick={() => { setShowConfirmation(false); setSelectedPlace(null); }}
+              >
                 Ok
               </button>
             </div>
