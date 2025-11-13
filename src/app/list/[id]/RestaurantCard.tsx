@@ -94,17 +94,15 @@ export default function RestaurantCard({
           }
           { // Modal for menu options
             showMenuModal && (
-              <div className="absolute right-4 top-12 min-w-30 p-2 flex flex-col bg-snowwhite border border-lightgray rounded-sm
-                md:right-8 md:top-16"
-                data-cy="restaurant-menu-modal">
-                <button data-cy="review-restaurant-modal-trigger"
-                  className="px-2 py-1 mb-2 text-left rounded-sm cursor-pointer hover:bg-lightpink"
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(false); setShowReviewModal(true); }}>
+              <div className="menu-modal right-4 top-12 md:right-8 md:top-16" data-cy="restaurant-menu-modal">
+                <button data-cy="review-restaurant-modal-trigger" className="menu-modal-item"
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(false); setShowReviewModal(true); }}
+                >
                   Review
                 </button>
-                <button data-cy="delete-restaurant-modal-trigger"
-                  className="px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink"
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(false); setShowDeleteAlert(true); }}>
+                <button data-cy="delete-restaurant-modal-trigger" className="menu-modal-item"
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(false); setShowDeleteAlert(true); }}
+                >
                   Delete
                 </button>
               </div>
@@ -117,7 +115,7 @@ export default function RestaurantCard({
           <div className="modal" data-cy="review-restaurant-modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Review {restaurant.name}</h2>
+                <h2 className="modal-heading">Review {restaurant.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowReviewModal(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
@@ -134,8 +132,7 @@ export default function RestaurantCard({
                 <label htmlFor="restaurant-note" className="pb-1 font-semibold">Note</label>
                 <textarea id="restaurant-note" name="restaurant-note" placeholder="Add a note for this restaurant" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="px-2 py-1 border border-charcoal border-solid rounded-sm mb-6 focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
-                <button className="px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                  data-cy="add-review-submit">
+                <button className="button-primary" data-cy="add-review-submit">
                   Update
                 </button>
               </form>
@@ -147,19 +144,17 @@ export default function RestaurantCard({
         showDeleteAlert && (
           <div className="modal" data-cy="delete-restaurant-modal">
             <div role="alert" className="modal-alert-inner">
-              <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this restaurant?</h3>
-              <div className="flex">
-                <button type="button" data-cy="delete-restaurant-button"
-                  className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
+              <h3 className="modal-alert-heading">Are you sure you want to delete this restaurant?</h3>
+              <div className="flex gap-4">
+                <button type="button" data-cy="delete-restaurant-button" className="button-primary"
                   onClick={async () => {
                     await deleteRestaurant(listId, restaurant._id);
                     onDelete(restaurant._id);
-                  }}>
+                  }}
+                >
                   Yes
                 </button>
-                <button type="button"
-                  className="px-8 py-1.5 text-sm text-darkpink font-semibold text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
-                  onClick={() => { setShowDeleteAlert(false) }}>
+                <button type="button" className="button-secondary" onClick={() => { setShowDeleteAlert(false) }}>
                   No
                 </button>
               </div>
@@ -172,7 +167,7 @@ export default function RestaurantCard({
           <div className="modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Reviews for {restaurant.name}</h2>
+                <h2 className="modal-heading">Reviews for {restaurant.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAllReviews(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
