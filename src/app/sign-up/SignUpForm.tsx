@@ -43,7 +43,7 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
   }
 
   return (
-    <div className="h-fit max-w-3xl px-8 py-6 bg-snowwhite rounded-3xl xl:px-12 xl:py-10">
+    <div className="form-layout">
       <h2 className="pb-2 text-2xl font-semibold text-center xl:text-3xl">Create an account</h2>
       { // If the user was redirected from an invitation link, show this message
         redirect && owner && (
@@ -76,7 +76,7 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
         <SignUpButton disabled={!formIsValid} />
         { // Alert for errors
           errorMessage && (
-            <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
+            <div className="modal">
               <div role="alert" className="relative px-6 py-8 w-1/5 text-center bg-snowwhite rounded-lg">
                 <p className="mb-4 text-lg font-semibold">{errorMessage}</p>
                 <button type="button"

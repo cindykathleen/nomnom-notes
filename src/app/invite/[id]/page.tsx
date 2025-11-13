@@ -24,8 +24,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   }
 
   return (
-    <div className="relative h-screen w-screen p-16 flex items-center justify-center bg-coolbeige">
-      <div className="max-w-[1440px] w-full flex flex-col items-center">
+    <div className="page-layout">
+      <div className="page-layout-inner">
         { // No error found and invitation is valid
           validInvitation && (
             <InvitationForm user={user} owner={owner} list={list} token={id} />

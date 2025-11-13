@@ -114,11 +114,8 @@ export default function RestaurantCard({
       </Link>
       { // Modal for reviewing restaurants
         showReviewModal && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
-            data-cy="review-restaurant-modal">
-            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
-            >
+          <div className="modal" data-cy="review-restaurant-modal">
+            <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Review {restaurant.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowReviewModal(false); }}>
@@ -148,11 +145,8 @@ export default function RestaurantCard({
       }
       { // Alert for deleting restaurants
         showDeleteAlert && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
-            data-cy="delete-restaurant-modal">
-            <div role="alert" className="relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5"
-            >
+          <div className="modal" data-cy="delete-restaurant-modal">
+            <div role="alert" className="modal-alert-inner">
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this restaurant?</h3>
               <div className="flex">
                 <button type="button" data-cy="delete-restaurant-button"
@@ -175,10 +169,8 @@ export default function RestaurantCard({
       }
       { // Modal for all reviews
         showAllReviews && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
-            >
+          <div className="modal">
+            <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Reviews for {restaurant.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAllReviews(false); }}>

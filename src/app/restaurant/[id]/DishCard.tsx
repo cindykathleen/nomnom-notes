@@ -191,11 +191,8 @@ export default function DishCard({
       </div>
       { // Modal for editing a dish
         showEditModal && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
-            data-cy="edit-dish-modal">
-            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
-            >
+          <div className="modal" data-cy="edit-dish-modal">
+            <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Edit the dish</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => setShowEditModal(false)}>
@@ -219,11 +216,8 @@ export default function DishCard({
       }
       { // Modal for reviewing a dish
         showReviewModal && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
-            data-cy="review-dish-modal">
-            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
-            >
+          <div className="modal" data-cy="review-dish-modal">
+            <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Review the dish</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => setShowReviewModal(false)}>
@@ -253,11 +247,8 @@ export default function DishCard({
       }
       { // Alert for deleting a dish
         showDeleteAlert && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
-            data-cy="delete-dish-modal">
-            <div role="alert" className="relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5"
-            >
+          <div className="modal" data-cy="delete-dish-modal">
+            <div role="alert" className="modal-alert-inner">
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this dish?</h3>
               <div className="flex">
                 <button type="button" data-cy="delete-dish-button"
@@ -277,10 +268,8 @@ export default function DishCard({
       }
       { // Modal for all reviews
         showAllReviews && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
-            >
+          <div className="modal">
+            <div className="modal-inner">
               <div className="p-4 flex items-center justify-between gap-2">
                 <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Reviews for {dish.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAllReviews(false); }}>

@@ -17,6 +17,36 @@
   --modal-background: rgba(0,0,0,.8);
 }
 
+@layer components {
+  .page-layout {
+    @apply relative min-h-screen h-auto w-screen p-8 flex items-center justify-center bg-coolbeige xl:p-16;
+  }
+  .page-layout-inner {
+    @apply max-w-[1440px] w-full flex flex-col items-center;
+  }
+  .gated-page-layout {
+    @apply relative top-[80px] min-h-[calc(100vh-80px)] h-auto w-screen box-border p-8 flex justify-center xl:p-16;
+  }
+  .gated-page-layout-inner {
+    @apply max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8;
+  }
+  .form-layout {
+    @apply h-fit max-w-3xl px-8 py-6 bg-snowwhite rounded-3xl xl:px-12 xl:py-10;
+  }
+  .modal {
+    @apply fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99;
+  }
+  .modal-inner {
+    @apply relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5;
+  }
+  .modal-alert-inner {
+    @apply relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5;
+  }
+  .cards {
+    @apply grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-16 xl:grid-cols-4;
+  }
+}
+
 body {
   background: var(--color-snowwhite);
   color: var(--color-charcoal);

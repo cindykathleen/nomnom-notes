@@ -183,11 +183,9 @@ export default function ListCard({
       </div>
       { // Modal for editing lists
         showEditModal && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
+          <div className="modal"
             data-cy="edit-list-modal">
-            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
-            >
+            <div className="modal-inner">
               <div className="p-2 flex items-center justify-between lg:p-4">
                 <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Edit {list.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowEditModal(false) }}>
@@ -225,10 +223,8 @@ export default function ListCard({
       }
       { // Modal for sharing lists
         showShareModal && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div className="relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5"
-            >
+          <div className="modal">
+            <div className="modal-inner">
               <div className="p-2 flex items-center justify-between lg:p-4">
                 <h2 className="text-2xl font-semibold text-darkpink lg:text-3xl">Share {list.name}</h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowShareModal(false) }}>
@@ -281,11 +277,8 @@ export default function ListCard({
       }
       { // Alert for deleting lists
         showDeleteAlert && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99"
-            data-cy="delete-list-modal">
-            <div role="alert" className="relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5"
-            >
+          <div className="modal" data-cy="delete-list-modal">
+            <div role="alert" className="modal-alert-inner">
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to delete this list?</h3>
               <div className="flex">
                 <button type="button" data-cy="delete-list-button"
@@ -305,10 +298,8 @@ export default function ListCard({
       }
       { // Alert for removing lists
         showRemoveAlert && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div role="alert" className="relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5"
-            >
+          <div className="modal">
+            <div role="alert" className="modal-alert-inner">
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to remove this list?</h3>
               <div className="flex">
                 <button type="button"
@@ -328,10 +319,8 @@ export default function ListCard({
       }
       { // Alert for removing collaborators
         collaboratorToRemove && (
-          <div className="fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99">
-            <div role="alert" className="relative w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll 
-              lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5"
-            >
+          <div className="modal">
+            <div role="alert" className="modal-alert-inner">
               <h3 className="mb-4 text-2xl font-semibold text-darkpink">Are you sure you want to remove this user as a collaborator?</h3>
               <div className="flex">
                 <button type="button"

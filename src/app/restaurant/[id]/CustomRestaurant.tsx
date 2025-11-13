@@ -42,8 +42,8 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
   dishes.sort((a, b) => a.index - b.index);
 
   return (
-    <div className="relative top-[80px] min-h-[calc(100vh-80px)] h-auto w-screen box-border p-8 flex justify-center xl:p-16">
-      <div className="max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8">
+    <div className="gated-page-layout">
+      <div className="gated-page-layout-inner">
         <div className="flex gap-2">
           { // Don't display private pages for anyone other than the list owner / collaborator
             isOwnerOrCollaborator && (
@@ -70,7 +70,7 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
             <p className="text-md md:text-lg">The owner of this list has not added any dishes.</p>
           )
         }
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-16 xl:grid-cols-4">
+        <div className="cards">
           {dishes.map((dish) => (
             <DishCard key={dish._id} userId={userId} isOwnerOrCollaborator={isOwnerOrCollaborator} restaurant={restaurant} dish={dish} />
           ))}

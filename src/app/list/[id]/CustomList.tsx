@@ -42,8 +42,8 @@ export default async function CustomList({ userId, listId }: { userId: string, l
   const featureAccessAllowed = await checkRate(userId, 'map');
 
   return (
-    <div className="relative top-[80px] min-h-[calc(100vh-80px)] h-auto w-screen box-border p-8 flex justify-center xl:p-16">
-      <div className="max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8">
+    <div className="gated-page-layout">
+      <div className="gated-page-layout-inner">
         { // Don't display private pages for anyone other than the list owner / collaborator
           isOwnerOrCollaborator && (
             <div className="flex gap-2">
