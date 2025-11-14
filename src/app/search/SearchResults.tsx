@@ -45,29 +45,33 @@ export default function SearchResults({ lists, places }: { lists: List[], places
         })}
       </div>
       {selectedPlace && (
-        <div className="min-w-xl h-fit px-6 py-4 border border-lightgray rounded-lg">
-          <div className="p-4 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-darkpink">Add {selectedPlace.name} to your list</h2>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={() => setSelectedPlace(null)}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          </div>
-          <hr className="border-slategray" />
-          <div className="p-4 flex flex-col">
-            <p className="pb-4 text-lg font-bold">Select a list</p>
-            <div className="flex flex-col gap-4">
-              {lists.map((list) => {
-                return (
-                  <div key={list._id} className="flex gap-4 cursor-pointer" data-cy="search-result-list"
-                    onClick={async () => { await addPlace(list._id, selectedPlace); setShowConfirmation(true); }}>
-                    <img className="max-w-24 aspect-square rounded-lg mb-4" src={list.photoUrl} alt={list.name} />
-                    <div>
-                      <p className="font-semibold">{list.name}</p>
-                      <p>{list.restaurants.length} places</p>
+        <div className="modal 
+          md:relative md:h-fit md:px-6 md:py-4 md:flex-col md:items-start md:bg-snowwhite md:border md:border-lightgray md:rounded-lg md:z-0 xl:max-w-xl"
+        >
+          <div className="modal-inner md:max-h-none md:max-w-none md:w-full md:p-0 md:rounded-none md:overflow-auto">
+            <div className="w-full p-4 flex items-center justify-between gap-4">
+              <h2 className="text-xl font-semibold text-darkpink">Add {selectedPlace.name} to your list</h2>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={() => setSelectedPlace(null)}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <hr className="w-full border-slategray" />
+            <div className="p-4 flex flex-col">
+              <p className="pb-4 text-lg font-bold">Select a list</p>
+              <div className="flex flex-col gap-4">
+                {lists.map((list) => {
+                  return (
+                    <div key={list._id} className="flex gap-4 cursor-pointer" data-cy="search-result-list"
+                      onClick={async () => { await addPlace(list._id, selectedPlace); setShowConfirmation(true); }}>
+                      <img className="max-w-24 aspect-square rounded-lg mb-4" src={list.photoUrl} alt={list.name} />
+                      <div>
+                        <p className="font-semibold">{list.name}</p>
+                        <p>{list.restaurants.length} places</p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

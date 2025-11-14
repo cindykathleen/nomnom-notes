@@ -270,7 +270,7 @@ export default function DishCard({
                 </svg>
               </div>
               <hr className="border-slategray" />
-              <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+              <div className="review-cards">
                 {dish.reviews.map((review: Review, index: number) => (
                   <ReviewCard key={index} index={index} review={review} />
                 ))}
