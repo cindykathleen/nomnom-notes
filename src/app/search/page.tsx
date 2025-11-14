@@ -45,17 +45,17 @@ export default async function Page(props: { searchParams: SearchParams }) {
   return (
     <div>
       <Nav />
-      <div className="relative h-full w-screen p-16 mt-[80px] flex justify-center">
-        <div className="w-full max-w-[1440px] px-8 flex flex-col justify-center">
+      <div className="gated-page-layout">
+        <div className="gated-page-layout-inner">
           { // Default search page
             !results && (
               <>
-                <div className="w-3xl mx-auto mb-16 space-y-8">
-                  <h1 className="text-4xl font-semibold text-center">Search for a restaurant</h1>
+                <div className="max-w-3xl w-full mx-auto mb-8 space-y-4 md:mb-16 md:space-y-8">
+                  <h1 className="text-2xl font-semibold text-center md:text-3xl lg:text-4xl">Search for a restaurant</h1>
                   <SearchForm />
                 </div>
-                <div className="space-y-12">
-                  <h2 className="text-3xl font-semibold">Need some recommendations?</h2>
+                <div className="md:space-y-12">
+                  <h2 className="text-xl font-semibold text-center md:text-2xl md:text-left lg:text-3xl">Need some recommendations?</h2>
                   <Recommendations recommendations={recommendations} />
                 </div>
               </>
@@ -64,7 +64,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
           { // Search results page
             results && (
               <div className="flex flex-col space-y-8">
-                <div className="w-3xl mx-auto mb-16">
+                <div className="max-w-3xl w-full mx-auto mb-8 xl:mb-16">
                   <SearchForm query={query} />
                 </div>
                 { // Display an error message if no results were found

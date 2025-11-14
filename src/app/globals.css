@@ -18,6 +18,12 @@
 }
 
 @layer components {
+  .nav-layout {
+    @apply fixed top-0 h-[60px] w-full flex items-center justify-center z-99 bg-coolbeige md:h-[80px];
+  }
+  .nav-layout-inner {
+    @apply max-w-[1440px] w-full px-8 flex justify-between;
+  }
   .page-layout {
     @apply relative min-h-screen h-auto w-screen p-8 flex items-center justify-center bg-coolbeige xl:p-16;
   }
@@ -25,7 +31,7 @@
     @apply max-w-[1440px] w-full flex flex-col items-center;
   }
   .gated-page-layout {
-    @apply relative top-[80px] min-h-[calc(100vh-80px)] h-auto w-screen box-border p-8 flex justify-center xl:p-16;
+    @apply relative top-[60px] min-h-[calc(100vh-60px)] h-auto w-screen box-border p-8 flex justify-center md:top-[80px] md:min-h-[calc(100vh-80px)] xl:p-16;
   }
   .gated-page-layout-inner {
     @apply max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8;
@@ -51,6 +57,21 @@
   .cards {
     @apply grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-16 xl:grid-cols-4;
   }
+  .cards-outline {
+    @apply relative p-4 flex border border-lightgray rounded-3xl;
+  }
+  .recommendation-cards {
+    @apply grid md:grid-cols-2 md:gap-y-8 xl:grid-cols-3 xl:gap-y-16;
+  }
+  .recommendation-cards-outline {
+    @apply px-4 py-8 flex flex-col justify-center items-center gap-2 text-center border-b border-lightgray
+      last:border-b-0 md:border-b-0
+      md:[&:nth-child(2n+1)]:border-r
+      xl:[&:nth-child(2n+1)]:border-r-0 xl:[&:nth-child(3n+1)]:border-r xl:[&:nth-child(3n+2)]:border-r;
+  }
+  .review-cards {
+    @apply mt-6 grid gap-6 lg:grid-cols-2 lg:gap-8;
+  }
   .menu-modal {
     @apply absolute min-w-30 p-2 flex flex-col gap-2 bg-snowwhite border border-lightgray rounded-sm z-99;
   }
@@ -63,8 +84,17 @@
   .button-secondary {
     @apply min-w-[100px] px-4 py-2 self-start text-darkpink font-bold bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors;
   }
+  .link {
+    @apply text-darkpink cursor-pointer hover:text-mauve transition-colors;
+  }
+  .breadcrumb-link {
+    @apply font-semibold hover:text-mauve transition-colors;
+  }
   .input {
     @apply px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
+  }
+  .input-file {
+    @apply mb-6 file:px-3 file:py-1 file:mr-2 file:font-semibold file:border file:border-charcoal file:rounded-lg file:cursor-pointer;
   }
 }
 

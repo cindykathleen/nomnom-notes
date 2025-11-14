@@ -62,7 +62,7 @@ export default function RestaurantCard({
   return (
     <div>
       <Link key={restaurant._id} href={`/restaurant/${restaurant._id}`} data-cy="restaurant">
-        <div className="flex gap-4 relative p-4 border border-lightgray rounded-3xl cursor-pointer md:gap-8 md:p-8">
+        <div className="cards-outline gap-4 cursor-pointer md:gap-8 md:p-8">
           <img className="h-[100px] w-[100px] self-center aspect-square object-cover rounded-lg md:h-[180px] md:w-[180px]"
             src={restaurant.photoUrl} alt={restaurant.name}
           />
@@ -173,7 +173,7 @@ export default function RestaurantCard({
                 </svg>
               </div>
               <hr className="border-slategray" />
-              <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+              <div className="review-cards">
                 {restaurant.reviews.map((review: Review, index: number) => (
                   <ReviewCard key={index} index={index} review={review} />
                 ))}

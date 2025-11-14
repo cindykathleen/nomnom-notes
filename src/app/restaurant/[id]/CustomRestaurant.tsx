@@ -48,13 +48,13 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
           { // Don't display private pages for anyone other than the list owner / collaborator
             isOwnerOrCollaborator && (
               <>
-                <Link href="/lists/" className="font-semibold hover:text-mauve transition-colors">
+                <Link href="/lists/" className="breadcrumb-link">
                   Lists
                 </Link>
                 <p className="font-semibold">/</p>
               </>
             )}
-          <Link href={`/list/${list._id}`} className="font-semibold hover:text-mauve transition-colors">
+          <Link href={`/list/${list._id}`} className="breadcrumb-link">
             {list!.name}
           </Link>
           <p className="font-semibold">/</p>

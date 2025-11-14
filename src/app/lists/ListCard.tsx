@@ -164,7 +164,7 @@ export default function ListCard({
           }
           { // Modal for collaborator's menu options
             showMenuModal && role === 'collaborator' && (
-              <div className="menu-modal">
+              <div className="menu-modal right-0 top-8">
                 <button className="menu-modal-item" onClick={() => { setShowMenuModal(false); setShowRemoveAlert(true); }}>
                   Remove
                 </button>

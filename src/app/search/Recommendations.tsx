@@ -25,20 +25,18 @@ export default function SearchResults({ recommendations }: { recommendations: Re
   }
 
   return (
-    <div className="grid grid-cols-3 gap-y-16">
+    <div className="recommendation-cards">
       {recommendations.map((recommendation) => {
         const type = getDisplayType(recommendation._id);
         const imgUrl = getImgUrl(type);
 
         return (
-          <div key={type}
-            className={`px-4 py-8 flex flex-col justify-center items-center gap-2 text-center
-              [&:nth-child(3n+1)]:border-r [&:nth-child(3n+2)]:border-r border-lightgray`}>
-            <p className="text-lg font-semibold">{type}</p>
+          <div key={type} className='recommendation-cards-outline'>
+            <p className="text-md font-semibold md:text-lg">{type}</p>
             <Image src={imgUrl} alt={`${type} food`} width={64} height={64} />
-            <p className="text-xl font-semibold">{recommendation.restaurant.name}</p>
+            <p className="text-lg font-semibold md:text-xl">{recommendation.restaurant.name}</p>
             <RatingDisplay rating={recommendation.restaurant.rating} />
-            <div className="flex items-center text-lg">
+            <div className="flex items-center text-md md:text-lg">
               <p>{getDisplayAddress(recommendation.restaurant.address)}</p>
               <p className="mx-2">|</p>
               <Link href={recommendation.restaurant.mapsUrl} target="_blank">

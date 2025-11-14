@@ -28,7 +28,7 @@ export default function RatingSystem({ currRating, setNewRating }: { currRating:
 
         return (
           <div key={i} className="relative">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="size-6 cursor-pointer"
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="size-5 cursor-pointer md:size-6"
             onMouseMove={(e) => {
               const { left, width } = e.currentTarget.getBoundingClientRect();
               const mouseX = e.clientX - left;
