@@ -33,6 +33,10 @@ export default function ListAddCard({ userId }: { userId: string }) {
 
     await addList(userId, formData, inputPhotoId);
     setShowAddModal(false);
+
+    // Clear inputs
+    setListName('');
+    setInputImage('');
   }
 
   return (
@@ -71,8 +75,7 @@ export default function ListAddCard({ userId }: { userId: string }) {
                   </label>
                 </fieldset>
                 <label htmlFor="list-description" className="pb-1 font-semibold">Description</label>
-                <textarea id="list-description" name="list-description" placeholder="Add a description for this list"
-                  className="input"></textarea>
+                <textarea id="list-description" name="list-description" placeholder="Add a description for this list" className="input"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
                 <button type="submit" disabled={!formIsValid}
                   className={`px-4 py-2 self-start text-snowwhite font-bold rounded-lg
