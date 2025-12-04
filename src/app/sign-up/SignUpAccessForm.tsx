@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { SignUpButton } from './SignUpButton';
-import { checkAccessCode } from '@/app/actions/authentication';
 
 export const SignUpAccessForm = ({
   handleAccessFormSubmit,
@@ -32,8 +32,13 @@ export const SignUpAccessForm = ({
       {
         errorMessage === '' && (
           <>
-            <h2 className="pb-2 text-2xl font-semibold text-center xl:text-3xl">Please enter the access code</h2>
-            <p className="pb-4 text-md font-semibold text-center">If you do not have one, please ask the application owner.</p>
+            <h2 className="form-heading">Please enter the access code</h2>
+            <p className="form-paragraph">If you do not have one, please ask the application owner.</p>
+            <p className="form-paragraph">
+              Already have an account? Click
+              <Link href="/sign-in/" className="text-darkpink hover:text-mauve transition-colors"> here </Link>
+              to sign in.
+            </p>
           </>
         )
       }
@@ -41,7 +46,7 @@ export const SignUpAccessForm = ({
         errorMessage && (
           <>
             <h2 className="pb-2 text-3xl font-semibold text-center">{errorMessage}</h2>
-            <p className="pb-4 text-md font-semibold text-center">The access code you have entered is not correct. Please try again or contact the application owner.</p>
+            <p className="form-paragraph">The access code you have entered is not correct. Please try again or contact the application owner.</p>
           </>
         )
       }

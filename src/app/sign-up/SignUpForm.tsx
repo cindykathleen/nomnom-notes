@@ -44,15 +44,15 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
 
   return (
     <div className="form-layout">
-      <h2 className="pb-2 text-2xl font-semibold text-center xl:text-3xl">Create an account</h2>
+      <h2 className="form-heading">Create an account</h2>
       { // If the user was redirected from an invitation link, show this message
         redirect && owner && (
-          <p className="pb-2 text-md font-semibold text-center">
+          <p className="form-paragraph">
             {owner.name} has invited you to collaborate on their list. Create an account to accept the invitation.
           </p>
         )
       }
-      <p className="pb-4 text-md font-semibold text-center">
+      <p className="form-paragraph">
         Already have an account? Click
         <Link href={signInUrl} className="text-darkpink hover:text-mauve transition-colors"> here </Link>
         to sign in.

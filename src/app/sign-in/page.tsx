@@ -22,15 +22,15 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ [
     <div className="page-layout">
       <div className="page-layout-inner">
         <div className="form-layout">
-          <h2 className="pb-2 text-2xl font-semibold text-center xl:text-3xl">Sign in</h2>
+          <h2 className="form-heading">Sign in</h2>
           { // If the user was redirected from an invitation link, show this message
             redirect && owner && (
-              <p className="pb-2 text-md font-semibold text-center">
+              <p className="form-paragraph">
                 {owner.name} has invited you to collaborate on their list. Sign in to your account to accept the invitation.
               </p>
             )
           }
-          <p className="pb-4 text-md font-semibold text-center">
+          <p className="form-paragraph">
             Don't have an account? Click
             <Link href={signUpUrl} className="text-darkpink hover:text-mauve transition-colors"> here </Link>
             to create one.

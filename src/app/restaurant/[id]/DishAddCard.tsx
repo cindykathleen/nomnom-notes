@@ -33,6 +33,10 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
 
     await addDish(formData, restaurantId, inputPhotoId);
     setShowAddModal(false);
+
+    // Clear inputs
+    setDishName('');
+    setInputImage('');
   }
 
   return (
