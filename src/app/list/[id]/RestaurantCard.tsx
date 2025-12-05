@@ -60,7 +60,7 @@ export default function RestaurantCard({
   }
 
   return (
-    <div>
+    <div className="last-of-type:mb-2">
       <Link key={restaurant._id} href={`/restaurant/${restaurant._id}`} data-cy="restaurant">
         <div className="cards-outline gap-4 cursor-pointer md:gap-8 md:p-8">
           <img className="h-[100px] w-[100px] self-center aspect-square object-cover rounded-lg md:h-[180px] md:w-[180px]"
