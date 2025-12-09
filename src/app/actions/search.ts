@@ -7,7 +7,11 @@ import { Place, Restaurant, SearchQueryResult } from '@/app/interfaces/interface
 import { getGooglePhoto } from './images';
 import { v4 as uuidv4 } from 'uuid';
 
-export const searchQuery = async (searchQuery: string, userId: string): Promise<SearchQueryResult> => {
+export const searchQuery = async (
+  searchQuery: string, 
+  coords: { latitude: number; longitude: number },
+  userId: string
+): Promise<SearchQueryResult> => {
   const query = searchQuery.toLowerCase();
 
   // Check if the query is already stored in the database
@@ -25,7 +29,7 @@ export const searchQuery = async (searchQuery: string, userId: string): Promise<
   }
 
   // Send a new search request
-  const searchedPlaces = await searchPlace(query, false);
+  const searchedPlaces = await searchPlace(query, coords, false);
   
   // Store the new search into the database
   await db.addSearchResult(query, searchedPlaces);

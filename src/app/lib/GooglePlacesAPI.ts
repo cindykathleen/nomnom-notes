@@ -1,11 +1,17 @@
 import { Place } from '@/app/interfaces/interfaces';
 
-export const searchPlace = async (query: string, recommendation: boolean): Promise<Place[]> => {
+export const searchPlace = async (
+  query: string, 
+  coords: { latitude: number; longitude: number }, 
+  recommendation: boolean
+): Promise<Place[]> => {
   // Make sure apiKey is not undefined
   const apiKey = process.env.GOOGLE_PLACES_API_KEY_SECRET!;
   const endpoint = 'https://places.googleapis.com/v1/places:searchText';
 
   let body = {};
+
+  console.log(coords);
 
   if (!recommendation) {
     body = {
@@ -16,7 +22,16 @@ export const searchPlace = async (query: string, recommendation: boolean): Promi
     body = {
       textQuery: query,
       minRating: 3.5,
-      languageCode: 'en'
+      languageCode: 'en',
+      locationBias: {
+        circle: {
+          center: {
+            latitude: coords.latitude,
+            longitude: coords.longitude
+          },
+          radius: 5000.0
+        }
+      }
     };
   }
 
