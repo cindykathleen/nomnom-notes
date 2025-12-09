@@ -1,8 +1,13 @@
+'use server'; 
+
 import { Place, Recommendation } from "@/app/interfaces/interfaces";
 import { db } from "./database";
 import { searchPlace } from "./GooglePlacesAPI";
 
-export default async function getRecommendations(numberOfRecs: number) {
+export default async function getRecommendations(
+  numberOfRecs: number,
+  coords: { latitude: number; longitude: number }
+) {
   let recommendations: Recommendation[] = [];
 
   let recommendedType = [
@@ -27,14 +32,14 @@ export default async function getRecommendations(numberOfRecs: number) {
 
     if (storedPlaces) {
       typeRecommendations = storedPlaces;
-    }
+    } else {
+      // Send a new search request
+      const searchedPlaces = await searchPlace(recommendedType[i], coords, true);
+      typeRecommendations = searchedPlaces;
 
-    // Send a new search request
-    const searchedPlaces = await searchPlace(recommendedType[i], true);
-    typeRecommendations = searchedPlaces;
-
-    // Store the new search into the database
+      // Store the new search into the database
     await db.addSearchResult(recommendedType[i], searchedPlaces);
+    }
 
     // Get one restaurant from typeRecommendations at random
     const randomIndex = Math.floor(Math.random() * (typeRecommendations.length));

@@ -1,9 +1,11 @@
+'use client';
+
 import { Recommendation } from '@/app/interfaces/interfaces';
 import RatingDisplay from '@/app/components/RatingDisplay';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function SearchResults({ recommendations }: { recommendations: Recommendation[] }) {
+export default function Recommendations({ recommendations }: { recommendations: Recommendation[] }) {
   const getDisplayType = (type: string) => {
     return type.replace(/\s*restaurant$/i, '').trim();
   }
