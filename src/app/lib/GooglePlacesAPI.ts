@@ -27,7 +27,7 @@ export const searchPlace = async (
             latitude: coords.latitude,
             longitude: coords.longitude
           },
-          radius: 5000.0
+          radius: 30000 // 30 km
         }
       }
     };

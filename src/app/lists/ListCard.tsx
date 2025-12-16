@@ -53,7 +53,7 @@ export default function ListCard({
 
     if (inputImage === list.photoUrl) {
       // If there is no change to the image, don't re-upload it into the database
-      inputPhotoUrl = inputImage.split('=')[1];
+      inputPhotoUrl = list.photoUrl;
     } else if (inputImage !== '') {
       inputPhotoUrl = await uploadImage(inputImage);
       if (inputPhotoUrl === null) return;
