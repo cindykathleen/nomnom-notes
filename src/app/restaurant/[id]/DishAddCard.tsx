@@ -21,17 +21,17 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    let inputPhotoId: string | null = '';
+    let inputPhotoUrl: string | null = '';
 
     if (inputImage !== '') {
-      inputPhotoId = await uploadImage(inputImage);
-      if (inputPhotoId === null) return;
+      inputPhotoUrl = await uploadImage(inputImage);
+      if (inputPhotoUrl === null) return;
     } else {
       // If no image is provided, use a default image
-      inputPhotoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
+      inputPhotoUrl = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
     }
 
-    await addDish(formData, restaurantId, inputPhotoId);
+    await addDish(formData, restaurantId, inputPhotoUrl);
     setShowAddModal(false);
 
     // Clear inputs

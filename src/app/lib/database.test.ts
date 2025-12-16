@@ -33,8 +33,7 @@ describe('Test database creation', async () => {
       visibility: 'private' as 'private',
       name: 'Boba',
       description: 'Rating all of the boba drinks we have tried',
-      photoId: 'photo-test',
-      photoUrl: '/api/database/photos?id=photo-test',
+      photoUrl: '',
       restaurants: []
     }
 
@@ -44,8 +43,7 @@ describe('Test database creation', async () => {
       visibility: 'public' as 'public',
       name: 'Michelin',
       description: 'Keeping track of all of the Michelin restaurants we have eaten at',
-      photoId: 'photo-test',
-      photoUrl: '/api/database/photos?id=photo-test',
+      photoUrl: '',
       restaurants: []
     }
 
@@ -69,8 +67,7 @@ describe('Test database creation', async () => {
         longitude: -122.023624,
       },
       mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
-      photoId: 'photo-test',
-      photoUrl: '/api/database/photos?id=photo-test',
+      photoUrl: '',
       reviews: [],
       dishes: [],
       dateAdded: new Date()
@@ -87,8 +84,7 @@ describe('Test database creation', async () => {
       index: 1,
       name: 'Strawberry Milk Tea w/ boba 50% sweet',
       reviews: [],
-      photoId: 'photo-test',
-      photoUrl: '/api/database/photos?id=photo-test'
+      photoUrl: ''
     }
 
     const testDish2 = {
@@ -96,8 +92,7 @@ describe('Test database creation', async () => {
       index: 2,
       name: 'Milk Tea w/ boba 50% sweet',
       reviews: [],
-      photoId: 'photo-test',
-      photoUrl: '/api/database/photos?id=photo-test'
+      photoUrl: ''
     }
 
     const testDish3 = {
@@ -105,8 +100,7 @@ describe('Test database creation', async () => {
       index: 3,
       name: 'Peach Milk Tea w/ boba 50% sweet',
       reviews: [],
-      photoId: 'photo-test',
-      photoUrl: '/api/database/photos?id=photo-test'
+      photoUrl: ''
     }
 
     await testDb.addDish('restaurant-test', testDish1);
@@ -136,7 +130,7 @@ describe('Test database creation', async () => {
           longitude: -122.023624,
         },
         mapsUrl: 'https://maps.google.com/?cid=16954183089385756841',
-        photoId: '503574d6-db6d-4be7-bec7-1c305686119e'
+        photoUrl: ''
       },
       {
         _id: 'ChIJZ0uK75gzjoARCoIgh3aIO1M',
@@ -149,7 +143,7 @@ describe('Test database creation', async () => {
           longitude: -121.86302269999997,
         },
         mapsUrl: 'https://maps.google.com/?cid=5997537371428520458',
-        photoId: 'AXQCQNSkq6kDl4fjCcYGXnnxXS5LvC22oEDkMLOqnRniVljSUe0cV5x'
+        photoUrl: ''
       }
     ]
 
@@ -158,17 +152,17 @@ describe('Test database creation', async () => {
     const searchResults = await testDb.getSearchResults('tp tea');
     expect(searchResults).not.toBeNull();
   })
-  it('upload photo', async () => {
-    const url = 'https://placehold.co/400';
-    const response = await fetch(url);
-    const bytes = await response.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+  // it('upload photo', async () => {
+  //   const url = 'https://placehold.co/400';
+  //   const response = await fetch(url);
+  //   const bytes = await response.arrayBuffer();
+  //   const buffer = Buffer.from(bytes);
 
-    await testDb.uploadPhoto('photo-test', buffer);
+  //   await testDb.uploadPhoto('photo-test', buffer);
 
-    const photo = await testDb.getPhoto('photo-test');
-    expect(photo).not.toBeNull();
-  })
+  //   const photo = await testDb.getPhoto('photo-test');
+  //   expect(photo).not.toBeNull();
+  // })
   it('create invitation', async () => {
     const testInvitation1 = {
       _id: 'invitation-1-test',

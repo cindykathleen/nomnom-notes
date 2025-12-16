@@ -1,5 +1,5 @@
-import { MongoClient, Db, Binary } from 'mongodb';
-import { User, List, Restaurant, Dish, Place, SearchResult, Photo, Invitation } from "@/app/interfaces/interfaces";
+import { MongoClient, Db } from 'mongodb';
+import { User, List, Restaurant, Dish, Place, SearchResult, Invitation } from "@/app/interfaces/interfaces";
 
 export class Database {
   client: MongoClient;
@@ -124,7 +124,6 @@ export class Database {
           name: list.name,
           visibility: list.visibility,
           description: list.description,
-          photoId: list.photoId,
           photoUrl: list.photoUrl
         }
       }
@@ -223,7 +222,6 @@ export class Database {
         $set: {
           name: dish.name,
           reviews: dish.reviews,
-          photoId: dish.photoId,
           photoUrl: dish.photoUrl
         }
       }
@@ -268,7 +266,6 @@ export class Database {
     ];
 
     const result = await restaurants.aggregate<{ _id: string, maxIndex: number }>(pipeline).toArray();
-    console.log(result);
 
     return result.length > 0 ? result[0].maxIndex : null;
   }
@@ -328,18 +325,18 @@ export class Database {
   }
 
   // Photo functions
-  async getPhoto(photoId: string) {
-    return await this.db.collection<Photo>('photos').findOne({ _id: photoId });
-  }
+  // async getPhoto(photoId: string) {
+  //   return await this.db.collection<Photo>('photos').findOne({ _id: photoId });
+  // }
 
-  async uploadPhoto(photoId: string, photoData: Buffer) {
-    const newPhoto = {
-      _id: photoId,
-      data: new Binary(photoData)
-    }
+  // async uploadPhoto(photoId: string, photoData: Buffer) {
+  //   const newPhoto = {
+  //     _id: photoId,
+  //     data: new Binary(photoData)
+  //   }
 
-    await this.db.collection<Photo>('photos').insertOne(newPhoto);
-  }
+  //   await this.db.collection<Photo>('photos').insertOne(newPhoto);
+  // }
 
   // Invitation functions
   async addInvitation(invitation: Invitation) {

@@ -1,4 +1,5 @@
-import { addPhoto } from "@/app/actions/images";
+import { addPhoto } from '@/app/actions/images';
+
 export const uploadImage = async (imageUrl: string): Promise<string | null> => {
   const formData = new FormData();
 
@@ -22,13 +23,13 @@ export const uploadImage = async (imageUrl: string): Promise<string | null> => {
     formData.append('url', imageUrl);
   }
 
-  const fileName = addPhoto(formData);
+  const imageUrlFromR2 = await addPhoto(formData);
 
-  if (!fileName) {
+  if (!imageUrlFromR2) {
     return null;
   }
 
-  return fileName;
+  return imageUrlFromR2;
 }
 
 const checkImageExists = (url: string): Promise<boolean> => {

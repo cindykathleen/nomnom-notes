@@ -5,7 +5,7 @@ import { Dish, Review } from '@/app/interfaces/interfaces';
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
 
-export const addDish = async (formData: FormData, restaurantId: string, photoId: string) => {
+export const addDish = async (formData: FormData, restaurantId: string, photoUrl: string) => {
   const name = formData.get('dish-name') as string;
 
   let restaurant;
@@ -27,8 +27,7 @@ export const addDish = async (formData: FormData, restaurantId: string, photoId:
     index: highestIndex + 1,
     name: name,
     reviews: [],
-    photoId: photoId,
-    photoUrl: `/api/database/photos?id=${photoId}`
+    photoUrl: photoUrl
   };
 
   try {
@@ -40,7 +39,7 @@ export const addDish = async (formData: FormData, restaurantId: string, photoId:
   }
 }
 
-export const updateDish = async (formData: FormData, dishId: string, photoId: string) => {
+export const updateDish = async (formData: FormData, dishId: string, photoUrl: string) => {
   const name = formData.get('dish-name') as string;
 
   try {
@@ -53,8 +52,7 @@ export const updateDish = async (formData: FormData, dishId: string, photoId: st
     const updatedDish: Dish = {
       ...existingDish,
       name: name,
-      photoId: photoId,
-      photoUrl: `/api/database/photos?id=${photoId}`,
+      photoUrl: photoUrl
     };
 
     await db.updateDish(updatedDish);

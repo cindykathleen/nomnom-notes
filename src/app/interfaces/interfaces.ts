@@ -15,7 +15,6 @@ export interface List {
   visibility: 'private' | 'public';
   name: string;
   description: string;
-  photoId: string;
   photoUrl: string;
   restaurants: string[];
 }
@@ -30,11 +29,10 @@ export interface Place {
     longitude: number;
   };
   mapsUrl: string;
-  photoId: string
+  photoUrl: string;
 }
 
 export interface Restaurant extends Place {
-  photoUrl: string;
   reviews: Review[];
   dishes: string[];
   dateAdded: Date;
@@ -50,7 +48,6 @@ export interface Dish {
   index: number;
   name: string;
   reviews: Review[];
-  photoId: string;
   photoUrl: string;
 }
 
@@ -69,11 +66,6 @@ export type SearchQueryResult =
 export interface SearchResult {
   _id: string;
   result: Place[];
-}
-
-export interface Photo {
-  _id: string;
-  data: Binary;
 }
 
 export interface Invitation {

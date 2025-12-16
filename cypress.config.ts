@@ -83,8 +83,7 @@ export default defineConfig({
             visibility: 'private',
             name: 'Test List',
             description: 'This is a test list.',
-            photoId: '',
-            photoUrl: '/api/database/photos?id=',
+            photoUrl: '',
             restaurants: []
           };
 
@@ -107,8 +106,7 @@ export default defineConfig({
               longitude: -121.9320587
             },
             mapsUrl: "https://maps.google.com/?cid=5825659302684031711&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
-            photoId: '',
-            photoUrl: '/api/database/photos?id=',
+            photoUrl: '',
             reviews: [],
             dishes: [],
             dateAdded: new Date

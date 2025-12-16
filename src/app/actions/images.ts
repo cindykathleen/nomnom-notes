@@ -1,34 +1,50 @@
 'use server';
 
-import { db } from '@/app/lib/database';
 import { v4 as uuidv4 } from 'uuid';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { r2 } from '@/app/lib/r2';
 import { getPhoto } from '@/app/lib/GooglePhotosAPI';
 
-export const addPhoto = async (formData: FormData) => {
-  const file = formData.get('file') as File;
-  const url = formData.get('url') as string;
+export const addPhoto = async (formData: FormData): Promise<string | null> => {
+  const file = formData.get('file') as File | null;
+  const url = formData.get('url') as string | null;
 
-  const fileName = uuidv4();
+  if (!file && !url) return null;
 
   try {
+    let buffer: Buffer;
+    let contentType: string;
+    let extension: string;
+
     if (file) {
       const bytes = await file.arrayBuffer(); // binary data which represents the image
-      const buffer = Buffer.from(bytes); // convert to a Node.js Buffer
-
-      await db.uploadPhoto(fileName, buffer);
-    } else if (url) {
-      const response = await fetch(url);
-      const bytes = await response.arrayBuffer(); // binary data which represents the image
-      const buffer = Buffer.from(bytes); // convert to a Node.js Buffer
-
-      await db.uploadPhoto(fileName, buffer);
+      buffer = Buffer.from(bytes); // convert to a Node.js Buffer
+      contentType = file.type;
+      extension = file.type.split('/')[1] ?? 'jpg';
     } else {
-      return null;
+      const response = await fetch(url!);
+      const bytes = await response.arrayBuffer(); // binary data which represents the image
+      buffer = Buffer.from(bytes); // convert to a Node.js Buffer
+      contentType = response.headers.get('content-type') ?? 'image/jpeg';
+      extension = contentType.split('/')[1] ?? 'jpg';
     }
 
-    return fileName;
+    const id = uuidv4();
+    const key = `${id}.${extension}`;
 
+    await r2.send(
+      new PutObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME!,
+        Key: key,
+        Body: buffer,
+        ContentType: contentType,
+        CacheControl: "public, max-age=31536000, immutable",
+      })
+    );
+
+    return `${process.env.R2_PUBLIC_URL}/${key}`;
   } catch (err) {
+    console.error('Error uploading image to R2:', err);
     return null;
   }
 }
@@ -43,14 +59,15 @@ export const getGooglePhoto = async (photoId: string) => {
     const formData = new FormData();
     formData.append('url', googlePhotoURL);
 
-    const fileName = await addPhoto(formData);
+    const imageUrlFromR2 = await addPhoto(formData);
 
-    if (!fileName) {
+    if (!imageUrlFromR2) {
       return null;
     }
 
-    return fileName;
+    return imageUrlFromR2;
   } catch (err) {
+    console.error('Error getting Google photo and uploading image to R2:', err);
     return null;
   }
 }

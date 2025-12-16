@@ -5,7 +5,7 @@ import { List } from "@/app/interfaces/interfaces";
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
 
-export const addList = async (userId: string, formData: FormData, photoId: string) => {
+export const addList = async (userId: string, formData: FormData, photoUrl: string) => {
   const name = formData.get('list-name') as string;
   const visibility = formData.get('list-visibility') as 'private' | 'public';
   const description = formData.get('list-description') as string;
@@ -16,8 +16,7 @@ export const addList = async (userId: string, formData: FormData, photoId: strin
     visibility: visibility,
     name: name,
     description: description,
-    photoId: photoId,
-    photoUrl: `/api/database/photos?id=${photoId}`,
+    photoUrl: photoUrl,
     restaurants: []
   };
 
@@ -30,7 +29,7 @@ export const addList = async (userId: string, formData: FormData, photoId: strin
   }
 }
 
-export const updateList = async (formData: FormData, listId: string, photoId: string) => {
+export const updateList = async (formData: FormData, listId: string, photoUrl: string) => {
   const name = formData.get('list-name') as string;
   const visibility = formData.get('list-visibility') as 'private' | 'public';
   const description = formData.get('list-description') as string;
@@ -47,8 +46,7 @@ export const updateList = async (formData: FormData, listId: string, photoId: st
       name: name,
       visibility: visibility,
       description: description,
-      photoId: photoId,
-      photoUrl: `/api/database/photos?id=${photoId}`,
+      photoUrl: photoUrl,
     };
 
     await db.updateList(updatedList);
