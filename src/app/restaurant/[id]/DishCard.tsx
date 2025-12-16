@@ -52,7 +52,7 @@ export default function DishCard({
 
     if (inputImage === dish.photoUrl) {
       // If there is no change to the image, don't re-upload it into the database
-      inputPhotoUrl = inputImage.split('=')[1];
+      inputPhotoUrl = dish.photoUrl;
     } else if (inputImage !== '') {
       inputPhotoUrl = await uploadImage(inputImage);
       if (inputPhotoUrl === null) return;
