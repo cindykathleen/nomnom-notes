@@ -24,7 +24,7 @@ export default function ImageInput({ currImage, setNewImage }: { currImage: stri
         : <label className="font-semibold">Image (<span className="link" onClick={() => setShowUploadInput(true)} data-cy="image-input-type-trigger">upload your own</span>)</label>
       }
       {previewImage !== '' && (
-        <img src={previewImage} className="max-w-36 mb-1 aspect-square object-contain" />
+        <img src={previewImage} alt="Preview image" className="max-w-36 mb-1 aspect-square object-contain" />
       )}
       {showUploadInput
         ? <div className="flex flex-col gap-2 mb-6">

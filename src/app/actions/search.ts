@@ -45,16 +45,16 @@ export const addPlace = async (listId: string, place: Place) => {
   // TODO: Check if the restaurant is already in the list
 
   // Get the restaurant cover photo from Google
-  if (place.photoId !== '') {
-    const googlePhotoId = await getGooglePhoto(place.photoId);
+  if (place.photoUrl !== '') {
+    const googlePhotoUrl = await getGooglePhoto(place.photoUrl);
 
-    if (googlePhotoId) {
-      place.photoId = googlePhotoId;
+    if (googlePhotoUrl) {
+      place.photoUrl = googlePhotoUrl;
     }
   } else {
     // Use a placeholder image if no photo is available from Google
     // There is a placeholder image in the database
-    place.photoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
+    place.photoUrl = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
   }
 
   const newRestaurant: Restaurant = {
@@ -65,8 +65,7 @@ export const addPlace = async (listId: string, place: Place) => {
     address: place.address,
     location: place.location,
     mapsUrl: place.mapsUrl,
-    photoId: place.photoId,
-    photoUrl: `/api/database/photos?id=${place.photoId}`,
+    photoUrl: place.photoUrl,
     reviews: [],
     dishes: [],
     dateAdded: new Date()

@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import type { Identifier, XYCoord } from 'dnd-core';
+import Image from 'next/image';
 import { Restaurant, Dish, Review } from '@/app/interfaces/interfaces';
 import getAvgRating from '@/app/lib/getAvgRating';
 import RatingDisplay from '@/app/components/RatingDisplay';
@@ -47,20 +48,20 @@ export default function DishCard({
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    let inputPhotoId: string | null = '';
+    let inputPhotoUrl: string | null = '';
 
     if (inputImage === dish.photoUrl) {
       // If there is no change to the image, don't re-upload it into the database
-      inputPhotoId = inputImage.split('=')[1];
+      inputPhotoUrl = inputImage.split('=')[1];
     } else if (inputImage !== '') {
-      inputPhotoId = await uploadImage(inputImage);
-      if (inputPhotoId === null) return;
+      inputPhotoUrl = await uploadImage(inputImage);
+      if (inputPhotoUrl === null) return;
     } else {
       // If no image is provided, use a default image
-      inputPhotoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
+      inputPhotoUrl = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
     }
 
-    await updateDish(formData, dish._id, inputPhotoId);
+    await updateDish(formData, dish._id, inputPhotoUrl);
     setShowEditModal(false);
   }
 
@@ -138,7 +139,7 @@ export default function DishCard({
   return (
     <div key={dish._id} {...(isOwnerOrCollaborator ? { ref, "data-handler-id": handlerId } : {})}
       className="flex flex-col relative bg-snowwhite rounded-sm" data-cy="dish">
-      <img src={dish.photoUrl} alt={dish.name} className="aspect-square object-cover rounded-lg" />
+      <Image src={dish.photoUrl} alt={dish.name} width={500} height={500} className="aspect-square object-cover rounded-lg" />
       <div className="flex flex-col gap-2 p-4">
         <div className="relative flex justify-between gap-4">
           <h3 className="text-xl font-semibold">{dish.name}</h3>

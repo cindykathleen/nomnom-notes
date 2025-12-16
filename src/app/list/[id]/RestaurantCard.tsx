@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Restaurant, Review } from '@/app/interfaces/interfaces';
 import { updateReview, updateRestaurant, deleteRestaurant } from '@/app/actions/restaurant';
 import getAvgRating from '@/app/lib/getAvgRating';
@@ -63,8 +64,8 @@ export default function RestaurantCard({
     <div className="last-of-type:mb-2">
       <Link key={restaurant._id} href={`/restaurant/${restaurant._id}`} data-cy="restaurant">
         <div className="cards-outline gap-4 cursor-pointer md:gap-8 md:p-8">
-          <img className="h-[100px] w-[100px] self-center aspect-square object-cover rounded-lg md:h-[180px] md:w-[180px]"
-            src={restaurant.photoUrl} alt={restaurant.name}
+          <Image src={restaurant.photoUrl} alt={restaurant.name} width={500} height={500} 
+            className="h-[100px] w-[100px] self-center aspect-square object-cover rounded-lg md:h-[180px] md:w-[180px]"
           />
           <div className="flex flex-col flex-1 gap-2">
             <h3 className="text-lg font-semibold md:text-lg">{restaurant.name}</h3>

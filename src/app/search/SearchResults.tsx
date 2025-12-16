@@ -3,6 +3,7 @@
 import { List, Place } from '@/app/interfaces/interfaces';
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { addPlace } from '@/app/actions/search';
 
 export default function SearchResults({ lists, places }: { lists: List[], places: Place[] }) {
@@ -63,7 +64,9 @@ export default function SearchResults({ lists, places }: { lists: List[], places
                   return (
                     <div key={list._id} className="flex gap-4 cursor-pointer" data-cy="search-result-list"
                       onClick={async () => { await addPlace(list._id, selectedPlace); setShowConfirmation(true); }}>
-                      <img className="max-w-24 aspect-square rounded-lg mb-4" src={list.photoUrl} alt={list.name} />
+                      <Image src={list.photoUrl} alt={list.name} width={500} height={500}
+                        className="max-w-24 aspect-square rounded-lg mb-4"
+                      />
                       <div>
                         <p className="font-semibold">{list.name}</p>
                         <p>{list.restaurants.length} places</p>

@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import type { Identifier, XYCoord } from 'dnd-core';
 import Link from 'next/link';
+import Image from 'next/image';
 import { User, List } from '@/app/interfaces/interfaces';
 import ImageInput from '@/app/components/ImageInput';
 import { uploadImage } from '@/app/lib/uploadImage';
@@ -48,20 +49,20 @@ export default function ListCard({
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    let inputPhotoId: string | null = '';
+    let inputPhotoUrl: string | null = '';
 
     if (inputImage === list.photoUrl) {
       // If there is no change to the image, don't re-upload it into the database
-      inputPhotoId = inputImage.split('=')[1];
+      inputPhotoUrl = inputImage.split('=')[1];
     } else if (inputImage !== '') {
-      inputPhotoId = await uploadImage(inputImage);
-      if (inputPhotoId === null) return;
+      inputPhotoUrl = await uploadImage(inputImage);
+      if (inputPhotoUrl === null) return;
     } else {
       // If no image is provided, use a default image
-      inputPhotoId = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
+      inputPhotoUrl = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
     }
 
-    await updateList(formData, list._id, inputPhotoId);
+    await updateList(formData, list._id, inputPhotoUrl);
     setShowEditModal(false);
   }
 
@@ -130,7 +131,7 @@ export default function ListCard({
     <div key={list._id} ref={ref} data-handler-id={handlerId} data-cy="list"
       className="relative flex flex-col bg-snowwhite rounded-sm">
       <Link href={`/list/${list._id}`}>
-        <img src={list.photoUrl} alt={list.name} className="aspect-square rounded-lg" />
+        <Image src={list.photoUrl} alt={list.name} width={500} height={500} className="aspect-square rounded-lg" />
       </Link>
       <div className="flex flex-col py-4">
         <div className="relative flex justify-between gap-4">

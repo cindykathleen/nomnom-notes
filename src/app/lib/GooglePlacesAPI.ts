@@ -11,8 +11,6 @@ export const searchPlace = async (
 
   let body = {};
 
-  console.log(coords);
-
   if (!recommendation) {
     body = {
       textQuery: query,
@@ -78,7 +76,7 @@ export const searchPlace = async (
       address: place.formattedAddress ?? "",
       location: place.location ?? { latitude: 0, longitude: 0 },
       mapsUrl: place.googleMapsUri ?? "",
-      photoId: place.photos?.[0]?.name ?? ""
+      photoUrl: place.photos?.[0]?.name ?? ""
     }
   });
 
