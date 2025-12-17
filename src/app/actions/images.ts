@@ -42,19 +42,19 @@ export const addPhoto = async (formData: FormData): Promise<string | null> => {
       })
     );
 
-    return `${process.env.R2_PUBLIC_URL}/${key}`;
+    return `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${key}`;
   } catch (err) {
     console.error('Error uploading image to R2:', err);
     return null;
   }
 }
 
-export const getGooglePhoto = async (photoId: string) => {
+export const getGooglePhoto = async (photoUrl: string) => {
   // Get the photo URL from the Google Photos API first 
   // Then upload the photo into the database
-  // And use the new, unique photoId (file name) provided
+  // And use the new, unique photoUrl provided
   try {
-    const googlePhotoURL = await getPhoto(photoId!);
+    const googlePhotoURL = await getPhoto(photoUrl!);
 
     const formData = new FormData();
     formData.append('url', googlePhotoURL);
