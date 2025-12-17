@@ -31,7 +31,7 @@
     @apply max-w-[1440px] w-full flex flex-col items-center;
   }
   .gated-page-layout {
-    @apply relative top-[60px] min-h-[calc(100vh-60px)] h-auto w-screen box-border p-8 flex justify-center md:top-[80px] md:min-h-[calc(100vh-80px)] xl:p-16;
+    @apply relative top-[60px] h-[calc(100vh-60px)] h-auto w-screen box-border p-8 flex justify-center md:top-[80px] md:h-[calc(100vh-80px)] xl:p-16;
   }
   .gated-page-layout-inner {
     @apply max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8;

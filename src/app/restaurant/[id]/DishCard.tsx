@@ -50,14 +50,21 @@ export default function DishCard({
 
     let inputPhotoUrl: string | null = '';
 
+    // If there is no change to the image, don't re-upload it into the database
     if (inputImage === dish.photoUrl) {
-      // If there is no change to the image, don't re-upload it into the database
       inputPhotoUrl = dish.photoUrl;
-    } else if (inputImage !== '') {
+    } 
+    // If the image is already uploaded, use the existing URL
+    else if (inputImage.startsWith(process.env.NEXT_PUBLIC_R2_PUBLIC_URL!)) {
+      inputPhotoUrl = inputImage;
+    } 
+    // If the image is new, upload it and get the URL
+    else if (inputImage !== '') {
       inputPhotoUrl = await uploadImage(inputImage);
       if (inputPhotoUrl === null) return;
-    } else {
-      // If no image is provided, use a default image
+    } 
+    // If no image is provided, use a default image
+    else {
       inputPhotoUrl = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
     }
 
