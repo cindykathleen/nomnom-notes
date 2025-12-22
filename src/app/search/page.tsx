@@ -1,5 +1,5 @@
+import getDb from '@/app/lib/db';
 import getCurrentUser from '@/app/lib/getCurrentUser';
-import { db } from '@/app/lib/database';
 import { List } from '@/app/interfaces/interfaces';
 import Nav from '@/app/components/Nav';
 import Search from './Search'
@@ -7,6 +7,8 @@ import Search from './Search'
 type SearchParams = Promise<{ [key: string]: string | undefined }>
 
 export default async function Page(props: { searchParams: SearchParams }) {
+  const db = await getDb();
+  
   const userId = await getCurrentUser(false);
   let listIds = await db.getListIds(userId);
   let lists: List[] = [];

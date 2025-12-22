@@ -1,4 +1,4 @@
-import { db } from '@/app/lib/database';
+import getDb from '@/app/lib/db';
 import { List, Dish } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import getAvgRating from '@/app/lib/getAvgRating';
@@ -7,6 +7,8 @@ import DishCard from './DishCard';
 import DishAddCard from './DishAddCard';
 
 export default async function CustomRestaurant({ userId, list, restaurantId }: { userId: string, list: List, restaurantId: string }) {
+  const db = await getDb();
+  
   const isOwnerOrCollaborator = await db.isOwnerOrCollaborator(userId, list._id);
 
   let restaurant;

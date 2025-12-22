@@ -1,9 +1,11 @@
 'use server';
 
-import { db } from '@/app/lib/database';
+import getDb from '@/app/lib/db';
 import { Dish, Review } from '@/app/interfaces/interfaces';
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
+
+const db = await getDb();
 
 export const addDish = async (formData: FormData, restaurantId: string, photoUrl: string) => {
   const name = formData.get('dish-name') as string;

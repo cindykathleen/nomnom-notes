@@ -1,11 +1,13 @@
 'use server';
 
+import getDb from '@/app/lib/db';
 import checkRate from '@/app/lib/checkRate';
-import { db } from '@/app/lib/database';
 import { searchPlace } from '@/app/lib/GooglePlacesAPI';
 import { Place, Restaurant, SearchQueryResult } from '@/app/interfaces/interfaces';
 import { getGooglePhoto } from './images';
 import { v4 as uuidv4 } from 'uuid';
+
+const db = await getDb();
 
 export const searchQuery = async (
   searchQuery: string, 

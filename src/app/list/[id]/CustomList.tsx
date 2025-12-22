@@ -1,4 +1,4 @@
-import { db } from '@/app/lib/database';
+import getDb from '@/app/lib/db';
 import { Restaurant } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import RestaurantDisplay from './RestaurantDisplay';
@@ -6,6 +6,7 @@ import checkRate from '@/app/lib/checkRate';
 import GoogleMap from './GoogleMap';
 
 export default async function CustomList({ userId, listId }: { userId: string, listId: string }) {
+  const db = await getDb();
   const isOwnerOrCollaborator = await db.isOwnerOrCollaborator(userId, listId);
 
   let list;
