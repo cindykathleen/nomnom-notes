@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { addDish } from '@/app/actions/dish'
 import ImageInput from '@/app/components/ImageInput';
 import { uploadImage } from '@/app/lib/uploadImage';
@@ -13,6 +14,7 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
   const [dishName, setDishName] = useState('');
   const [inputImage, setInputImage] = useState('');
 
+  const { pending } = useFormStatus();
   const formIsValid = dishName.trim() !== '';
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -26,12 +28,12 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
     // If the image is already uploaded, use the existing URL
     if (inputImage.startsWith(process.env.NEXT_PUBLIC_R2_PUBLIC_URL!)) {
       inputPhotoUrl = inputImage;
-    } 
+    }
     // If the image is new, upload it and get the URL
     else if (inputImage !== '') {
       inputPhotoUrl = await uploadImage(inputImage);
       if (inputPhotoUrl === null) return;
-    } 
+    }
     // If no image is provided, use a default image
     else {
       inputPhotoUrl = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;
@@ -77,7 +79,12 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
                       ? 'bg-lightgray cursor-not-allowed'
                       : 'bg-darkpink cursor-pointer hover:bg-mauve transition-colors'
                     }`}>
-                  Add
+                  {pending
+                    ? (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="block m-auto size-6 animate-spin" >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>)
+                    : ("Add")
+                  }
                 </button>
               </form>
             </div>
