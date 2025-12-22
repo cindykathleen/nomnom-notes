@@ -138,7 +138,7 @@ export default function ListCard({
     <div key={list._id} ref={ref} data-handler-id={handlerId} data-cy="list"
       className="relative flex flex-col bg-snowwhite rounded-sm">
       <Link href={`/list/${list._id}`}>
-        <Image src={list.photoUrl} alt={list.name} width={500} height={500} className="aspect-square rounded-lg" />
+        <Image src={list.photoUrl} alt={list.name} width={500} height={500} className="aspect-square object-cover rounded-lg" />
       </Link>
       <div className="flex flex-col py-4">
         <div className="relative flex justify-between gap-4">
