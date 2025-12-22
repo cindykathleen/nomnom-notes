@@ -1,13 +1,15 @@
 'use server'; 
 
-import { Place, Recommendation } from "@/app/interfaces/interfaces";
-import { db } from "./database";
-import { searchPlace } from "./GooglePlacesAPI";
+import getDb from '@/app/lib/db';
+import { Place, Recommendation } from '@/app/interfaces/interfaces';
+import { searchPlace } from './GooglePlacesAPI';
 
 export default async function getRecommendations(
   numberOfRecs: number,
   coords: { latitude: number; longitude: number }
 ) {
+  const db = await getDb();
+
   let recommendations: Recommendation[] = [];
 
   let recommendedType = [

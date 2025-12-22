@@ -1,9 +1,11 @@
 'use server';
 
-import { db } from '@/app/lib/database';
+import getDb from '@/app/lib/db';
 import { Invitation } from "@/app/interfaces/interfaces";
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
+
+const db = await getDb();
 
 export const getToken = async (userId: string, listId: string) => {
   const token = crypto.randomBytes(16).toString('base64url');

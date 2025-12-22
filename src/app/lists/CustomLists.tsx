@@ -1,10 +1,12 @@
-import { db } from '@/app/lib/database';
+import getDb from '@/app/lib/db';
 import { List } from '@/app/interfaces/interfaces';
 import ListCard from './ListCard';
 import ListAddCard from './ListAddCard';
 import { getAllUsers } from '@/app/actions/user';
 
 export default async function CustomLists({ userId }: { userId: string }) {
+  const db = await getDb();
+  
   let listIds = await db.getListIds(userId);
   let lists: List[] = [];
 

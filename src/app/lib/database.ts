@@ -1,14 +1,8 @@
-import { MongoClient, Db } from 'mongodb';
+import { Db } from 'mongodb';
 import { User, List, Restaurant, Dish, Place, SearchResult, Invitation } from "@/app/interfaces/interfaces";
 
 export class Database {
-  client: MongoClient;
-  db: Db;
-
-  constructor(databaseName: string) {
-    this.client = new MongoClient(process.env.MONGODB_URI || '');
-    this.db = this.client.db(databaseName + (process.env.MONGODB_DBNAME_SUFFIX || ''));
-  }
+  constructor(private db: Db) {}
 
   // Users functions
   async getUser(userId?: string) {
@@ -443,5 +437,3 @@ export class Database {
     return doc?.reviews?.[0] || null;
   }
 }
-
-export const db = new Database('nomnom_notes');

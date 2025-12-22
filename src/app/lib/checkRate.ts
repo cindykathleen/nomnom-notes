@@ -1,6 +1,8 @@
-import { db } from './database';
+import getDb from './db';
 
 export default async function checkRate(userId: string, feature: 'search' | 'map') {
+  const db = await getDb();
+  
   const rateArr = await db.getRate(userId, feature);
   const limit = feature === 'search' 
     ? parseInt(process.env.SEARCH_LIMIT || '100') 

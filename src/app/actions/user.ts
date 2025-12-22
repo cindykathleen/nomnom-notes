@@ -1,9 +1,11 @@
 'use server';
 
-import { db } from '@/app/lib/database';
+import getDb from '@/app/lib/db';
 import { auth } from '@/app/lib/auth';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+
+const db = await getDb();
 
 export const getAllUsers = async (listId: string) => {
   try {

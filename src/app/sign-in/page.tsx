@@ -1,9 +1,11 @@
-import { db } from '@/app/lib/database';
+import getDb from '@/app/lib/db';
 import { User } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import { SignInForm } from './SignInForm';
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
+  const db = await getDb();
+  
   const redirect = (await searchParams)?.redirect;
   const signUpUrl =
     redirect

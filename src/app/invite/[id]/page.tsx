@@ -1,11 +1,13 @@
+import getDb from '@/app/lib/db';
 import getCurrentUser from '@/app/lib/getCurrentUser';
-import { db } from '@/app/lib/database';
 import { checkInvitation } from '@/app/actions/invitation';
 import InvitationForm from './InvitationForm';
 import ErrorMessage from './ErrorMessage';
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+
+  const db = await getDb();
 
   const userId = await getCurrentUser(false);
   const user = await db.getUser(userId);
