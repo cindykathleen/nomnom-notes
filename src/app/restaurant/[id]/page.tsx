@@ -1,4 +1,4 @@
-import getDb from '@/app/lib/db';
+import { getListByRestaurantId, getListVisibility } from '@/app/lib/dbFunctions';
 import getCurrentUser from '@/app/lib/getCurrentUser';
 import PublicNav from '@/app/components/PublicNav';
 import Nav from '@/app/components/Nav';
@@ -8,12 +8,10 @@ import CustomRestaurant from './CustomRestaurant';
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const db = await getDb();
-  
   let list;
 
   try {
-    list = await db.getListByRestaurantId(id);
+    list = await getListByRestaurantId(id);
 
     if (!list) {
       return { error: 'Error fetching list' };
@@ -22,7 +20,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     return { error: `Error fetching list: ${err}` };
   }
 
-  const isPublic = await db.getListVisibility(list._id) === 'public';
+  const isPublic = await getListVisibility(list._id) === 'public';
   const userId = await getCurrentUser(isPublic);
 
   return (

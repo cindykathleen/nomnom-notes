@@ -6,7 +6,7 @@ import { User } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import { SignUpButton } from './SignUpButton';
 import { signUp } from '@/app/actions/authentication';
-import { addUserToDB } from '@/app/actions/user';
+import { addUser } from '@/app/actions/user';
 
 export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: User | null }) => {
   const [displayName, setDisplayName] = useState<string>('');
@@ -37,7 +37,7 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
     if (result.error) {
       setErrorMessage(result.error);
     } else {
-      await addUserToDB();
+      await addUser();
       router.push(redirect);
     }
   }

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { Database } from './database';
+import { Database } from './dbFunctions';
 
 const testDb = new Database('nomnom_notes_test');
 

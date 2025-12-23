@@ -1,4 +1,4 @@
-import getDb from '@/app/lib/db';
+import { isOwnerOrCollaboratorDb, getRestaurant, getDish } from '@/app/lib/dbFunctions';
 import { List, Dish } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import getAvgRating from '@/app/lib/getAvgRating';
@@ -7,14 +7,12 @@ import DishCard from './DishCard';
 import DishAddCard from './DishAddCard';
 
 export default async function CustomRestaurant({ userId, list, restaurantId }: { userId: string, list: List, restaurantId: string }) {
-  const db = await getDb();
-  
-  const isOwnerOrCollaborator = await db.isOwnerOrCollaborator(userId, list._id);
+  const isOwnerOrCollaborator = await isOwnerOrCollaboratorDb(userId, list._id);
 
   let restaurant;
 
   try {
-    restaurant = await db.getRestaurant(restaurantId);
+    restaurant = await getRestaurant(restaurantId);
 
     if (!restaurant) {
       return <div>Error fetching restaurant</div>;
@@ -28,7 +26,7 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
   try {
     dishes = await Promise.all(
       restaurant.dishes.map(async (dishId) => {
-        const dish = await db.getDish(dishId);
+        const dish = await getDish(dishId);
 
         if (!dish) {
           throw new Error(`Dish with ID ${dishId} not found`);

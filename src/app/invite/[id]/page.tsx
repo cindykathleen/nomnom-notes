@@ -1,4 +1,4 @@
-import getDb from '@/app/lib/db';
+import { getUser, getOwnerByToken, getListByToken } from '@/app/lib/dbFunctions';
 import getCurrentUser from '@/app/lib/getCurrentUser';
 import { checkInvitation } from '@/app/actions/invitation';
 import InvitationForm from './InvitationForm';
@@ -7,12 +7,10 @@ import ErrorMessage from './ErrorMessage';
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const db = await getDb();
-
   const userId = await getCurrentUser(false);
-  const user = await db.getUser(userId);
-  const owner = await db.getOwnerByToken(id);
-  const list = await db.getListByToken(id);
+  const user = await getUser(userId);
+  const owner = await getOwnerByToken(id);
+  const list = await getListByToken(id);
 
   if (!user || !owner || !list) {
     return;

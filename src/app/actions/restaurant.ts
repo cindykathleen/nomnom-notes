@@ -1,21 +1,20 @@
 'use server';
 
-import getDb from '@/app/lib/db';
+import { getExistingRestaurantReview, getUserName, getRestaurant,
+  updateRestaurantDb, deleteRestaurantDb } from '@/app/lib/dbFunctions';
 import { Restaurant, Review } from "@/app/interfaces/interfaces";
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
 
-const db = await getDb();
-
 export const updateReview = async (formData: FormData, userId: string, restaurantId: string, rating: number) => {
   const note = formData.get('restaurant-note') as string;
 
-  const existingReview = await db.getExistingRestaurantReview(userId, restaurantId);
+  const existingReview = await getExistingRestaurantReview(userId, restaurantId);
   let updatedReview: Review;
 
   if (!existingReview) {
     // Create a new review
-    const name = await db.getUserName(userId);
+    const name = await getUserName(userId);
     
     updatedReview = {
       _id: uuidv4(),
@@ -38,8 +37,8 @@ export const updateReview = async (formData: FormData, userId: string, restauran
 
 export const updateRestaurant = async (userId: string, restaurantId: string, updatedReview: Review) => {
   try {
-    const existingReview = await db.getExistingRestaurantReview(userId, restaurantId);
-    const existingRestaurant = await db.getRestaurant(restaurantId);
+    const existingReview = await getExistingRestaurantReview(userId, restaurantId);
+    const existingRestaurant = await getRestaurant(restaurantId);
 
     if (!existingRestaurant) {
       return { error: 'Restaurant not found' };
@@ -62,7 +61,7 @@ export const updateRestaurant = async (userId: string, restaurantId: string, upd
       reviews: updatedReviews
     };
 
-    await db.updateRestaurant(updatedRestaurant);
+    await updateRestaurantDb(updatedRestaurant);
     revalidatePath('/list');
     return { message: 'Restaurant updated successfully' };
   } catch (err) {
@@ -72,7 +71,7 @@ export const updateRestaurant = async (userId: string, restaurantId: string, upd
 
 export const deleteRestaurant = async (listId: string, restaurantId: string) => {
   try {
-    await db.deleteRestaurant(listId, restaurantId);
+    await deleteRestaurantDb(listId, restaurantId);
     revalidatePath('/list');
     return { message: 'Restaurant deleted successfully' };
   } catch (err) {

@@ -1,19 +1,17 @@
-import getDb from '@/app/lib/db';
+import { getListIds, getList, isOwnerDb } from '@/app/lib/dbFunctions';
 import { List } from '@/app/interfaces/interfaces';
 import ListCard from './ListCard';
 import ListAddCard from './ListAddCard';
 import { getAllUsers } from '@/app/actions/user';
 
 export default async function CustomLists({ userId }: { userId: string }) {
-  const db = await getDb();
-  
-  let listIds = await db.getListIds(userId);
+  let listIds = await getListIds(userId);
   let lists: List[] = [];
 
   try {
     lists = await Promise.all(
       listIds.map(async (listId) => {
-        const list = await db.getList(listId);
+        const list = await getList(listId);
 
         if (!list) {
           throw new Error(`List with ID ${listId} not found`);
@@ -27,7 +25,7 @@ export default async function CustomLists({ userId }: { userId: string }) {
   }
 
   const getRole = async (listId: string) => {
-    const isOwner = await db.isOwner(userId, listId);
+    const isOwner = await isOwnerDb(userId, listId);
     return isOwner ? 'owner' : 'collaborator';
   }
 

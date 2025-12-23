@@ -1,4 +1,4 @@
-import getDb from '@/app/lib/db';
+import { isOwnerOrCollaboratorDb, getList, getRestaurant } from '@/app/lib/dbFunctions';
 import { Restaurant } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import RestaurantDisplay from './RestaurantDisplay';
@@ -6,13 +6,12 @@ import checkRate from '@/app/lib/checkRate';
 import GoogleMap from './GoogleMap';
 
 export default async function CustomList({ userId, listId }: { userId: string, listId: string }) {
-  const db = await getDb();
-  const isOwnerOrCollaborator = await db.isOwnerOrCollaborator(userId, listId);
+  const isOwnerOrCollaborator = await isOwnerOrCollaboratorDb(userId, listId);
 
   let list;
 
   try {
-    list = await db.getList(listId);
+    list = await getList(listId);
 
     if (!list) {
       return <div>error: {listId}</div>;
@@ -26,7 +25,7 @@ export default async function CustomList({ userId, listId }: { userId: string, l
   try {
     restaurants = await Promise.all(
       list.restaurants.map(async (restaurantId) => {
-        const restaurant = await db.getRestaurant(restaurantId);
+        const restaurant = await getRestaurant(restaurantId);
 
         if (!restaurant) {
           throw new Error(`Restaurant with ID ${restaurantId} not found`);

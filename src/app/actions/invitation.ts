@@ -1,11 +1,10 @@
 'use server';
 
-import getDb from '@/app/lib/db';
+import { addInvitation, getInvitationByToken, 
+  acceptInvitationDb, declineInvitationDb } from '@/app/lib/dbFunctions';
 import { Invitation } from "@/app/interfaces/interfaces";
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-
-const db = await getDb();
 
 export const getToken = async (userId: string, listId: string) => {
   const token = crypto.randomBytes(16).toString('base64url');
@@ -21,7 +20,7 @@ export const getToken = async (userId: string, listId: string) => {
   }
 
   try {
-      await db.addInvitation(newInvitation);
+      await addInvitation(newInvitation);
       return token;
     } catch (err) {
       return 'Error creating invitation';
@@ -30,7 +29,7 @@ export const getToken = async (userId: string, listId: string) => {
 
 export const checkInvitation = async (token: string) => {
   try {
-    const invitation = await db.getInvitationByToken(token);
+    const invitation = await getInvitationByToken(token);
 
     if (!invitation) {
       return { error: 'Not a valid invitation link' };
@@ -44,7 +43,7 @@ export const checkInvitation = async (token: string) => {
 
 export const acceptInvitation = async (userId: string, token: string) => {
   try {
-    await db.acceptInvitation(userId, token);
+    await acceptInvitationDb(userId, token);
     return { success: true };
   } catch (err: any) {
     return { error: err?.response?.data?.message || err.message || 'Error accepting invitation' };
@@ -53,7 +52,7 @@ export const acceptInvitation = async (userId: string, token: string) => {
 
 export const declineInvitation = async (userId: string, token: string) => {
   try {
-    await db.declineInvitation(userId, token);
+    await declineInvitationDb(userId, token);
     return { success: true };
   } catch (err: any) {
     return { error: err?.response?.data?.message || err.message || 'Error declining invitation' };
