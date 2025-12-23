@@ -1,16 +1,17 @@
 import clientPromise from './mongoDb';
-import { Database } from './database';
+import type { Db } from 'mongodb';
 
-let dbInstance: Database | null = null;
+declare global {
+  var _db: Db | undefined;
+}
 
-export default async function getDb() {
-  if (dbInstance) return dbInstance;
+export default async function getDb(): Promise<Db> {
+  if (global._db) return global._db;
 
   const client = await clientPromise;
-  const db = client.db(
+  global._db = client.db(
     'nomnom_notes' + (process.env.MONGODB_DBNAME_SUFFIX || '')
   );
 
-  dbInstance = new Database(db);
-  return dbInstance;
+  return global._db;
 }

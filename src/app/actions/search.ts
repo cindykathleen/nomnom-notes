@@ -1,13 +1,12 @@
 'use server';
 
-import getDb from '@/app/lib/db';
+import { getSearchResults, addSearchResult, addRestaurant } from '@/app/lib/dbFunctions';
 import checkRate from '@/app/lib/checkRate';
 import { searchPlace } from '@/app/lib/GooglePlacesAPI';
 import { Place, Restaurant, SearchQueryResult } from '@/app/interfaces/interfaces';
 import { getGooglePhoto } from './images';
 import { v4 as uuidv4 } from 'uuid';
 
-const db = await getDb();
 
 export const searchQuery = async (
   searchQuery: string, 
@@ -17,7 +16,7 @@ export const searchQuery = async (
   const query = searchQuery.toLowerCase();
 
   // Check if the query is already stored in the database
-  const storedPlaces = await db.getSearchResults(query);
+  const storedPlaces = await getSearchResults(query);
 
   if (storedPlaces) {
     return { kind: 'success', places: storedPlaces };
@@ -34,7 +33,7 @@ export const searchQuery = async (
   const searchedPlaces = await searchPlace(query, coords, false);
   
   // Store the new search into the database
-  await db.addSearchResult(query, searchedPlaces);
+  await addSearchResult(query, searchedPlaces);
 
   if (searchedPlaces.length === 0) {
     return { kind: 'error', message: 'No results found. Please try a different search query.' };
@@ -73,5 +72,5 @@ export const addPlace = async (listId: string, place: Place) => {
     dateAdded: new Date()
   }
 
-  await db.addRestaurant(listId, newRestaurant);
+  await addRestaurant(listId, newRestaurant);
 }

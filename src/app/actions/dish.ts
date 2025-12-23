@@ -1,11 +1,11 @@
 'use server';
 
-import getDb from '@/app/lib/db';
+import { getRestaurant, getHighestDishIndex, 
+  addDishDb, getDish, updateDishDb, deleteDishDb, getExistingDishReview,
+  moveDishDb, getUserName } from '@/app/lib/dbFunctions';
 import { Dish, Review } from '@/app/interfaces/interfaces';
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
-
-const db = await getDb();
 
 export const addDish = async (formData: FormData, restaurantId: string, photoUrl: string) => {
   const name = formData.get('dish-name') as string;
@@ -13,7 +13,7 @@ export const addDish = async (formData: FormData, restaurantId: string, photoUrl
   let restaurant;
 
   try {
-    restaurant = await db.getRestaurant(restaurantId);
+    restaurant = await getRestaurant(restaurantId);
 
     if (!restaurant) {
       return { error: 'Error fetching restaurant' };
@@ -22,7 +22,7 @@ export const addDish = async (formData: FormData, restaurantId: string, photoUrl
     return { error: `Error fetching restaurant: ${err}` };
   }
 
-  const highestIndex = await db.getHighestDishIndex(restaurantId) || 0;
+  const highestIndex = await getHighestDishIndex(restaurantId) || 0;
 
   const newDish: Dish = {
     _id: uuidv4(),
@@ -33,7 +33,7 @@ export const addDish = async (formData: FormData, restaurantId: string, photoUrl
   };
 
   try {
-    await db.addDish(restaurantId, newDish);
+    await addDishDb(restaurantId, newDish);
     revalidatePath('/restaurant');
     return { message: 'Dish added successfully' };
   } catch (err) {
@@ -45,7 +45,7 @@ export const updateDish = async (formData: FormData, dishId: string, photoUrl: s
   const name = formData.get('dish-name') as string;
 
   try {
-    const existingDish = await db.getDish(dishId);
+    const existingDish = await getDish(dishId);
 
     if (!existingDish) {
       return { error: 'Dish not found' };
@@ -57,7 +57,7 @@ export const updateDish = async (formData: FormData, dishId: string, photoUrl: s
       photoUrl: photoUrl
     };
 
-    await db.updateDish(updatedDish);
+    await updateDishDb(updatedDish);
     revalidatePath('/restaurant');
     return { message: 'Dish updated successfully' };
   } catch (err) {
@@ -68,19 +68,19 @@ export const updateDish = async (formData: FormData, dishId: string, photoUrl: s
 export const updateReview = async (formData: FormData, userId: string, dishId: string, rating: number) => {
   const note = formData.get('dish-note') as string;
 
-  const existingDish = await db.getDish(dishId);
+  const existingDish = await getDish(dishId);
 
   if (!existingDish) {
     return { error: 'Dish not found' };
   }
 
-  const existingReview = await db.getExistingDishReview(userId, dishId);
+  const existingReview = await getExistingDishReview(userId, dishId);
   let updatedReview: Review;
   let updatedReviews: Review[];
 
   if (!existingReview) {
     // Create a new review
-    const name = await db.getUserName(userId);
+    const name = await getUserName(userId);
 
     updatedReview = {
       _id: uuidv4(),
@@ -110,7 +110,7 @@ export const updateReview = async (formData: FormData, userId: string, dishId: s
   };
 
   try {
-    await db.updateDish(updatedDish);
+    await updateDishDb(updatedDish);
     revalidatePath('/restaurant');
     return { message: 'Dish updated successfully' };
   } catch (err) {
@@ -120,7 +120,7 @@ export const updateReview = async (formData: FormData, userId: string, dishId: s
 
 export const deleteDish = async (restaurantId: string, dishId: string) => {
   try {
-    await db.deleteDish(restaurantId, dishId);
+    await deleteDishDb(restaurantId, dishId);
     revalidatePath('/restaurant');
     return { message: 'Dish deleted successfully' };
   } catch (err) {
@@ -130,7 +130,7 @@ export const deleteDish = async (restaurantId: string, dishId: string) => {
 
 export const moveDish = async (dragIndex: number, hoverIndex: number) => {
   try {
-    await db.moveDish(dragIndex, hoverIndex);
+    await moveDishDb(dragIndex, hoverIndex);
     revalidatePath('/restaurant');
     return { message: 'Drag & drop implemented successfully' };
   } catch (err) {

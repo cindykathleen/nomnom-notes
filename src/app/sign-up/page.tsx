@@ -1,10 +1,8 @@
-import getDb from '@/app/lib/db';
+import { getOwnerByToken } from '@/app/lib/dbFunctions';
 import { User } from '@/app/interfaces/interfaces';
 import { SignUpAccessGate } from './SignUpAccessGate';
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
-  const db = await getDb();
-  
   // Handle redirect
   const redirect = (await searchParams)?.redirect;
   const signInUrl =
@@ -17,7 +15,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ [
 
   if (redirect) {
     token = redirect.split("/")[2];
-    owner = await db.getOwnerByToken(token);
+    owner = await getOwnerByToken(token);
   }
 
   return (

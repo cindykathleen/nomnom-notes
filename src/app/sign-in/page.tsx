@@ -1,11 +1,9 @@
-import getDb from '@/app/lib/db';
+import { getOwnerByToken } from '@/app/lib/dbFunctions';
 import { User } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import { SignInForm } from './SignInForm';
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
-  const db = await getDb();
-  
   const redirect = (await searchParams)?.redirect;
   const signUpUrl =
     redirect
@@ -17,7 +15,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ [
 
   if (redirect) {
     token = redirect.split("/")[2];
-    owner = await db.getOwnerByToken(token);
+    owner = await getOwnerByToken(token);
   }
 
   return (
