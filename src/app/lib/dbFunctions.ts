@@ -382,20 +382,6 @@ export async function addSearchResult(query: string, places: Place[]) {
   );
 }
 
-// Photo functions
-// export async function getPhoto(photoId: string) {
-//   return await database.collection<Photo>('photos').findOne({ _id: photoId });
-// }
-
-// export async function uploadPhoto(photoId: string, photoData: Buffer) {
-//   const newPhoto = {
-//     _id: photoId,
-//     data: new Binary(photoData)
-//   }
-
-//   await database.collection<Photo>('photos').insertOne(newPhoto);
-// }
-
 // Invitation functions
 export async function addInvitation(invitation: Invitation) {
   const database: Db = await db();
