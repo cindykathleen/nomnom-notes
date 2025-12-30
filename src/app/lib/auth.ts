@@ -1,9 +1,10 @@
-import getDb from '@/app/lib/db';
+import clientPromise from './mongoDb';
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { nextCookies } from 'better-auth/next-js';
 
-const db = await getDb('auth');
+const client = await clientPromise;
+const db = client.db('nomnom_notes_auth' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
