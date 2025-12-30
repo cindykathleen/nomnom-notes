@@ -1,5 +1,5 @@
+import clientPromise from './mongoDb';
 import { describe, it, expect, beforeAll } from 'vitest';
-import getDb from '@/app/lib/db';
 import {
   addUserDb, addTimestamp, getUser,
   addListDb, getList, addRestaurant, getRestaurant,
@@ -15,14 +15,12 @@ import {
   removeListDb, removeUserDb, deleteDishDb, deleteRestaurantDb, deleteListDb
 } from './dbFunctions';
 
-async function db() {
-  return await getDb('test');
-}
+const client = await clientPromise;
+const db = client.db('nomnom_notes_test' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
 
 // Clear the database before running tests
 beforeAll(async () => {
-  const database = await db();
-  await database.dropDatabase();
+  await db.dropDatabase();
 })
 
 describe('Test database creation', async () => {
