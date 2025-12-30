@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 @theme {
   --color-lightpink: #FDECEF;
   --color-dustypink: #E8B4BC;
@@ -61,7 +67,7 @@
     @apply text-2xl font-semibold text-darkpink;
   }
   .cards {
-    @apply grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-16 xl:grid-cols-4;
+    @apply pb-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-16 xl:pb-16 xl:grid-cols-4;
   }
   .cards-outline {
     @apply relative p-4 flex border border-lightgray rounded-3xl;
