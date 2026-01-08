@@ -105,6 +105,9 @@
   .input {
     @apply px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
   }
+  textarea.input {
+    @apply h-[100px] lg:h-auto
+  }
   .input-file {
     @apply file:px-3 file:py-1 file:mr-2 file:font-semibold file:border file:border-charcoal file:rounded-lg file:cursor-pointer;
   }

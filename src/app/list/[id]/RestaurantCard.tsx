@@ -132,7 +132,7 @@ export default function RestaurantCard({
                 </div>
                 <label htmlFor="restaurant-note" className="pb-1 font-semibold">Note</label>
                 <textarea id="restaurant-note" name="restaurant-note" placeholder="Add a note for this restaurant" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
-                  className="px-2 py-1 border border-charcoal border-solid rounded-sm mb-6 focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow)"></textarea>
+                  className="input"></textarea>
                 <button className="button-primary" data-cy="add-review-submit">
                   Update
                 </button>
