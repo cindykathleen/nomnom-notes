@@ -44,7 +44,7 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
   return (
     <div className="gated-page-layout">
       <div className="gated-page-layout-inner">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           { // Don't display private pages for anyone other than the list owner / collaborator
             isOwnerOrCollaborator && (
               <>
