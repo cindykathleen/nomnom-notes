@@ -2,22 +2,13 @@ import { Place } from '@/app/interfaces/interfaces';
 
 export const searchPlace = async (
   query: string, 
-  coords: { latitude: number; longitude: number }, 
-  recommendation: boolean
+  coords: { latitude: number; longitude: number }
 ): Promise<Place[]> => {
   // Make sure apiKey is not undefined
   const apiKey = process.env.GOOGLE_PLACES_API_KEY_SECRET!;
   const endpoint = 'https://places.googleapis.com/v1/places:searchText';
 
-  let body = {};
-
-  if (!recommendation) {
-    body = {
-      textQuery: query,
-      languageCode: 'en'
-    };
-  } else {
-    body = {
+  const body = {
       textQuery: query,
       minRating: 3.5,
       languageCode: 'en',
@@ -31,7 +22,6 @@ export const searchPlace = async (
         }
       }
     };
-  }
 
   // The input has to be a string
   const fieldMask = [

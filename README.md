@@ -71,7 +71,7 @@ The owner of the list can choose to share their list with other registered users
 A page where a user is being invited to collaborate on a list. 
 
 ![Search page](./images/search-page-default.png)
-The default search page where a user can search for specific restaurants by entering the name into the input bar or view recommendations for top-rated restaurants, varying by cuisine.
+The default search page where a user can search for specific restaurants by entering the name into the input bar.
 
 ![Searching for restaurants](./images/search-page-results.png)
 The search page results where related results will appear (maximum of 20), and the user can select on which one to add to their list. The user can also click on the "Google Maps" link to view it there. This page can also be accessed by clicking on "Search" in the sidebar.

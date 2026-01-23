@@ -30,7 +30,7 @@ export const searchQuery = async (
   }
 
   // Send a new search request
-  const searchedPlaces = await searchPlace(query, coords, false);
+  const searchedPlaces = await searchPlace(query, coords);
   
   // Store the new search into the database
   await addSearchResult(query, searchedPlaces);
