@@ -1,10 +1,11 @@
 'use server';
 
 import { auth } from '@/app/lib/auth';
+import { headers } from 'next/headers';
 
 export const checkAccessCode = async (accessCode: string) => {
   const accessSecret = process.env.SIGNUP_ACCESS_SECRET;
-  
+
   if (accessCode === accessSecret) {
     return { success: true };
   } else {
@@ -47,5 +48,17 @@ export const signIn = async (formData: FormData) => {
     return { success: true };
   } catch (err: any) {
     return { error: err?.response?.data?.message || err.message || 'Sign in not successful' };
+  }
+}
+
+export const signOut = async () => {
+  try {
+    await auth.api.signOut({
+      headers: await headers(),
+    });
+
+    return { success: true };
+  } catch (err: any) {
+    return { error: err?.response?.data?.message || err.message || 'Sign out not successful' };
   }
 }
