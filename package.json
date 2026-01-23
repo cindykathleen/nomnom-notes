@@ -15,6 +15,7 @@
     "@aws-sdk/client-s3": "^3.948.0",
     "@vis.gl/react-google-maps": "^1.5.4",
     "better-auth": "^1.2.12",
+    "browser-image-compression": "^2.0.2",
     "dotenv": "^17.2.3",
     "file-type": "^21.0.0",
     "mongodb": "6.17",

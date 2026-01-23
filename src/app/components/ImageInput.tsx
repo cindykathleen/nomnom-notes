@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import imageCompression from 'browser-image-compression';
 
 export default function ImageInput({ currImage, setNewImage }: { currImage: string, setNewImage: (newImage: string) => void }) {
   const [showUploadInput, setShowUploadInput] = useState<boolean>(false);
@@ -10,7 +11,15 @@ export default function ImageInput({ currImage, setNewImage }: { currImage: stri
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const fileUrl = URL.createObjectURL(file);
+    // Compress the uploaded image
+    const options = {
+      maxWidthOrHeight: 600,
+      useWebWorker: true,
+    }
+
+    const compressedFile = await imageCompression(file, options);
+
+    const fileUrl = URL.createObjectURL(compressedFile);
 
     setPreviewImage(fileUrl);
     setNewImage(fileUrl);
@@ -29,7 +38,7 @@ export default function ImageInput({ currImage, setNewImage }: { currImage: stri
       {showUploadInput
         ? <div className="flex flex-col gap-2 mb-6">
             <input name="img-file" key="file-input" type="file" accept="image/*" className="input-file" onChange={handleFileChange} />
-            <p className="text-small text-slategray">Maximum file size: 5 MB</p>
+            <p className="text-small text-slategray">Maximum file size: 10 MB</p>
           </div>
         : <input name="img-url" key="url-input" type="text" placeholder="Add image URL here" className="input" autoComplete="off"
           value={currImage} onChange={(e) => setNewImage(e.target.value)} onBlur={(e) => setPreviewImage(e.target.value)} />
