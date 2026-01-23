@@ -6,7 +6,7 @@ beforeEach(() => {
   cy.signIn('test@test.com', 'password123')
 
   // Start at the lists page
-  cy.visit('/lists');
+  cy.visit('/');
 })
 
 describe('Lists page', () => {

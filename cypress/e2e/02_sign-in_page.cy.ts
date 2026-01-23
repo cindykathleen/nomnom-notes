@@ -49,10 +49,10 @@ describe('Sign-in page', () => {
     cy.intercept('POST', '/sign-in').as('signIn')
     cy.get('button[type="submit"]').click()
     cy.wait('@signIn')
-    cy.url({ timeout: 10000 }).should('include', '/lists')
+    cy.url({ timeout: 10000 }).should('include', '/')
 
     // Reload and confirm the user is still logged in
     cy.reload()
-    cy.url().should('include', '/lists')
+    cy.url().should('include', '/')
   })
 })

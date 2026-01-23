@@ -1,44 +1,17 @@
-import { auth } from '@/app/lib/auth';
-import { headers } from 'next/headers';
-import Link from 'next/link';
+import getCurrentUser from '@/app/lib/getCurrentUser';
+import Nav from '@/app/components/Nav';
+import DndWrapper from '@/app/components/DndWrapper';
+import CustomLists from '@/app/components/CustomLists';
 
 export default async function HomePage() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
+  const userId = await getCurrentUser(false);
 
   return (
-    <div className="page-layout">
-      <div className="page-layout-inner">
-        <div className="w-full text-center xl:w-2/3">
-          <h1 className="text-4xl mb-6 font-semibold xl:text-6xl">NomNom Notes</h1>
-          <p className="text-lg mb-6 xl:text-xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris elementum ipsum eget libero iaculis pretium. Sed quis lobortis sapien. Mauris diam justo, ullamcorper sed tortor sit amet, pretium ornare massa.</p>
-          { // Set CTA to lists if logged in 
-            session && (
-              <Link href="/lists">
-                <button className="inline-block px-12 py-4 text-lg text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer
-                  hover:bg-mauve transition-colors
-                  xl:text-xl"
-                >
-                  View your lists
-                </button>
-              </Link>
-            )
-          }
-          { // Set CTA to sign up if not logged in
-            !session && (
-              <Link href="/sign-up">
-                <button className="inline-block px-8 py-2 text-lg text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer
-                  hover:bg-mauve transition-colors
-                  xl:px-12 xl:py-4 xl:text-xl"
-                >
-                  Get started
-                </button>
-              </Link>
-            )
-          }
-        </div>
-      </div>
+    <div>
+      <Nav />
+      <DndWrapper>
+        <CustomLists userId={userId} />
+      </DndWrapper>
     </div>
   );
 }

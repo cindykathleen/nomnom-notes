@@ -9,7 +9,7 @@ beforeEach(() => {
   cy.signIn('test@test.com', 'password123')
 
   // Start at the lists page, click into a list, click into a restaurant
-  cy.visit('/lists');
+  cy.visit('/');
   cy.get('[data-cy=list]').click()
   cy.get('[data-cy=restaurant]').click()
 })

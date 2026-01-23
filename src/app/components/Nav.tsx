@@ -34,7 +34,7 @@ export default function Nav() {
           </Link>
         </div>
         <ul className="flex flex-row items-center gap-6 text-md font-semibold md:text-lg">
-          <li><Link href="/lists">Lists</Link></li>
+          <li><Link href="/">Lists</Link></li>
           <li><Link href="/search">Search</Link></li>
           <li><Link href="#" onClick={handleSignOut}>Sign out</Link></li>
         </ul>

@@ -6,7 +6,7 @@ import type { Identifier, XYCoord } from 'dnd-core';
 import Link from 'next/link';
 import Image from 'next/image';
 import { User, List } from '@/app/interfaces/interfaces';
-import ImageInput from '@/app/components/ImageInput';
+import ImageInput from './ImageInput';
 import { uploadImage } from '@/app/lib/uploadImage';
 import { removeUser } from '@/app/actions/user';
 import { updateList, deleteList, removeList, moveList } from '@/app/actions/list';
