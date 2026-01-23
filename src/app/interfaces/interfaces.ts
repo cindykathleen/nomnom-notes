@@ -38,11 +38,6 @@ export interface Restaurant extends Place {
   dateAdded: Date;
 }
 
-export interface Recommendation {
-  _id: string;
-  restaurant: Place;
-}
-
 export interface Dish {
   _id: string;
   index: number;

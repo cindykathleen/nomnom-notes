@@ -42,6 +42,12 @@
   .gated-page-layout-inner {
     @apply max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8;
   }
+  .search-page-layout {
+    @apply relative top-[60px] h-[calc(100vh-60px)] w-screen overflow-y-auto md:top-[80px] md:h-[calc(100vh-80px)];
+  }
+  .search-page-layout-inner {
+    @apply min-h-full max-w-[1440px] px-8 py-16 mx-auto flex flex-col items-center justify-start sm:py-[clamp(96px,20vh,220px)] xl:px-16;
+  }
   .form-layout {
     @apply h-fit max-w-3xl px-8 py-6 bg-snowwhite rounded-3xl xl:px-12 xl:py-10;
   }
@@ -71,15 +77,6 @@
   }
   .cards-outline {
     @apply relative p-4 flex border border-lightgray rounded-3xl;
-  }
-  .recommendation-cards {
-    @apply grid md:grid-cols-2 md:gap-y-8 xl:grid-cols-3 xl:gap-y-16;
-  }
-  .recommendation-cards-outline {
-    @apply px-4 py-8 flex flex-col justify-center items-center gap-2 text-center border-b border-lightgray
-      last:border-b-0 md:border-b-0
-      md:[&:nth-child(2n+1)]:border-r
-      xl:[&:nth-child(2n+1)]:border-r-0 xl:[&:nth-child(3n+1)]:border-r xl:[&:nth-child(3n+2)]:border-r;
   }
   .review-cards {
     @apply mt-6 grid gap-6 lg:grid-cols-2 lg:gap-8;

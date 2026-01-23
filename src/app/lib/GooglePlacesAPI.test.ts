@@ -4,6 +4,7 @@ import * as fs from 'fs'
 
 describe('Google Places API', async () => {
   const testData = JSON.parse(await fs.promises.readFile('src/app/lib/GooglePlacesAPITestData.json', 'utf8'));
+  const coords = { latitude: 37.335480, longitude: -121.893028 };
 
   const expectedPlaces = testData.places.map((place: any) => {
     return {
@@ -23,7 +24,7 @@ describe('Google Places API', async () => {
       new Response(JSON.stringify(testData), { status: 200 })
     )
 
-    const result = await searchPlace('TP TEA', false)
+    const result = await searchPlace('TP TEA', coords)
     expect(result).toEqual(expectedPlaces)
   })
 })
