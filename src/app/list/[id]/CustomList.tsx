@@ -46,7 +46,7 @@ export default async function CustomList({ userId, listId }: { userId: string, l
       <div className="gated-page-layout-inner">
         { // Don't display private pages for anyone other than the list owner / collaborator
           isOwnerOrCollaborator && (
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Link href="/" className="breadcrumb-link">
                 Lists
               </Link>
