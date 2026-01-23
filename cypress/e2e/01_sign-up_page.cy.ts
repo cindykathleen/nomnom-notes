@@ -74,7 +74,7 @@ describe('Sign-up page', () => {
     cy.intercept('POST', '/sign-up').as('signUp')
     cy.get('button[type="submit"]').click()
     cy.wait('@signUp')
-    cy.url({ timeout: 10000 }).should('include', '/lists')
+    cy.url({ timeout: 10000 }).should('include', '/')
   })
 
   it('Unsuccessfully sign-up with an existing email', () => {

@@ -26,7 +26,7 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/lists';
+  const redirect = searchParams.get('redirect') || '/';
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -23,7 +23,7 @@ export const addList = async (userId: string, formData: FormData, photoUrl: stri
 
   try {
     await addListDb(userId, newList);
-    revalidatePath('/lists');
+    revalidatePath('/');
     return { message: 'List added successfully' };
   } catch (err) {
     return { error: `Error adding list: ${err}` };
@@ -51,7 +51,7 @@ export const updateList = async (formData: FormData, listId: string, photoUrl: s
     };
 
     await updateListDb(updatedList);
-    revalidatePath('/lists');
+    revalidatePath('/');
     return { message: 'List updated successfully' };
   } catch (err) {
     return { error: `Error updating list: ${err}` };
@@ -61,7 +61,7 @@ export const updateList = async (formData: FormData, listId: string, photoUrl: s
 export const deleteList = async (listId: string) => {
   try {
     await deleteListDb(listId);
-    revalidatePath('/lists');
+    revalidatePath('/');
     return { message: 'List deleted successfully' };
   } catch (err) {
     return { error: `Error deleting list: ${err}` };
@@ -71,7 +71,7 @@ export const deleteList = async (listId: string) => {
 export const removeList = async (userId: string, listId: string) => {
   try {
     await removeListDb(userId, listId);
-    revalidatePath('/lists');
+    revalidatePath('/');
     return { message: 'List removed successfully' };
   } catch (err) {
     return { error: `Error removing list: ${err}` };
@@ -81,7 +81,7 @@ export const removeList = async (userId: string, listId: string) => {
 export const moveList = async (userId: string, dragIndex: number, hoverIndex: number) => {
   try {
     await moveListDb(userId, dragIndex, hoverIndex);
-    revalidatePath('/lists');
+    revalidatePath('/');
     return { message: 'Drag & drop implemented successfully' };
   } catch (err) {
     return { error: `Error dragging & dropping items: ${err}` };

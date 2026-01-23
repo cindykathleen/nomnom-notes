@@ -30,7 +30,7 @@ export const addUser = async () => {
 export const removeUser = async (userId: string, listId: string) => {
   try {
     await removeUserDb(userId, listId);
-    revalidatePath('/lists');
+    revalidatePath('/');
     return { success: true };
   } catch (err) {
     return { error: `Error removing user from list: ${err}` };
