@@ -122,6 +122,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .profile-section {
+    @apply relative px-8 py-6 flex flex-col gap-2 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/5 rounded-xl;
+  }
+  .profile-section-heading {
+    @apply text-lg text-slategray font-semibold uppercase xl:text-xl;
+  }
 }
 
 body {
