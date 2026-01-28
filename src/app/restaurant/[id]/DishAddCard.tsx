@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { addDish } from '@/app/actions/dish'
+import { addPhotoToUser } from '@/app/actions/user';
 import ImageInput from '@/app/components/ImageInput';
 import { uploadImage } from '@/app/lib/uploadImage';
 
@@ -33,6 +34,7 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
     else if (inputImage !== '') {
       inputPhotoUrl = await uploadImage(inputImage);
       if (inputPhotoUrl === null) return;
+      await addPhotoToUser(userId, inputPhotoUrl);
     }
     // If no image is provided, use a default image
     else {

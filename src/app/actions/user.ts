@@ -54,6 +54,28 @@ export const updateUser = async (formData: FormData, userId: string, photoUrl: s
   }
 }
 
+export const addPhotoToUser = async (userId: string, photoUrl: string) => {
+  try {
+    const user = await getUser(userId);
+    
+    if (!user) {
+      return { error: 'User not found' };
+    }
+
+    const updatedPhotos = user.photos ? [...user.photos, photoUrl] : [photoUrl];
+
+    const updatedUser: User = {
+      ...user,
+      photos: updatedPhotos,
+    };
+
+    await updateUserDb(updatedUser);
+    return { message: 'Photo added to user successfully' };
+  } catch (err) {
+    return { error: `Error adding photo to user: ${err}` };
+  }
+}
+
 export const removeUser = async (userId: string, listId: string) => {
   try {
     await removeUserDb(userId, listId);

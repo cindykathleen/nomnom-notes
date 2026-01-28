@@ -12,7 +12,7 @@ export default async function Profile({ user }: { user: User }) {
       <div className="gated-page-layout-inner">
         <Hero user={user} />
         <hr className="border-lightgray" />
-        <div className="flex gap-6">
+        <div className="pb-8 flex gap-6 xl:pb-16">
           <div className="w-2/5 space-y-6">
             <Statistics user={user} />
             <Photos user={user} />

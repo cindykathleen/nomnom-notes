@@ -8,6 +8,7 @@ export interface User {
   photoUrl: string;
   location: string;
   profilePrivacy: boolean;
+  photos: string[];
 }
 
 export interface List {
