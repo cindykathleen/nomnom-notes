@@ -69,7 +69,8 @@ export const addPlace = async (listId: string, place: Place) => {
     photoUrl: place.photoUrl,
     reviews: [],
     dishes: [],
-    dateAdded: new Date()
+    dateAdded: new Date(),
+    dateUpdated: new Date(),
   }
 
   await addRestaurant(listId, newRestaurant);

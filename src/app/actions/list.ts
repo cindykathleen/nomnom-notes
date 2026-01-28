@@ -18,7 +18,9 @@ export const addList = async (userId: string, formData: FormData, photoUrl: stri
     name: name,
     description: description,
     photoUrl: photoUrl,
-    restaurants: []
+    restaurants: [],
+    dateAdded: new Date(),
+    dateUpdated: new Date(),
   };
 
   try {
@@ -48,6 +50,7 @@ export const updateList = async (formData: FormData, listId: string, photoUrl: s
       visibility: visibility,
       description: description,
       photoUrl: photoUrl,
+      dateUpdated: new Date(),
     };
 
     await updateListDb(updatedList);

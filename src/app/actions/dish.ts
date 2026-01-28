@@ -29,7 +29,9 @@ export const addDish = async (formData: FormData, restaurantId: string, photoUrl
     index: highestIndex + 1,
     name: name,
     reviews: [],
-    photoUrl: photoUrl
+    photoUrl: photoUrl,
+    dateAdded: new Date(),
+    dateUpdated: new Date(),
   };
 
   try {
@@ -54,7 +56,8 @@ export const updateDish = async (formData: FormData, dishId: string, photoUrl: s
     const updatedDish: Dish = {
       ...existingDish,
       name: name,
-      photoUrl: photoUrl
+      photoUrl: photoUrl,
+      dateUpdated: new Date(),
     };
 
     await updateDishDb(updatedDish);
@@ -106,7 +109,8 @@ export const updateReview = async (formData: FormData, userId: string, dishId: s
 
   const updatedDish: Dish = {
     ...existingDish,
-    reviews: updatedReviews
+    reviews: updatedReviews,
+    dateUpdated: new Date(),
   };
 
   try {

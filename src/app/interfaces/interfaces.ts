@@ -1,5 +1,3 @@
-import { Binary } from 'mongodb';
-
 export interface User {
   _id: string;
   name: string;
@@ -7,6 +5,9 @@ export interface User {
   lists: string[];
   searchRate: Date[];
   mapRate: Date[];
+  photoUrl: string;
+  location: string;
+  profilePrivacy: boolean;
 }
 
 export interface List {
@@ -17,6 +18,8 @@ export interface List {
   description: string;
   photoUrl: string;
   restaurants: string[];
+  dateAdded: Date;
+  dateUpdated: Date;
 }
 export interface Place {
   _id: string;
@@ -36,6 +39,7 @@ export interface Restaurant extends Place {
   reviews: Review[];
   dishes: string[];
   dateAdded: Date;
+  dateUpdated: Date;
 }
 
 export interface Dish {
@@ -44,6 +48,8 @@ export interface Dish {
   name: string;
   reviews: Review[];
   photoUrl: string;
+  dateAdded: Date;
+  dateUpdated: Date;
 }
 
 export interface Review {
