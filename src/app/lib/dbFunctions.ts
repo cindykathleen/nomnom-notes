@@ -19,13 +19,13 @@ export async function getUser(userId?: string) {
 
 export async function getUsers(listId: string) {
   const database: Db = await db();
-  
+
   return await database.collection<User>('users').find({ lists: listId }).toArray();
 }
 
 export async function getUserName(userId: string) {
   const database: Db = await db();
-  
+
   const doc = await database.collection<User>('users').findOne({ _id: userId });
   return doc?.name ?? '';
 }
@@ -39,13 +39,13 @@ export async function getListIds(userId: string) {
 
 export async function addUserDb(userId: string, name: string, email: string) {
   const database: Db = await db();
-  
-  await database.collection<User>('users').insertOne({ 
-    _id: userId, 
-    name: name, 
-    email: email, 
-    lists: [], 
-    searchRate: [], 
+
+  await database.collection<User>('users').insertOne({
+    _id: userId,
+    name: name,
+    email: email,
+    lists: [],
+    searchRate: [],
     mapRate: [],
     photoUrl: process.env.NEXT_PUBLIC_PLACEHOLDER_IMG_AVATAR!,
     location: '',
@@ -70,7 +70,7 @@ export async function updateUserDb(user: User) {
 
 export async function removeUserDb(userId: string, listId: string) {
   const database: Db = await db();
-  
+
   await database.collection<User>('users').updateOne(
     { _id: userId },
     { $pull: { lists: listId } }
@@ -79,7 +79,7 @@ export async function removeUserDb(userId: string, listId: string) {
 
 export async function getRate(userId: string, feature: 'search' | 'map') {
   const database: Db = await db();
-  
+
   const doc = await database.collection<User>('users').findOne({ _id: userId });
 
   if (feature === 'search') {
@@ -91,7 +91,7 @@ export async function getRate(userId: string, feature: 'search' | 'map') {
 
 export async function addTimestamp(userId: string, feature: 'search' | 'map', timestamp: Date) {
   const database: Db = await db();
-  
+
   if (feature === 'search') {
     await database.collection<User>('users').updateOne(
       { _id: userId },
@@ -105,22 +105,76 @@ export async function addTimestamp(userId: string, feature: 'search' | 'map', ti
   }
 }
 
+export async function getListsCount(userId: string) {
+  const database: Db = await db();
+
+  const doc = await database.collection<User>('users').findOne({ _id: userId });
+
+  return doc?.lists.length ?? 0;
+}
+
+export async function getRestaurantsCount(userId: string) {
+  const database: Db = await db();
+
+  const user = await database.collection<User>('users').findOne({ _id: userId });
+
+  if (!user) return 0;
+
+  let totalRestaurants = 0;
+
+  for (const listId of user.lists) {
+    const list = await database.collection<List>('lists').findOne({ _id: listId });
+
+    if (list) {
+      totalRestaurants += list.restaurants.length;
+    }
+  }
+
+  return totalRestaurants;
+}
+
+export async function getReviewsCount(userId: string) {
+  const database: Db = await db();
+
+  const user = await database.collection<User>('users').findOne({ _id: userId });
+
+  if (!user) return 0;
+
+  let totalReviews = 0;
+
+  for (const listId of user.lists) {
+    const list = await database.collection<List>('lists').findOne({ _id: listId });
+
+    if (list) {
+      for (const restaurantId of list.restaurants) {
+        const restaurant = await database.collection<Restaurant>('restaurants').findOne({ _id: restaurantId });
+
+        if (restaurant) {
+          totalReviews += restaurant.reviews.filter(review => review.createdBy === userId).length;
+        }
+      }
+    }
+  }
+  
+  return totalReviews;
+}
+
 // Lists functions
 export async function getList(listId: string) {
   const database: Db = await db();
-  
+
   return await database.collection<List>('lists').findOne({ _id: listId });
 }
 
 export async function getListByRestaurantId(restaurantId: string) {
   const database: Db = await db();
-  
+
   return await database.collection<List>('lists').findOne({ restaurants: restaurantId });
 }
 
 export async function getListByToken(token: string) {
   const database: Db = await db();
-  
+
   const doc = await database.collection<Invitation>('invitations').findOne({ token: token });
 
   if (!doc) return null;
@@ -130,7 +184,7 @@ export async function getListByToken(token: string) {
 
 export async function getListVisibility(listId: string) {
   const database: Db = await db();
-  
+
   const doc = await database.collection<List>('lists').findOne({ _id: listId });
 
   return doc?.visibility ?? null;
@@ -138,7 +192,7 @@ export async function getListVisibility(listId: string) {
 
 export async function isOwnerDb(userId: string, listId: string) {
   const database: Db = await db();
-  
+
   const doc = await database.collection<List>('lists').findOne({ _id: listId });
 
   return doc?.owner === userId;
@@ -146,7 +200,7 @@ export async function isOwnerDb(userId: string, listId: string) {
 
 export async function isOwnerOrCollaboratorDb(userId: string, listId: string) {
   const database: Db = await db();
-  
+
   const users = await database.collection<User>('users').find(
     { lists: listId },
     { projection: { _id: 1 } })
@@ -157,7 +211,7 @@ export async function isOwnerOrCollaboratorDb(userId: string, listId: string) {
 
 export async function addListDb(userId: string, list: List) {
   const database: Db = await db();
-  
+
   await database.collection<List>('lists').insertOne(list);
 
   // Add the list ID to the specified user
@@ -169,7 +223,7 @@ export async function addListDb(userId: string, list: List) {
 
 export async function updateListDb(list: List) {
   const database: Db = await db();
-  
+
   await database.collection<List>('lists').updateOne(
     { _id: list._id },
     {
@@ -186,7 +240,7 @@ export async function updateListDb(list: List) {
 
 export async function deleteListDb(listId: string) {
   const database: Db = await db();
-  
+
   await database.collection<List>('lists').deleteOne({ _id: listId });
 
   // Remove the list ID from ALL users
@@ -198,7 +252,7 @@ export async function deleteListDb(listId: string) {
 
 export async function removeListDb(userId: string, listId: string) {
   const database: Db = await db();
-  
+
   await database.collection<User>('users').updateOne(
     { _id: userId },
     { $pull: { lists: listId } }
@@ -207,7 +261,7 @@ export async function removeListDb(userId: string, listId: string) {
 
 export async function moveListDb(userId: string, dragIndex: number, hoverIndex: number) {
   const database: Db = await db();
-  
+
   const user = await database.collection<User>('users').findOne({ _id: userId });
 
   if (!user) return null;
@@ -231,13 +285,13 @@ export async function moveListDb(userId: string, dragIndex: number, hoverIndex: 
 // Restaurant functions
 export async function getRestaurant(restaurantId: string) {
   const database: Db = await db();
-  
+
   return await database.collection<Restaurant>('restaurants').findOne({ _id: restaurantId });
 }
 
 export async function addRestaurant(listId: string, restaurant: Restaurant) {
   const database: Db = await db();
-  
+
   await database.collection<Restaurant>('restaurants').insertOne(restaurant);
 
   // Add the restaurant ID to the specified list
@@ -249,19 +303,21 @@ export async function addRestaurant(listId: string, restaurant: Restaurant) {
 
 export async function updateRestaurantDb(restaurant: Restaurant) {
   const database: Db = await db();
-  
+
   await database.collection<Restaurant>('restaurants').updateOne(
     { _id: restaurant._id },
-    { $set: { 
-      reviews: restaurant.reviews,
-      dateUpdated: restaurant.dateUpdated,
-    } }
+    {
+      $set: {
+        reviews: restaurant.reviews,
+        dateUpdated: restaurant.dateUpdated,
+      }
+    }
   );
 }
 
 export async function deleteRestaurantDb(listId: string, restaurantId: string) {
   const database: Db = await db();
-  
+
   await database.collection<Restaurant>('restaurants').deleteOne({ _id: restaurantId });
 
   // Delete the restaurant ID from the specified list
@@ -274,13 +330,13 @@ export async function deleteRestaurantDb(listId: string, restaurantId: string) {
 // Dish functions
 export async function getDish(dishId: string) {
   const database: Db = await db();
-  
+
   return await database.collection<Dish>('dishes').findOne({ _id: dishId });
 }
 
 export async function addDishDb(restaurantId: string, dish: Dish) {
   const database: Db = await db();
-  
+
   await database.collection<Dish>('dishes').insertOne(dish);
 
   // Add the dish ID to the specified restaurant
@@ -292,7 +348,7 @@ export async function addDishDb(restaurantId: string, dish: Dish) {
 
 export async function updateDishDb(dish: Dish) {
   const database: Db = await db();
-  
+
   await database.collection<Dish>('dishes').updateOne(
     { _id: dish._id },
     {
@@ -308,7 +364,7 @@ export async function updateDishDb(dish: Dish) {
 
 export async function deleteDishDb(restaurantId: string, dishId: string) {
   const database: Db = await db();
-  
+
   await database.collection<Dish>('dishes').deleteOne({ _id: dishId });
 
   // Delete the restaurant ID from the specified list
@@ -321,7 +377,7 @@ export async function deleteDishDb(restaurantId: string, dishId: string) {
 // Drag & Drop functions
 export async function getHighestDishIndex(restaurantId: string) {
   const database: Db = await db();
-  
+
   const restaurants = database.collection<Restaurant>('restaurants');
 
   const pipeline = [
@@ -354,7 +410,7 @@ export async function getHighestDishIndex(restaurantId: string) {
 
 export async function moveDishDb(dragIndex: number, hoverIndex: number) {
   const database: Db = await db();
-  
+
   const collection = database.collection<Dish>('dishes');
 
   const dragItem = await collection.findOne({ index: dragIndex });
@@ -388,7 +444,7 @@ export async function moveDishDb(dragIndex: number, hoverIndex: number) {
 // Search functions
 export async function getSearchResults(query: string) {
   const database: Db = await db();
-  
+
   const doc = await database.collection<SearchResult>('places').findOne(
     { _id: query },
     { projection: { result: 1, _id: 0 } }
@@ -399,7 +455,7 @@ export async function getSearchResults(query: string) {
 
 export async function addSearchResult(query: string, places: Place[]) {
   const database: Db = await db();
-  
+
   const newSearch = {
     _id: query,
     result: places
@@ -415,7 +471,7 @@ export async function addSearchResult(query: string, places: Place[]) {
 // Invitation functions
 export async function addInvitation(invitation: Invitation) {
   const database: Db = await db();
-  
+
   await database.collection<Invitation>('invitations').insertOne(invitation);
 }
 
@@ -444,7 +500,7 @@ export async function getInvitationByToken(token: string) {
 
 export async function getOwnerByToken(token: string) {
   const database: Db = await db();
-  
+
   const doc = await database.collection<Invitation>('invitations').findOne({ token: token });
 
   if (!doc) return null;
@@ -454,7 +510,7 @@ export async function getOwnerByToken(token: string) {
 
 export async function acceptInvitationDb(userId: string, token: string) {
   const database: Db = await db();
-  
+
   const invitation = await database.collection<Invitation>('invitations').findOne({ token: token });
 
   // Check to make sure the invitation exists
@@ -487,7 +543,7 @@ export async function acceptInvitationDb(userId: string, token: string) {
 
 export async function declineInvitationDb(userId: string, token: string) {
   const database: Db = await db();
-  
+
   const invitation = await database.collection<Invitation>('invitations').findOne({ token: token });
 
   // Check to make sure the invitation exists
@@ -511,7 +567,7 @@ export async function declineInvitationDb(userId: string, token: string) {
 // Review functions
 export async function getExistingRestaurantReview(userId: string, restaurantId: string) {
   const database: Db = await db();
-  
+
   const doc = await database.collection<Restaurant>('restaurants').findOne(
     { _id: restaurantId, 'reviews.createdBy': userId },
     { projection: { 'reviews.$': 1 } }
@@ -522,7 +578,7 @@ export async function getExistingRestaurantReview(userId: string, restaurantId: 
 
 export async function getExistingDishReview(userId: string, dishId: string) {
   const database: Db = await db();
-  
+
   const doc = await database.collection<Dish>('dishes').findOne(
     { _id: dishId, 'reviews.createdBy': userId },
     { projection: { 'reviews.$': 1 } }
