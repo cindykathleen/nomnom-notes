@@ -40,7 +40,17 @@ export async function getListIds(userId: string) {
 export async function addUserDb(userId: string, name: string, email: string) {
   const database: Db = await db();
   
-  await database.collection<User>('users').insertOne({ _id: userId, name: name, email: email, lists: [], searchRate: [], mapRate: [] });
+  await database.collection<User>('users').insertOne({ 
+    _id: userId, 
+    name: name, 
+    email: email, 
+    lists: [], 
+    searchRate: [], 
+    mapRate: [],
+    photoUrl: process.env.NEXT_PUBLIC_PLACEHOLDER_IMG_AVATAR!,
+    location: '',
+    profilePrivacy: true,
+  });
 }
 
 export async function removeUserDb(userId: string, listId: string) {
@@ -152,7 +162,8 @@ export async function updateListDb(list: List) {
         name: list.name,
         visibility: list.visibility,
         description: list.description,
-        photoUrl: list.photoUrl
+        photoUrl: list.photoUrl,
+        dateUpdated: list.dateUpdated,
       }
     }
   );
@@ -226,7 +237,10 @@ export async function updateRestaurantDb(restaurant: Restaurant) {
   
   await database.collection<Restaurant>('restaurants').updateOne(
     { _id: restaurant._id },
-    { $set: { reviews: restaurant.reviews } }
+    { $set: { 
+      reviews: restaurant.reviews,
+      dateUpdated: restaurant.dateUpdated,
+    } }
   );
 }
 
@@ -270,7 +284,8 @@ export async function updateDishDb(dish: Dish) {
       $set: {
         name: dish.name,
         reviews: dish.reviews,
-        photoUrl: dish.photoUrl
+        photoUrl: dish.photoUrl,
+        dateUpdated: dish.dateUpdated,
       }
     }
   );

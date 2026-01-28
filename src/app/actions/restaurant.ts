@@ -58,7 +58,8 @@ export const updateRestaurant = async (userId: string, restaurantId: string, upd
 
     const updatedRestaurant: Restaurant = {
       ...existingRestaurant,
-      reviews: updatedReviews
+      reviews: updatedReviews,
+      dateUpdated: new Date(),
     };
 
     await updateRestaurantDb(updatedRestaurant);
