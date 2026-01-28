@@ -9,7 +9,7 @@ export default async function Hero({ user }: { user: User }) {
   return (
     <div className="profile-section">
       <h4 className="profile-section-heading">Statistics</h4>
-      <table className="text-md xl:text-lg">
+      <table className="text-lg xl:text-xl">
         <tbody>
           <tr>
             <td className="w-px pr-2 text-darkpink font-semibold">{listsCount}</td>
