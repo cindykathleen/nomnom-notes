@@ -12,12 +12,12 @@ export default async function Profile({ user }: { user: User }) {
       <div className="gated-page-layout-inner">
         <Hero user={user} />
         <hr className="border-lightgray" />
-        <div className="pb-8 flex gap-6 xl:pb-16">
-          <div className="w-2/5 space-y-6">
+        <div className="pb-8 flex flex-col gap-6 xl:pb-16 lg:flex-row">
+          <div className="w-full space-y-6 lg:w-2/5">
             <Statistics user={user} />
             <Photos user={user} />
           </div>
-          <div className="w-3/5 space-y-6">
+          <div className="w-full space-y-6 lg:w-3/5">
             <Lists user={user} />
             <Restaurants user={user} />
             <Reviews user={user} />
