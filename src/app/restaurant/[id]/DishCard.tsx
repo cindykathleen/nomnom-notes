@@ -11,6 +11,7 @@ import RatingSystem from '@/app/components/RatingSystem';
 import ImageInput from '@/app/components/ImageInput';
 import { uploadImage } from '@/app/lib/uploadImage';
 import { updateDish, updateReview, deleteDish, moveDish } from '@/app/actions/dish';
+import { addPhotoToUser } from '@/app/actions/user';
 import ReviewCard from '@/app/components/ReviewCard';
 
 interface DragItem {
@@ -53,16 +54,17 @@ export default function DishCard({
     // If there is no change to the image, don't re-upload it into the database
     if (inputImage === dish.photoUrl) {
       inputPhotoUrl = dish.photoUrl;
-    } 
+    }
     // If the image is already uploaded, use the existing URL
     else if (inputImage.startsWith(process.env.NEXT_PUBLIC_R2_PUBLIC_URL!)) {
       inputPhotoUrl = inputImage;
-    } 
+    }
     // If the image is new, upload it and get the URL
     else if (inputImage !== '') {
       inputPhotoUrl = await uploadImage(inputImage);
       if (inputPhotoUrl === null) return;
-    } 
+      await addPhotoToUser(userId, inputPhotoUrl);
+    }
     // If no image is provided, use a default image
     else {
       inputPhotoUrl = process.env.NEXT_PUBLIC_PLACEHOLDER_IMG!;

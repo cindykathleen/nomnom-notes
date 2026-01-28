@@ -112,7 +112,7 @@
     @apply text-3xl font-semibold xl:text-4xl;
   }
   .page-subheading {
-    @apply text-xl font-semibold xl:text-2xl;
+    @apply pb-2 text-xl font-semibold xl:text-2xl;
   }
   .review-text {
     display: -webkit-box;
@@ -127,6 +127,9 @@
   }
   .profile-section-heading {
     @apply text-lg text-slategray font-semibold uppercase xl:text-xl;
+  }
+  .profile-section-photos {
+    @apply grid grid-cols-3 gap-1;
   }
 }
 

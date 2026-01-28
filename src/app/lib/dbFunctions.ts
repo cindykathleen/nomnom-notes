@@ -50,6 +50,7 @@ export async function addUserDb(userId: string, name: string, email: string) {
     photoUrl: process.env.NEXT_PUBLIC_PLACEHOLDER_IMG_AVATAR!,
     location: '',
     profilePrivacy: true,
+    photos: [],
   });
 }
 
@@ -63,6 +64,7 @@ export async function updateUserDb(user: User) {
         name: user.name,
         photoUrl: user.photoUrl,
         location: user.location,
+        photos: user.photos,
       }
     }
   );
@@ -150,12 +152,19 @@ export async function getReviewsCount(userId: string) {
         const restaurant = await database.collection<Restaurant>('restaurants').findOne({ _id: restaurantId });
 
         if (restaurant) {
-          totalReviews += restaurant.reviews.filter(review => review.createdBy === userId).length;
+          for (const dishId of restaurant.dishes) {
+            const dish = await database.collection<Dish>('dishes').findOne({ _id: dishId });
+
+            if (dish) {
+              const userDishReviews = dish.reviews.filter(review => review.createdBy === userId);
+              totalReviews += userDishReviews.length;
+            }
+          }
         }
       }
     }
   }
-  
+
   return totalReviews;
 }
 
