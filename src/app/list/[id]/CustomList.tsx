@@ -54,7 +54,7 @@ export default async function CustomList({ userId, listId }: { userId: string, l
               <p>{list.name}</p>
             </div>
           )}
-        <h1 className="text-3xl font-semibold xl:text-4xl">{list.name}</h1>
+        <h1 className="page-heading">{list.name}</h1>
         <div className="max-h-full flex gap-8 overflow-y-auto">
           <RestaurantDisplay
             userId={userId}

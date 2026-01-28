@@ -108,6 +108,12 @@
   .input-file {
     @apply file:px-3 file:py-1 file:mr-2 file:font-semibold file:border file:border-charcoal file:rounded-lg file:cursor-pointer;
   }
+  .page-heading {
+    @apply text-3xl font-semibold xl:text-4xl;
+  }
+  .page-subheading {
+    @apply text-xl font-semibold xl:text-2xl;
+  }
   .review-text {
     display: -webkit-box;
     -webkit-box-orient: vertical;

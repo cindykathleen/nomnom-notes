@@ -36,7 +36,7 @@ export default async function CustomLists({ userId }: { userId: string }) {
   return (
     <div className="gated-page-layout">
       <div className="gated-page-layout-inner">
-        <h1 className="text-4xl font-semibold">My lists</h1>
+        <h1 className="page-heading">My lists</h1>
         <div className="cards">
           {lists.map(async (list: List) => {
             const role = await getRole(list._id);

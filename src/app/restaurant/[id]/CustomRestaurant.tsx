@@ -61,7 +61,7 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
           <p>{restaurant.name}</p>
         </div>
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-semibold xl:text-4xl">{restaurant.name}</h1>
+          <h1 className="page-heading">{restaurant.name}</h1>
           <RatingDisplay rating={getAvgRating(restaurant.reviews)} />
         </div>
         <h2 className="text-2xl font-semibold xl:text-3xl">Dishes</h2>

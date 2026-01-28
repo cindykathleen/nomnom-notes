@@ -53,6 +53,21 @@ export async function addUserDb(userId: string, name: string, email: string) {
   });
 }
 
+export async function updateUserDb(user: User) {
+  const database: Db = await db();
+
+  await database.collection<User>('users').updateOne(
+    { _id: user._id },
+    {
+      $set: {
+        name: user.name,
+        photoUrl: user.photoUrl,
+        location: user.location,
+      }
+    }
+  );
+}
+
 export async function removeUserDb(userId: string, listId: string) {
   const database: Db = await db();
   
