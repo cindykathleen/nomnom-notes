@@ -62,3 +62,19 @@ export const signOut = async () => {
     return { error: err?.response?.data?.message || err.message || 'Sign out not successful' };
   }
 }
+
+export const updateEmail = async (formData: FormData) => {
+  const email = formData.get('user-email') as string;
+
+  try {
+    await auth.api.changeEmail({
+      body: {
+        newEmail: email,
+      }
+    });
+
+    return { success: true };
+  } catch (err: any) {
+    return { error: err?.response?.data?.message || err.message || 'Email update not successful' };
+  }
+}

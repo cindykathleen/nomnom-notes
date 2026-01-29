@@ -14,7 +14,7 @@ export default function Profile({ user }: { user: User }) {
 
   return (
     <div>
-      <h3 className="accordion-content-heading">Profile privacy</h3>
+      <h3 className="accordion-content-heading">Set your profile privacy</h3>
       <hr className="hidden border-lightgray xl:block" />
       <div className="pt-2 flex gap-4 items-center xl:pt-8">
         <span className="text-lg">Private profile</span>
