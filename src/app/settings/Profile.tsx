@@ -1,4 +1,5 @@
 'use client';
+
 import { useState } from 'react';
 import { User } from '@/app/interfaces/interfaces';
 import ImageInput from '@/app/components/ImageInput';
