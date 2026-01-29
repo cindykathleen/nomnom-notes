@@ -14,7 +14,7 @@ export default async function Lists({ user }: { user: User }) {
           <div className="profile-section-highlights">
             {profileLists.map(list => (
               <Link href={`/list/${list._id}`} key={list._id} className="text-center">
-                <Image src={list.photoUrl} alt={list.name} width='300' height='300'
+                <Image src={list.photoUrl!} alt={list.name} width='300' height='300'
                   className="aspect-square object-cover rounded-sm"
                 />
                 <span className="profile-section-highlights-text">{list.name}</span>

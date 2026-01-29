@@ -14,7 +14,7 @@ export default async function Restaurants({ user }: { user: User }) {
           <div className="profile-section-highlights">
             {profileRestaurants.map(restaurant => (
               <Link key={restaurant._id} href={`/restaurant/${restaurant._id}`} className="text-center">
-                <Image src={restaurant.photoUrl} alt={restaurant.name} width='300' height='300'
+                <Image src={restaurant.photoUrl!} alt={restaurant.name} width='300' height='300'
                   className="aspect-square object-cover rounded-sm"
                 />
                 <span className="profile-section-highlights-text">{restaurant.name}</span>
