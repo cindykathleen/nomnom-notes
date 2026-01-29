@@ -137,6 +137,30 @@
   .profile-section-highlights-text {
     @apply pt-2 text-lg line-clamp-1;
   }
+  .accordion {
+    @apply w-full pb-8 flex flex-col gap-8 xl:pb-16 xl:flex-row xl:gap-16;
+  }
+  .accordion-title {
+    @apply hidden w-full md:flex md:gap-6 xl:w-1/5 xl:flex-col xl:gap-0;
+  }
+  .accordion-title button {
+    @apply p-4 text-lg font-semibold text-center border-b-2 border-b-lightgray border-l-4 border-l-transparent cursor-pointer xl:text-left xl:border-b-1 xl:hover:bg-[#F5F5F5] transition-colors;
+  }
+  .accordion-title button:first-of-type {
+    @apply xl:border-t xl:border-t-lightgray;
+  }
+  .accordion-title button.active {
+    @apply border-b-dustypink xl:bg-[#F5F5F5] xl:border-b-lightgray xl:border-l-dustypink;
+  }
+  .accordion-title-select {
+    @apply block py-4 text-lg font-semibold border-b-2 border-b-dustypink md:hidden;
+  }
+  .accordion-content {
+    @apply w-full xl:w-4/5;
+  }
+  .accordion-content-heading {
+    @apply hidden pb-6 text-2xl font-semibold xl:block xl:text-3xl;
+  }
 }
 
 body {
