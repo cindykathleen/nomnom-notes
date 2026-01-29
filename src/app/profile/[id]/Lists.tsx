@@ -13,7 +13,7 @@ export default async function Lists({ user }: { user: User }) {
         profileLists.length > 0 && (
           <div className="profile-section-highlights">
             {profileLists.map(list => (
-              <Link key={list._id} href={`/list/${list._id}`} className="text-center">
+              <Link href={`/list/${list._id}`} key={list._id} className="text-center">
                 <Image src={list.photoUrl} alt={list.name} width='300' height='300'
                   className="aspect-square object-cover rounded-sm"
                 />
@@ -25,7 +25,7 @@ export default async function Lists({ user }: { user: User }) {
       }
       { // Display an error message if no lists are found
         profileLists.length === 0 && (
-          <p className="text-lg lg:text-xl">The user does not have any lists.</p>
+          <p className="text-lg">The user does not have any lists.</p>
         )
       }
     </div>
