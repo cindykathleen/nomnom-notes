@@ -68,17 +68,40 @@ export const updateUserPrivacy = async (userId: string, profilePrivacy: boolean)
     };
 
     await updateUserDb(updatedUser);
-    revalidatePath('/settings/');
+    revalidatePath('/settings/#privacy');
     return { message: 'User privacy updated successfully' };
   } catch (err) {
     return { error: `Error updating user privacy: ${err}` };
   }
 }
 
+export const updateUserEmail = async (formData: FormData, userId: string) => {
+  const email = formData.get('user-email') as string;
+
+  try {
+    const existingUser = await getUser(userId);
+
+    if (!existingUser) {
+      return { error: 'User not found' };
+    }
+
+    const updatedUser: User = {
+      ...existingUser,
+      email: email,
+    };
+
+    await updateUserDb(updatedUser);
+    revalidatePath('/settings/#email');
+    return { message: 'User email updated successfully' };
+  } catch (err) {
+    return { error: `Error updating user email: ${err}` };
+  }
+}
+
 export const addPhotoToUser = async (userId: string, photoUrl: string) => {
   try {
     const user = await getUser(userId);
-    
+
     if (!user) {
       return { error: 'User not found' };
     }

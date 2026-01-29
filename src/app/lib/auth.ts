@@ -9,8 +9,14 @@ const db = client.db('nomnom_notes_auth' + (process.env.MONGODB_DBNAME_SUFFIX ||
 export const auth = betterAuth({
   database: mongodbAdapter(db),
   emailAndPassword: {
-    enabled: true
+    enabled: true,
+  },
+  user: {
+    changeEmail: {
+      enabled: true,
+      updateEmailWithoutVerification: true,
+    },
   },
   plugins: [nextCookies()],
-  secret: process.env.BETTER_AUTH_SECRET
+  secret: process.env.BETTER_AUTH_SECRET,
 });

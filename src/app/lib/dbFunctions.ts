@@ -62,6 +62,7 @@ export async function updateUserDb(user: User) {
     {
       $set: {
         name: user.name,
+        email: user.email,
         photoUrl: user.photoUrl,
         location: user.location,
         profilePrivacy: user.profilePrivacy,

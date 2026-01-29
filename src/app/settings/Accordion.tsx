@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { User } from '@/app/interfaces/interfaces';
 import Profile from './Profile';
+import Email from './Email';
 import Privacy from './Privacy';
 
 export default function Accordion({ user }: { user: User }) {
@@ -15,7 +16,7 @@ export default function Accordion({ user }: { user: User }) {
     },
     {
       title: 'Email',
-      content: 'hi',
+      content: <Email user={user} />,
     },
     {
       title: 'Password',

@@ -45,17 +45,17 @@ export default function Profile({ user }: { user: User }) {
 
   return (
     <div>
-      <h3 className="accordion-content-heading">Profile</h3>
+      <h3 className="accordion-content-heading">Update your profile</h3>
       <hr className="hidden border-lightgray xl:block" />
       <form onSubmit={handleSubmit} className="max-w-[700px] pt-2 flex flex-col xl:pt-8">
         <label htmlFor="user-name" className="pb-1 font-semibold">Display name</label>
         <input id="user-name" name="user-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
-          className="w-full input" placeholder="City, State/Country" autoComplete="off" />
+          className="w-full input" autoComplete="off" />
         <label htmlFor="user-location" className="pb-1 font-semibold">Location</label>
         <input id="user-location" name="user-location" type="text" value={inputLocation} onChange={(e) => setInputLocation(e.target.value)}
-          className="w-full input" autoComplete="off" />
+          className="w-full input" placeholder="City, State/Country" autoComplete="off" />
         <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-        <button type="submit" className="button-primary" data-cy="edit-list-submit">
+        <button type="submit" className="button-primary">
           Update
         </button>
       </form>
