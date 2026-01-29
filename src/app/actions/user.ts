@@ -47,7 +47,7 @@ export const updateUser = async (formData: FormData, userId: string, photoUrl: s
     };
 
     await updateUserDb(updatedUser);
-    revalidatePath('/profile/' + userId);
+    revalidatePath('/settings/');
     return { message: 'User updated successfully' };
   } catch (err) {
     return { error: `Error updating user: ${err}` };

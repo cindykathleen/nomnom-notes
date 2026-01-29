@@ -12,7 +12,7 @@ export default async function Reviews({ user }: { user: User }) {
         profileReviews.length > 0 && (
           <div className="profile-section-highlights">
             {profileReviews.map(review => (
-              <div className="relative p-1 flex flex-col items-center gap-2 border border-lightgray rounded-sm">
+              <div key={review._id} className="relative p-1 flex flex-col items-center gap-2 border border-lightgray rounded-sm">
                 <span className="profile-section-highlights-text">{review.name}</span>
                 <RatingDisplay rating={review.rating!} />
                 <span className="text-sm text-center line-clamp-5">{review.note}</span>
