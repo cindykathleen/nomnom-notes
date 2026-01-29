@@ -54,6 +54,27 @@ export const updateUser = async (formData: FormData, userId: string, photoUrl: s
   }
 }
 
+export const updateUserPrivacy = async (userId: string, profilePrivacy: boolean) => {
+  try {
+    const existingUser = await getUser(userId);
+
+    if (!existingUser) {
+      return { error: 'User not found' };
+    }
+
+    const updatedUser: User = {
+      ...existingUser,
+      profilePrivacy: profilePrivacy,
+    };
+
+    await updateUserDb(updatedUser);
+    revalidatePath('/settings/');
+    return { message: 'User privacy updated successfully' };
+  } catch (err) {
+    return { error: `Error updating user privacy: ${err}` };
+  }
+}
+
 export const addPhotoToUser = async (userId: string, photoUrl: string) => {
   try {
     const user = await getUser(userId);

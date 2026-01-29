@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { User } from '@/app/interfaces/interfaces';
 import Profile from './Profile';
+import Privacy from './Privacy';
 
 export default function Accordion({ user }: { user: User }) {
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -22,7 +23,7 @@ export default function Accordion({ user }: { user: User }) {
     },
     {
       title: 'Privacy',
-      content: 'condy',
+      content: <Privacy user={user} />,
     },
   ]
 

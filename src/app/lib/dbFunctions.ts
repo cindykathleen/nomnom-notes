@@ -64,6 +64,7 @@ export async function updateUserDb(user: User) {
         name: user.name,
         photoUrl: user.photoUrl,
         location: user.location,
+        profilePrivacy: user.profilePrivacy,
         photos: user.photos,
       }
     }

@@ -161,6 +161,24 @@
   .accordion-content-heading {
     @apply hidden pb-6 text-2xl font-semibold xl:block xl:text-3xl;
   }
+  .toggle-switch {
+    @apply relative inline-block w-[50px] h-[22px];
+  }
+  .toggle-switch input { 
+    @apply w-0 h-0 opacity-0;
+  }
+  .slider { 
+    @apply absolute w-full h-full bg-lightgray rounded-[24px] cursor-pointer transition-colors;
+  }
+  .slider::before {
+    @apply content-[""] absolute w-[20px] h-[20px] left-[1px] bottom-[1px] bg-snowwhite rounded-full transition-transform;
+  }
+  .toggle-switch input:checked + .slider {
+    @apply bg-darkpink;
+  }
+  .toggle-switch input:checked + .slider::before {
+    @apply translate-x-[28px];
+  }
 }
 
 body {
