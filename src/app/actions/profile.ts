@@ -1,8 +1,8 @@
 'use server';
 
-import { getListIds, getList } from '@/app/lib/dbFunctions';
+import { getListIds, getList, getRestaurant } from '@/app/lib/dbFunctions';
 
-interface ProfileList {
+interface ProfileItem {
   _id: string;
   name: string;
   photoUrl: string;
@@ -28,8 +28,7 @@ export const getProfileLists = async (userId: string) => {
           };
         })
       )
-    ).filter(Boolean) as ProfileList[];
-
+    ).filter(Boolean) as ProfileItem[];
 
     // Sort lists by when they were last updated
     lists.sort((a, b) => b.dateUpdated.getTime() - a.dateUpdated.getTime());
@@ -40,3 +39,45 @@ export const getProfileLists = async (userId: string) => {
     return [];
   }
 };
+
+export const getProfileRestaurants = async (userId: string) => {
+  try {
+    const listIds = await getListIds(userId);
+    const restaurantIds: string[] = [];
+
+    await Promise.all(
+      listIds.map(async (listId) => {
+        const list = await getList(listId);
+
+        if (!list) return null;
+
+        restaurantIds.push(...list.restaurants);
+      })
+    );
+
+    const restaurants = (
+      await Promise.all(
+        restaurantIds.map(async (restaurantId) => {
+          const restaurant = await getRestaurant(restaurantId);
+
+          if (!restaurant) return null;
+
+          return {
+            _id: restaurant._id,
+            name: restaurant.name,
+            photoUrl: restaurant.photoUrl,
+            dateUpdated: restaurant.dateUpdated,
+          };
+        })
+      )
+    ).filter(Boolean) as ProfileItem[];
+
+    // Sort restaurants by when they were last updated
+    restaurants.sort((a, b) => b.dateUpdated.getTime() - a.dateUpdated.getTime());
+
+    // Only return the top 4 most recently updated restaurants
+    return restaurants.slice(0, 4);
+  } catch (err) {
+    return [];
+  }
+}

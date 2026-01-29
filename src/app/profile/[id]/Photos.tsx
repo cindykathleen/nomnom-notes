@@ -35,7 +35,7 @@ export default async function Photos({ user }: { user: User }) {
       }
       { // Display an error message if no photos are found
         profilePhotos.length === 0 && (
-          <p className="text-lg lg:text-xl">The user has not uploaded any photos.</p>
+          <p className="text-lg">The user has not uploaded any photos.</p>
         )
       }
     </div>
