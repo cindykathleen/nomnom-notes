@@ -132,7 +132,10 @@
     @apply grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3;
   }
   .profile-section-highlights {
-    @apply grid grid-cols-4 gap-2;
+    @apply grid grid-cols-2 gap-2 sm:grid-cols-4;
+  }
+  .profile-section-highlights-text {
+    @apply pt-2 text-lg line-clamp-1;
   }
 }
 
