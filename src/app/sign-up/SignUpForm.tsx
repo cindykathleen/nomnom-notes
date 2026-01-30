@@ -69,7 +69,7 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
         <label htmlFor="password" className="pb-1 font-semibold">Password</label>
         <input id="password" name="password" type="password" required value={password} onChange={e => setPassword(e.target.value)}
           className="input" autoComplete="off" />
-        <label htmlFor="password-confirmation" className="pb-1 font-semibold">Password confirmation</label>
+        <label htmlFor="password-confirmation" className="pb-1 font-semibold">Re-enter your password</label>
         {!passwordMatch && confirmation && (<p className="pb-3 text-sm text-red-600 font-semibold">The passwords do not match</p>)}
         <input id="password-confirmation" type="password" required value={confirmation} onChange={e => setConfirmation(e.target.value)}
           className="input" autoComplete="off" />
