@@ -7,14 +7,14 @@ async function db() {
 }
 
 // Users functions
-export async function getUser(userId?: string) {
+export async function getUser(userId?: string): Promise<User> {
   const database: Db = await db();
 
   if (!userId) {
-    return await database.collection<User>('users').findOne({});
+    return await database.collection<User>('users').findOne({}) as User;
   }
 
-  return await database.collection<User>('users').findOne({ _id: userId });
+  return await database.collection<User>('users').findOne({ _id: userId }) as User;
 }
 
 export async function getUsers(listId: string) {

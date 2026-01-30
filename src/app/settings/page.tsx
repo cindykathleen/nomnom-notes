@@ -9,7 +9,7 @@ export default async function Page() {
 
   return (
     <>
-      <Nav />
+      <Nav userId={userId} />
       <div className="gated-page-layout">
         <div className="gated-page-layout-inner">
           { user && (

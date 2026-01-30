@@ -8,7 +8,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      <Nav />
+      <Nav userId={userId} />
       <DndWrapper>
         <CustomLists userId={userId} />
       </DndWrapper>
