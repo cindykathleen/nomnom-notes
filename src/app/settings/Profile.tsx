@@ -77,7 +77,7 @@ export default function Profile({ user }: { user: User }) {
 
   return (
     <div>
-      <h3 className="accordion-content-heading">Update your profile</h3>
+      <h3 className="tab-content-heading">Update your profile</h3>
       <hr className="hidden border-lightgray xl:block" />
       <form onSubmit={handleSubmit} className="pt-2 flex flex-col-reverse justify-between gap-8 md:flex-row md:items-center md:gap-16 xl:pt-8">
         <div className="w-full md:w-3/5 lg:w-[700px]">

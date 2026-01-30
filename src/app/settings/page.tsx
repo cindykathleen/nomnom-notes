@@ -1,7 +1,7 @@
 import getCurrentUser from '@/app/lib/getCurrentUser';
 import { getUser } from '@/app/lib/dbFunctions';
 import Nav from '@/app/components/Nav';
-import Accordion from './Accordion';
+import Tabs from './Tabs';
 
 export default async function Page() {
   const userId = await getCurrentUser(false);
@@ -15,7 +15,7 @@ export default async function Page() {
           { user && (
             <>
               <h1 className="page-heading">Account settings</h1>
-              <Accordion user={user} />
+              <Tabs user={user} />
             </>
           )}
           { !user && (

@@ -34,7 +34,7 @@ export default function Password() {
 
   return (
     <div>
-      <h3 className="accordion-content-heading">Change your account password</h3>
+      <h3 className="tab-content-heading">Change your account password</h3>
       <hr className="hidden border-lightgray xl:block" />
       <form onSubmit={handleSubmit} className="max-w-[700px] pt-2 flex flex-col xl:pt-8">
         <label htmlFor="current-password" className="pb-1 font-semibold">Current password</label>
