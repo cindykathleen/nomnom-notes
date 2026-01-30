@@ -70,11 +70,30 @@ export const updateEmail = async (formData: FormData) => {
     await auth.api.changeEmail({
       body: {
         newEmail: email,
-      }
+      },
     });
 
     return { success: true };
   } catch (err: any) {
     return { error: err?.response?.data?.message || err.message || 'Email update not successful' };
+  }
+}
+
+export const updatePasssword = async (formData: FormData) => {
+  const currentPassword = formData.get('current-password') as string;
+  const newPassword = formData.get('new-password') as string;
+
+  try {
+    await auth.api.changePassword({
+      body: {
+        newPassword: newPassword,
+        currentPassword: currentPassword,
+      },
+      headers: await headers(),
+    });
+    
+    return { success: true };
+  } catch (err: any) {
+    return { error: err?.response?.data?.message || err.message || 'Password update not successful' };
   }
 }
