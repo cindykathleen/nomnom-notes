@@ -4,7 +4,6 @@ import { useState } from 'react';
 import imageCompression from 'browser-image-compression';
 
 export default function ImageInput({ currImage, setNewImage }: { currImage: string, setNewImage: (newImage: string) => void }) {
-  const [showUploadInput, setShowUploadInput] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string>(currImage);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,22 +26,14 @@ export default function ImageInput({ currImage, setNewImage }: { currImage: stri
 
   return (
     <div className="flex flex-col gap-2">
-      {showUploadInput
-        ? <label className="font-semibold">
-          Image (<span className="link" onClick={() => setShowUploadInput(false)} data-cy="image-input-type-trigger">use an existing image</span>)</label>
-        : <label className="font-semibold">Image (<span className="link" onClick={() => setShowUploadInput(true)} data-cy="image-input-type-trigger">upload your own</span>)</label>
-      }
+      <label className="font-semibold">Image</label>
       {previewImage !== '' && (
         <img src={previewImage} alt="Preview image" className="max-w-36 mb-1 aspect-square object-contain" />
       )}
-      {showUploadInput
-        ? <div className="flex flex-col gap-2 mb-6">
-            <input name="img-file" key="file-input" type="file" accept="image/*" className="input-file" onChange={handleFileChange} />
-            <p className="text-small text-slategray">Maximum file size: 10 MB</p>
-          </div>
-        : <input name="img-url" key="url-input" type="text" placeholder="Add image URL here" className="input" autoComplete="off"
-          value={currImage} onChange={(e) => setNewImage(e.target.value)} onBlur={(e) => setPreviewImage(e.target.value)} />
-      }
+      <div className="flex flex-col gap-2 mb-6">
+        <input name="img-file" key="file-input" type="file" accept="image/*" className="input-file" onChange={handleFileChange} />
+        <p className="text-small text-slategray">Maximum file size: 10 MB</p>
+      </div>
     </div>
   );
 }
