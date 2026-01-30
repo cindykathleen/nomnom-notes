@@ -26,7 +26,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   return (
     <div>
       { // Display a different nav bar for public users
-        userId === 'public' ? <PublicNav /> : <Nav />
+        userId === 'public' ? <PublicNav /> : <Nav userId={userId} />
       }
       <DndWrapper>
         <CustomRestaurant userId={userId} list={list} restaurantId={id} />

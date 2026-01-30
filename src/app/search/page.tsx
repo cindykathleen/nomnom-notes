@@ -32,7 +32,7 @@ export default async function Page(props: { searchParams: SearchParams }) {
 
   return (
     <div>
-      <Nav />
+      <Nav userId={userId} />
       <Search query={query} userId={userId} lists={lists} />
     </div>
   );
