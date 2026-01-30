@@ -34,7 +34,7 @@ export default function Email({ user }: { user: User }) {
 
   return (
     <div>
-      <h3 className="accordion-content-heading">Change your account email</h3>
+      <h3 className="tab-content-heading">Change your account email</h3>
       <hr className="hidden border-lightgray xl:block" />
       <form onSubmit={handleSubmit} className="max-w-[700px] pt-2 flex flex-col xl:pt-8">
         <div className="mb-6">
