@@ -21,7 +21,7 @@ export default async function Page() {
           { !user && (
             <>
               <h1 className="page-heading">Uh oh!</h1>
-              <p>We are not able to load your account information. Please try again.</p>
+              <p className="text-xl">We are not able to load your account information. Please try again.</p>
             </>
           )}
         </div>
