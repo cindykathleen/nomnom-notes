@@ -169,7 +169,7 @@ export default function RestaurantCard({
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="modal-heading">Reviews for {restaurant.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAllReviews(false); }}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 min-w-[24px] cursor-pointer lg:size-9 lg:min-w-[36px]" onClick={() => { setShowAllReviews(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
