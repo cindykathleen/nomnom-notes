@@ -8,7 +8,7 @@ export default async function Hero({ user }: { user: User }) {
 
   return (
     <div className="profile-section">
-      <h4 className="profile-section-heading">Statistics</h4>
+      <h4 className="profile-section-heading">Overview</h4>
       <table className="text-lg xl:text-xl">
         <tbody>
           <tr>
