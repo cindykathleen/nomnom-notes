@@ -84,7 +84,9 @@ export default defineConfig({
             name: 'Test List',
             description: 'This is a test list.',
             photoUrl: '',
-            restaurants: []
+            restaurants: [],
+            dateAdded: new Date,
+            dateUpdated: new Date,
           };
 
           await db.collection<List>('lists').insertOne(list);
@@ -109,7 +111,8 @@ export default defineConfig({
             photoUrl: '',
             reviews: [],
             dishes: [],
-            dateAdded: new Date
+            dateAdded: new Date,
+            dateUpdated: new Date,
           }
 
           await db.collection<Restaurant>('restaurants').insertOne(restaurant);
