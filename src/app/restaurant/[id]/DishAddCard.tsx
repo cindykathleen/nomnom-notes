@@ -71,7 +71,7 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
               </div>
               <hr className="border-slategray" />
               <form onSubmit={handleSubmit} className="p-4 flex flex-col">
-                <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
+                <label htmlFor="dish-name" className="pb-1 font-semibold">Name *</label>
                 <input id="dish-name" name="dish-name" type="text" required value={dishName} onChange={e => setDishName(e.target.value)}
                   className="input" autoComplete="off" />
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
@@ -88,6 +88,7 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
                     : ("Add")
                   }
                 </button>
+                <p className="mt-6 text-sm font-semibold">* Required fields</p>
               </form>
             </div>
           </div>
