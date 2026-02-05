@@ -141,7 +141,7 @@
     @apply grid grid-cols-2 gap-2 sm:grid-cols-4;
   }
   .profile-section-highlights-text {
-    @apply pt-2 text-lg line-clamp-1;
+    @apply pt-2 text-lg text-center line-clamp-1;
   }
   .tabs {
     @apply w-full pb-8 flex flex-col gap-8 xl:pb-16 xl:flex-row xl:gap-16;
