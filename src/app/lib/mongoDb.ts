@@ -13,19 +13,12 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-// In dev, reuse the global promise to avoid multiple connections
-if (process.env.NODE_ENV === 'development') {
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri);
-    global._mongoClientPromise = client.connect();
-  }
 
-  clientPromise = global._mongoClientPromise;
-}
-// In prod, rely on module scope
-else {
+if (!global._mongoClientPromise) {
   client = new MongoClient(uri);
-  clientPromise = client.connect();
+  global._mongoClientPromise = client.connect();
 }
+
+clientPromise = global._mongoClientPromise;
 
 export default clientPromise;

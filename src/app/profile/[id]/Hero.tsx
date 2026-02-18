@@ -9,7 +9,7 @@ export default async function Hero({ user }: { user: User }) {
   return (
     <div className="flex flex-col-reverse gap-6 items-center justify-between sm:flex-row sm:gap-2 sm:items-start">
       <div className="flex flex-col items-center gap-8 sm:flex-row">
-        <Image src={user.photoUrl} alt={`${user.name}'s profile picture`} width={200} height={200}
+        <Image src={user.photoUrl} alt={`${user.name}'s profile picture`} width={200} height={200} priority
           className="rounded-full aspect-square object-cover"
         />
         <div className="flex flex-col gap-2">
