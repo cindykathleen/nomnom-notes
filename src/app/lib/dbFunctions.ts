@@ -1,6 +1,6 @@
 import getDb from '@/app/lib/db';
 import { Db, ObjectId } from 'mongodb';
-import { User, List, Restaurant, Dish, Place, SearchResult, Invitation } from '@/app/interfaces/interfaces';
+import { User, List, Restaurant, Dish, Place, SearchResult, Invitation, ProfileItem } from '@/app/interfaces/interfaces';
 
 async function db() {
   return await getDb();
@@ -107,86 +107,6 @@ export async function addTimestamp(userId: string, feature: 'search' | 'map', ti
       { $push: { mapRate: timestamp } }
     );
   }
-}
-
-export async function getUserStats(userId: string) {
-  const database: Db = await db();
-
-  const pipeline = [
-    { $match: { _id: new ObjectId(userId) } },
-
-    // Look up lists
-    {
-      $lookup: {
-        from: 'lists',
-        localField: 'lists',
-        foreignField: '_id',
-        as: 'listsData',
-      },
-    },
-
-    // Look up restaurants
-    {
-      $lookup: {
-        from: 'restaurants',
-        let: { restaurantIds: { $reduce: {
-          input: '$listsData.restaurants',
-          initialValue: [],
-          in: { $concatArrays: ['$$value', '$$this'] },
-        } } },
-        pipeline: [
-          { $match: { $expr: { $in: ['$_id', '$$restaurantIds'] } } },
-        ],
-        as: 'restaurantsData',
-      },
-    },
-
-    // Look up dishes
-    {
-      $lookup: {
-        from: 'dishes',
-        let: { dishIds: { $reduce: {
-          input: '$restaurantsData.dishes',
-          initialValue: [],
-          in: { $concatArrays: ['$$value', '$$this'] },
-        }}},
-        pipeline: [
-          { $match: { $expr: { $in: ['$_id', '$$dishIds'] } } },
-        ],
-        as: 'dishesData',
-      },
-    },
-
-    // Calculate the counts
-    {
-      $addFields: {
-        listsCount: { $size: '$lists' },
-        restaurantsCount: { $size: '$restaurantsData' },
-        reviewsCount: {
-          $sum: {
-            $map: {
-              input: '$dishesData',
-              as: 'dish',
-              in: {
-                $size: {
-                  $filter: {
-                    input: '$$dish.reviews',
-                    cond: { $eq: ['$$this.createdBy', userId] },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-
-    { $project: { listsCount: 1, restaurantsCount: 1, reviewsCount: 1 } },
-  ];
-
-  const result = await database.collection('users').aggregate(pipeline).toArray();
-
-  return result[0] || { listsCount: 0, restaurantsCount: 0, reviewsCount: 0 };
 }
 
 // Lists functions
@@ -615,4 +535,114 @@ export async function getExistingDishReview(userId: string, dishId: string) {
   );
 
   return doc?.reviews?.[0] || null;
+}
+
+// Profile function
+export async function getProfileData(userId: string) {
+  const database: Db = await db();
+
+  const user = await database.collection<User>('users').findOne({ _id: userId });
+
+  if (!user) {
+    return {
+      stats: { listsCount: 0, restaurantsCount: 0, reviewsCount: 0 },
+      lists: [],
+      restaurants: [],
+      reviews: [],
+    };
+  }
+
+  const listsCount = user.lists.length;
+
+  const lists = await database
+    .collection<List>('lists')
+    .find({ _id: { $in: user.lists } })
+    .project({ _id: 1, name: 1, photoUrl: 1, dateUpdated: 1, restaurants: 1 })
+    .toArray();
+
+  const profileLists: ProfileItem[] = lists
+    .sort((a, b) => b.dateUpdated.getTime() - a.dateUpdated.getTime())
+    .slice(0, 4)
+    .map(list => ({
+      _id: list._id.toString(),
+      name: list.name,
+      photoUrl: list.photoUrl,
+    }));
+
+  const restaurantIds = lists.flatMap(list => list.restaurants);
+  const restaurantsCount = restaurantIds.length;
+
+  if (restaurantIds.length === 0) {
+    return {
+      stats: { listsCount, restaurantsCount: 0, reviewsCount: 0 },
+      lists: profileLists,
+      restaurants: [],
+      reviews: [],
+    };
+  }
+
+  const restaurants = await database
+    .collection<Restaurant>('restaurants')
+    .find({ _id: { $in: restaurantIds } })
+    .project({ _id: 1, name: 1, photoUrl: 1, dateUpdated: 1, dishes: 1 })
+    .toArray();
+
+  const profileRestaurants: ProfileItem[] = restaurants
+    .sort((a, b) => b.dateUpdated.getTime() - a.dateUpdated.getTime())
+    .slice(0, 4)
+    .map(r => ({
+      _id: r._id.toString(),
+      name: r.name,
+      photoUrl: r.photoUrl,
+    }));
+
+  const dishIds = restaurants.flatMap(r => r.dishes);
+
+  if (dishIds.length === 0) {
+    return {
+      stats: { listsCount, restaurantsCount, reviewsCount: 0 },
+      lists: profileLists,
+      restaurants: profileRestaurants,
+      reviews: [],
+    };
+  }
+
+  const dishes = await database
+    .collection<Dish>('dishes')
+    .find({ _id: { $in: dishIds } })
+    .project({ _id: 1, name: 1, dateUpdated: 1, reviews: 1 })
+    .toArray();
+
+  const reviews: ProfileItem[] = [];
+  let reviewsCount = 0;
+
+  for (const dish of dishes) {
+    for (const review of dish.reviews) {
+      if (review.createdBy === userId) {
+        reviewsCount++;
+        reviews.push({
+          _id: review._id.toString(),
+          name: dish.name,
+          dateUpdated: dish.dateUpdated,
+          rating: review.rating,
+          note: review.note,
+        });
+      }
+    }
+  }
+
+  const profileReviews = reviews
+    .sort((a, b) => b.dateUpdated!.getTime() - a.dateUpdated!.getTime())
+    .slice(0, 4);
+
+  return {
+    stats: {
+      listsCount,
+      restaurantsCount,
+      reviewsCount,
+    },
+    lists: profileLists,
+    restaurants: profileRestaurants,
+    reviews: profileReviews,
+  };
 }

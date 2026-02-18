@@ -79,3 +79,12 @@ export interface Invitation {
   expiresAt: Date;
   usedBy: string;
 }
+
+export interface ProfileItem {
+  _id: string;
+  name: string;
+  photoUrl?: string;
+  dateUpdated?: Date;
+  rating?: number;
+  note?: string;
+}
