@@ -1,17 +1,11 @@
-import { getListsCount, getRestaurantsCount, getReviewsCount } from "./dbFunctions";
+import { getUserStats } from "./dbFunctions";
 
-export default async function getStatistics(userId: string, type: 'lists' | 'restaurants' | 'reviews'): Promise<number> {
-  switch (type) {
-    case 'lists':
-      const listsCount = await getListsCount(userId);
-      return listsCount;
-    case 'restaurants':
-      const restaurantsCount = await getRestaurantsCount(userId);
-      return restaurantsCount;
-    case 'reviews':
-      const reviewsCount = await getReviewsCount(userId);
-      return reviewsCount;
-    default:
-      return 0;
-  }
+export default async function getStatistics(userId: string) {
+  const { listsCount, restaurantsCount, reviewsCount } = await getUserStats(userId);
+
+  return {
+    listsCount: listsCount,
+    restaurantsCount: restaurantsCount,
+    reviewsCount: reviewsCount,
+  };
 }
