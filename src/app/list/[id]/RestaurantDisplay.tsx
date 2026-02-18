@@ -72,7 +72,7 @@ export default function RestaurantDisplay({
         </form>
       </div>
       <div
-        className={`gap-8 lg:max-h-[80vh] lg:overflow-y-auto
+        className={`gap-4 lg:max-h-[80vh] lg:overflow-y-auto
         ${userId === 'public' || !featureAccessAllowed ? "grid grid-cols-2" : "pr-4 flex flex-col"}`}
       >
         {restaurants.map((restaurant: Restaurant) => (

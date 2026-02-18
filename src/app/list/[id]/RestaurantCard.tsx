@@ -63,21 +63,21 @@ export default function RestaurantCard({
   return (
     <div className="last-of-type:mb-2">
       <Link key={restaurant._id} href={`/restaurant/${restaurant._id}`} data-cy="restaurant">
-        <div className="cards-outline gap-4 cursor-pointer md:gap-8 md:p-8">
-          <Image src={restaurant.photoUrl} alt={restaurant.name} width={500} height={500} 
-            className="h-[100px] w-[100px] self-center aspect-square object-cover rounded-lg md:h-[180px] md:w-[180px]"
+        <div className="cards-outline gap-4 cursor-pointer md:p-4">
+          <Image src={restaurant.photoUrl} alt={restaurant.name} width={250} height={250} 
+            className="h-[100px] w-[100px] self-center aspect-square object-cover rounded-lg"
           />
-          <div className="flex flex-col flex-1 gap-2">
+          <div className="flex flex-col flex-1 gap-1">
             <h3 className="text-lg font-semibold md:text-lg">{restaurant.name}</h3>
             <RatingDisplay rating={getAvgRating(restaurant.reviews)} />
             { // Display the review note if there is only one
               restaurant.reviews.length === 1 && (
-                <p className="text-md whitespace-pre-line md:text-lg">{restaurant.reviews[0].note}</p>
+                <p className="text-md whitespace-pre-line">{restaurant.reviews[0].note}</p>
               )
             }
             { // Display the number of reviews if there are multiple
               restaurant.reviews.length > 1 && (
-                <p className="w-fit text-md hover:text-mauve transition-colors md:text-lg"
+                <p className="w-fit text-md hover:text-mauve transition-colors"
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowAllReviews(true); }}>
                   {restaurant.reviews.length} notes
                 </p>
