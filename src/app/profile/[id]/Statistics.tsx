@@ -2,9 +2,7 @@ import { User } from '@/app/interfaces/interfaces';
 import getStatistics from '@/app/lib/getStatistics';
 
 export default async function Hero({ user }: { user: User }) {
-  const listsCount = await getStatistics(user._id, 'lists');
-  const restaurantsCount = await getStatistics(user._id, 'restaurants');
-  const reviewsCount = await getStatistics(user._id, 'reviews');
+  const { listsCount, restaurantsCount, reviewsCount } = await getStatistics(user._id);
 
   return (
     <div className="profile-section">

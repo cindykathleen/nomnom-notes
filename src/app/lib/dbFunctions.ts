@@ -1,5 +1,5 @@
 import getDb from '@/app/lib/db';
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { User, List, Restaurant, Dish, Place, SearchResult, Invitation } from '@/app/interfaces/interfaces';
 
 async function db() {
@@ -109,65 +109,84 @@ export async function addTimestamp(userId: string, feature: 'search' | 'map', ti
   }
 }
 
-export async function getListsCount(userId: string) {
+export async function getUserStats(userId: string) {
   const database: Db = await db();
 
-  const doc = await database.collection<User>('users').findOne({ _id: userId });
+  const pipeline = [
+    { $match: { _id: new ObjectId(userId) } },
 
-  return doc?.lists.length ?? 0;
-}
+    // Look up lists
+    {
+      $lookup: {
+        from: 'lists',
+        localField: 'lists',
+        foreignField: '_id',
+        as: 'listsData',
+      },
+    },
 
-export async function getRestaurantsCount(userId: string) {
-  const database: Db = await db();
+    // Look up restaurants
+    {
+      $lookup: {
+        from: 'restaurants',
+        let: { restaurantIds: { $reduce: {
+          input: '$listsData.restaurants',
+          initialValue: [],
+          in: { $concatArrays: ['$$value', '$$this'] },
+        } } },
+        pipeline: [
+          { $match: { $expr: { $in: ['$_id', '$$restaurantIds'] } } },
+        ],
+        as: 'restaurantsData',
+      },
+    },
 
-  const user = await database.collection<User>('users').findOne({ _id: userId });
+    // Look up dishes
+    {
+      $lookup: {
+        from: 'dishes',
+        let: { dishIds: { $reduce: {
+          input: '$restaurantsData.dishes',
+          initialValue: [],
+          in: { $concatArrays: ['$$value', '$$this'] },
+        }}},
+        pipeline: [
+          { $match: { $expr: { $in: ['$_id', '$$dishIds'] } } },
+        ],
+        as: 'dishesData',
+      },
+    },
 
-  if (!user) return 0;
+    // Calculate the counts
+    {
+      $addFields: {
+        listsCount: { $size: '$lists' },
+        restaurantsCount: { $size: '$restaurantsData' },
+        reviewsCount: {
+          $sum: {
+            $map: {
+              input: '$dishesData',
+              as: 'dish',
+              in: {
+                $size: {
+                  $filter: {
+                    input: '$$dish.reviews',
+                    cond: { $eq: ['$$this.createdBy', userId] },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-  let totalRestaurants = 0;
+    { $project: { listsCount: 1, restaurantsCount: 1, reviewsCount: 1 } },
+  ];
 
-  for (const listId of user.lists) {
-    const list = await database.collection<List>('lists').findOne({ _id: listId });
+  const result = await database.collection('users').aggregate(pipeline).toArray();
 
-    if (list) {
-      totalRestaurants += list.restaurants.length;
-    }
-  }
-
-  return totalRestaurants;
-}
-
-export async function getReviewsCount(userId: string) {
-  const database: Db = await db();
-
-  const user = await database.collection<User>('users').findOne({ _id: userId });
-
-  if (!user) return 0;
-
-  let totalReviews = 0;
-
-  for (const listId of user.lists) {
-    const list = await database.collection<List>('lists').findOne({ _id: listId });
-
-    if (list) {
-      for (const restaurantId of list.restaurants) {
-        const restaurant = await database.collection<Restaurant>('restaurants').findOne({ _id: restaurantId });
-
-        if (restaurant) {
-          for (const dishId of restaurant.dishes) {
-            const dish = await database.collection<Dish>('dishes').findOne({ _id: dishId });
-
-            if (dish) {
-              const userDishReviews = dish.reviews.filter(review => review.createdBy === userId);
-              totalReviews += userDishReviews.length;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return totalReviews;
+  return result[0] || { listsCount: 0, restaurantsCount: 0, reviewsCount: 0 };
 }
 
 // Lists functions
