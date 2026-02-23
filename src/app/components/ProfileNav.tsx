@@ -29,7 +29,8 @@ export default function ProfileNav({ user }: { user: User }) {
   return (
     <div className="relative">
       <Image src={user.photoUrl} alt="Navigation profile icon" width={50} height={50}
-        className="w-[40px] h-[40px] rounded-full aspect-square object-cover cursor-pointer md:w-[50px] md:h-[50px]"
+        className="w-[40px] h-[40px] rounded-full aspect-square object-cover cursor-pointer 
+          shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition md:w-[50px] md:h-[50px]"
         onClick={handleClick}
       />
       {
