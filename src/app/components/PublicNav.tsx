@@ -9,11 +9,11 @@ export default function Nav() {
           <Link href="/">
             {/* Mobile logo */}
             <Image src="/logo-mobile.png" alt="NomNom Notes logo"
-              width={80} height={51} className="block md:hidden"
+              width={70} height={45} className="block md:hidden"
             />
             {/* Desktop */}
             <Image src="/logo-desktop.png" alt="NomNom Notes logo"
-              width={250} height={64} className="hidden md:block"
+              width={200} height={41} className="hidden md:block"
             />
           </Link>
         </div>

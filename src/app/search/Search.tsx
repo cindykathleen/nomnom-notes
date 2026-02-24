@@ -62,7 +62,7 @@ export default function Search({ query, userId, lists }: SearchProps) {
           <div className="search-page-layout">
             <div className="search-page-layout-inner">
               <div className="max-w-3xl w-full space-y-4 md:space-y-8">
-                <Image src="/logo-search.png" alt="NomNom Notes logo" width={500} height={102} 
+                <Image src="/logo-desktop.png" alt="NomNom Notes logo" width={500} height={102} 
                   className="mx-auto"
                 />
                 <SearchForm />
