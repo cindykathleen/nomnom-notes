@@ -17,7 +17,7 @@ export default async function Nav({ userId }: { userId: string }) {
             />
             {/* Desktop */}
             <Image src="/logo-desktop.png" alt="NomNom Notes logo"
-              width={200} height={52} className="hidden md:block"
+              width={200} height={41} className="hidden md:block"
             />
           </Link>
         </div>
