@@ -47,8 +47,9 @@ export default function RestaurantCard({
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    const note = formData.get('restaurant-note') as string;
 
-    const updatedReview = await updateReview(formData, userId, restaurant._id, rating);
+    const updatedReview = await updateReview(note, userId, restaurant._id, rating);
     await updateRestaurant(userId, restaurant._id, updatedReview);
     onUpdate({
       ...restaurant,
