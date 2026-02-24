@@ -6,9 +6,7 @@ import { Restaurant, Review } from "@/app/interfaces/interfaces";
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
 
-export const updateReview = async (formData: FormData, userId: string, restaurantId: string, rating: number) => {
-  const note = formData.get('restaurant-note') as string;
-
+export const updateReview = async (note: string, userId: string, restaurantId: string, rating: number) => {
   const existingReview = await getExistingRestaurantReview(userId, restaurantId);
   let updatedReview: Review;
 
