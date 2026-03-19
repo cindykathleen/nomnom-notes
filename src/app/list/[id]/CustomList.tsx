@@ -4,8 +4,9 @@ import Link from 'next/link';
 import RestaurantDisplay from './RestaurantDisplay';
 import checkRate from '@/app/lib/checkRate';
 import GoogleMap from './GoogleMap';
+import SearchResults from './SearchResults';
 
-export default async function CustomList({ userId, listId }: { userId: string, listId: string }) {
+export default async function CustomList({ userId, listId, query }: { userId: string, listId: string, query?: string }) {
   const isOwnerOrCollaborator = await isOwnerOrCollaboratorDb(userId, listId);
 
   let list;
@@ -47,7 +48,7 @@ export default async function CustomList({ userId, listId }: { userId: string, l
         { // Don't display private pages for anyone other than the list owner / collaborator
           isOwnerOrCollaborator && (
             <div className="flex flex-wrap gap-2">
-              <Link href="/" className="breadcrumb-link">
+              <Link href="/" className="link">
                 Lists
               </Link>
               <p className="font-semibold">/</p>
@@ -69,6 +70,7 @@ export default async function CustomList({ userId, listId }: { userId: string, l
             )
           }
         </div>
+        { query && <SearchResults userId={userId} listId={listId} query={query} /> }
       </div>
     </div>
   );
