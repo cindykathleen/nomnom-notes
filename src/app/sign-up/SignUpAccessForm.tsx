@@ -36,7 +36,7 @@ export const SignUpAccessForm = ({
             <p className="form-paragraph">If you do not have one, please ask the application owner.</p>
             <p className="form-paragraph">
               Already have an account? Click
-              <Link href="/sign-in/" className="text-darkpink hover:text-mauve transition-colors"> here </Link>
+              <Link href="/sign-in/" className="link text-darkpink"> here </Link>
               to sign in.
             </p>
           </>

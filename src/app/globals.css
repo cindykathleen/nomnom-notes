@@ -25,20 +25,20 @@
 
 @layer components {
   .nav-layout {
-    @apply fixed top-0 h-[60px] w-full px-8 flex items-center justify-center z-50 bg-snowwhite md:h-[80px] xl:px-16;
+    @apply fixed top-0 h-[60px] w-full px-8 flex items-center justify-center z-50 bg-snowwhite md:h-[80px] xl:px-12;
     box-shadow: 0 2px 0 rgba(0,0,0,0.04);
   }
   .nav-layout-inner {
     @apply max-w-[1440px] w-full flex items-center justify-between;
   }
   .page-layout {
-    @apply relative min-h-screen h-auto w-screen p-8 flex items-center justify-center bg-coolbeige xl:p-16;
+    @apply relative min-h-screen h-auto w-screen p-8 flex items-center justify-center bg-coolbeige xl:p-12;
   }
   .page-layout-inner {
     @apply max-w-[1440px] w-full flex flex-col items-center;
   }
   .gated-page-layout {
-    @apply relative top-[60px] h-[calc(100vh-60px)] w-screen box-border p-8 flex justify-center md:top-[80px] md:h-[calc(100vh-80px)] xl:p-16;
+    @apply relative top-[60px] h-[calc(100vh-60px)] w-screen box-border p-8 flex justify-center md:top-[80px] md:h-[calc(100vh-80px)] xl:p-12;
   }
   .gated-page-layout-inner {
     @apply max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8;
@@ -105,10 +105,7 @@
     @apply min-w-[100px] px-4 py-2 self-start text-darkpink font-bold bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors;
   }
   .link {
-    @apply text-darkpink cursor-pointer hover:text-mauve transition-colors;
-  }
-  .breadcrumb-link {
-    @apply font-semibold hover:text-mauve transition-colors;
+    @apply font-semibold cursor-pointer hover:text-mauve transition-colors;
   }
   .input {
     @apply px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);

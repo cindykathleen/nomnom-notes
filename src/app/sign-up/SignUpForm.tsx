@@ -54,7 +54,7 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
       }
       <p className="form-paragraph">
         Already have an account? Click
-        <Link href={signInUrl} className="text-darkpink hover:text-mauve transition-colors"> here </Link>
+        <Link href={signInUrl} className="link text-darkpink"> here </Link>
         to sign in.
       </p>
       <hr className="border-slategray" />

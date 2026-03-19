@@ -24,7 +24,7 @@ export default function InvitationForm({ user, owner, list, token }: { user: Use
     setMessage(
       <>
         <a href={`/list/${list._id}`}
-          className="font-semibold text-darkpink hover:text-mauve transition-colors">
+          className="link text-darkpink">
           {list.name}
         </a>{" "}
         has been added to your lists. You can start collaborating now!

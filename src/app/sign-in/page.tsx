@@ -32,7 +32,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ [
           }
           <p className="form-paragraph">
             Don't have an account? Click
-            <Link href={signUpUrl} className="text-darkpink hover:text-mauve transition-colors"> here </Link>
+            <Link href={signUpUrl} className="link text-darkpink"> here </Link>
             to create one.
           </p>
           <hr className="border-slategray" />
