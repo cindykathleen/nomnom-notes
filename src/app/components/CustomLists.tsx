@@ -34,18 +34,13 @@ export default async function CustomLists({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="gated-page-layout">
-      <div className="gated-page-layout-inner">
-        <h1 className="page-heading">My lists</h1>
-        <div className="cards">
-          {lists.map(async (list: List) => {
-            const role = await getRole(list._id);
-            const users = await getUsers(list._id);
-            return <ListCard key={list._id} userId={userId} role={role} list={list} lists={lists} users={users} />;
-          })}
-          <ListAddCard userId={userId} />
-        </div>
-      </div>
+    <div className="cards">
+      {lists.map(async (list: List) => {
+        const role = await getRole(list._id);
+        const users = await getUsers(list._id);
+        return <ListCard key={list._id} userId={userId} role={role} list={list} lists={lists} users={users} />;
+      })}
+      <ListAddCard userId={userId} />
     </div>
   );
 }
