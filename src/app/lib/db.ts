@@ -6,7 +6,7 @@ declare global {
 }
 
 export default async function getDb(): Promise<Db> {
-  if (global._db) return global._db;
+  if (global._db && process.env.MONGODB_DBNAME_SUFFIX !== '_test') return global._db;
   
   const client = await clientPromise;
   global._db = client.db('nomnom_notes' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
