@@ -1,5 +1,5 @@
 import getDb from '@/app/lib/db';
-import { Db, ObjectId } from 'mongodb';
+import { Db } from 'mongodb';
 import { User, List, Restaurant, Dish, Place, SearchResult, Invitation, ProfileItem } from '@/app/interfaces/interfaces';
 
 async function db() {

@@ -1,5 +1,6 @@
-import clientPromise from './mongoDb';
+import dotenv from 'dotenv';
 import { describe, it, expect, beforeAll } from 'vitest';
+import getDb from './db';
 import {
   addUserDb, addTimestamp, getUser,
   addListDb, getList, addRestaurant, getRestaurant,
@@ -15,13 +16,12 @@ import {
   removeListDb, removeUserDb, deleteDishDb, deleteRestaurantDb, deleteListDb
 } from './dbFunctions';
 
-const client = await clientPromise;
-const db = client.db('nomnom_notes_test' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
+dotenv.config({ path: '.env.test' });
 
-// Clear the database before running tests
 beforeAll(async () => {
+  const db = await getDb();
   await db.dropDatabase();
-})
+});
 
 describe('Test database creation', async () => {
   it('add users', async () => {
@@ -49,7 +49,9 @@ describe('Test database creation', async () => {
       name: 'Boba',
       description: 'Rating all of the boba drinks we have tried',
       photoUrl: '',
-      restaurants: []
+      restaurants: [],
+      dateAdded: new Date(),
+      dateUpdated: new Date()
     }
 
     const testList2 = {
@@ -59,7 +61,9 @@ describe('Test database creation', async () => {
       name: 'Michelin',
       description: 'Keeping track of all of the Michelin restaurants we have eaten at',
       photoUrl: '',
-      restaurants: []
+      restaurants: [],
+      dateAdded: new Date(),
+      dateUpdated: new Date()
     }
 
     await addListDb('user-1-test', testList1);
@@ -85,7 +89,8 @@ describe('Test database creation', async () => {
       photoUrl: '',
       reviews: [],
       dishes: [],
-      dateAdded: new Date()
+      dateAdded: new Date(),
+      dateUpdated: new Date()
     }
 
     await addRestaurant('list-1-test', testRestaurant);
@@ -99,7 +104,9 @@ describe('Test database creation', async () => {
       index: 1,
       name: 'Strawberry Milk Tea w/ boba 50% sweet',
       reviews: [],
-      photoUrl: ''
+      photoUrl: '',
+      dateAdded: new Date(),
+      dateUpdated: new Date()
     }
 
     const testDish2 = {
@@ -107,7 +114,9 @@ describe('Test database creation', async () => {
       index: 2,
       name: 'Milk Tea w/ boba 50% sweet',
       reviews: [],
-      photoUrl: ''
+      photoUrl: '',
+      dateAdded: new Date(),
+      dateUpdated: new Date()
     }
 
     const testDish3 = {
@@ -115,7 +124,9 @@ describe('Test database creation', async () => {
       index: 3,
       name: 'Peach Milk Tea w/ boba 50% sweet',
       reviews: [],
-      photoUrl: ''
+      photoUrl: '',
+      dateAdded: new Date(),
+      dateUpdated: new Date()
     }
 
     await addDishDb('restaurant-test', testDish1);
