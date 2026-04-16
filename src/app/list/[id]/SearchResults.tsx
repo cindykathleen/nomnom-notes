@@ -75,6 +75,9 @@ export default function SearchResults({ userId, listId, query }: { userId: strin
         </div>
         <hr className="border-slategray" />
         <div className="px-2 py-4 flex flex-col lg:px-4">
+          { // Display a loading message while waiting for results
+            !results && <p className="text-lg">Loading results...</p>
+          }
           { // Display an error message if no results were found
             // or if the user has exceeded their rate limit
             results?.kind === 'error' && (
@@ -86,7 +89,7 @@ export default function SearchResults({ userId, listId, query }: { userId: strin
               return (
                 <div key={place._id} className="relative mb-8 space-y-2 bg-snowwhite cursor-pointer"
                   onClick={() => handleClick(place)}>
-                  <div className="flex items-end gap-2 font-semibold">
+                  <div className="flex flex-col font-semibold">
                     <p className="text-xl">{place.name}</p>
                     {showConfirmation && place._id === placeId &&
                       <p className="text-darkpink">(Place has been added to your list!)</p>
