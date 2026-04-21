@@ -71,6 +71,7 @@ export const updateEmail = async (formData: FormData) => {
       body: {
         newEmail: email,
       },
+      headers: await headers(),
     });
 
     return { success: true };

@@ -11,11 +11,11 @@ export default async function Hero({ stats }: {
       <table className="text-lg xl:text-xl">
         <tbody>
           <tr>
-            <td className="w-px pr-2 text-darkpink font-semibold">{stats.listsCount}</td>
+            <td className="w-px pr-2 text-darkpink font-semibold" data-cy="profile-lists-count">{stats.listsCount}</td>
             <td>lists</td>
           </tr>
           <tr>
-            <td className="w-px pr-2 text-darkpink font-semibold">{stats.restaurantsCount}</td>
+            <td className="w-px pr-2 text-darkpink font-semibold" data-cy="profile-restaurants-count">{stats.restaurantsCount}</td>
             <td>restaurants</td>
           </tr>
           <tr>

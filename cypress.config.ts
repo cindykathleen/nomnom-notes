@@ -124,6 +124,27 @@ export default defineConfig({
 
           return null;
         },
+        async addPrivateUser() {
+          const client = await clientPromise;
+          const db = client.db('nomnom_notes' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
+
+          const privateUser: User = {
+            _id: uuidv4(),
+            name: 'Private User',
+            email: 'private@test.com',
+            lists: [],
+            searchRate: [],
+            mapRate: [],
+            photoUrl: 'https://pub-ade72a2b901940aa8064a0e8a76b5b67.r2.dev/placeholder.jpg',
+            location: 'San Jose, CA',
+            profilePrivacy: true,
+            photos: [],
+          };
+
+          await db.collection<User>('users').insertOne(privateUser);
+
+          return privateUser._id;
+        },
       });
     },
   },
