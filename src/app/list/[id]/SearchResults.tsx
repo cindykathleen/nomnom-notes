@@ -31,7 +31,7 @@ export default function SearchResults({ userId, listId, query }: { userId: strin
     }
 
     function error() {
-      console.error('Unable to retrieve your location. Using default location (San Jose, CA).');
+      console.log('Unable to retrieve your location. Using default location (San Jose, CA).');
     }
 
     if (navigator.geolocation) {
@@ -65,7 +65,7 @@ export default function SearchResults({ userId, listId, query }: { userId: strin
   }
 
   return (
-    <div className="modal">
+    <div className="modal" data-cy="search-results">
       <div className="modal-inner">
         <div className="p-2 flex items-center justify-between lg:p-4">
           <h2 className="modal-heading">Search results</h2>
@@ -81,18 +81,18 @@ export default function SearchResults({ userId, listId, query }: { userId: strin
           { // Display an error message if no results were found
             // or if the user has exceeded their rate limit
             results?.kind === 'error' && (
-              <p className="text-lg">{results.message}</p>
+              <p className="text-lg" data-cy="error-message">{results.message}</p>
             )
           }
           { // Display search results
             results?.kind === 'success' && results.places.map((place) => {
               return (
                 <div key={place._id} className="relative mb-8 space-y-2 bg-snowwhite cursor-pointer"
-                  onClick={() => handleClick(place)}>
+                  onClick={() => handleClick(place)} data-cy="search-result-place">
                   <div className="flex flex-col font-semibold">
                     <p className="text-xl">{place.name}</p>
                     {showConfirmation && place._id === placeId &&
-                      <p className="text-darkpink">(Place has been added to your list!)</p>
+                      <p className="text-darkpink" data-cy="search-result-confirmation">(Place has been added to your list!)</p>
                     }
                   </div>
                   <div className="flex gap-2">

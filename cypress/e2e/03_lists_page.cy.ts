@@ -6,7 +6,7 @@ beforeEach(() => {
   cy.signIn('test@test.com', 'password123')
 
   // Start at the lists page
-  cy.visit('/');
+  cy.visit('/')
 })
 
 describe('Lists page', () => {
@@ -18,7 +18,7 @@ describe('Lists page', () => {
     // Fill out the add form
     cy.get('input[name="list-name"]').type('Test List')
     cy.get('textarea[name="list-description"]').type('This is a test list.')
-    cy.get('input[name="img-url"]').type('https://placehold.co/400')
+    cy.get('input[name="img-file"]').selectFile('cypress/fixtures/placeholder.jpg')
 
     // Submit the form
     cy.get('button[type="submit"]').click()
@@ -37,8 +37,6 @@ describe('Lists page', () => {
     cy.get('input[name="list-name"]').clear().type('Edited Test List')
     cy.get('input[name="list-visibility"]').check('public')
     cy.get('textarea[name="list-description"]').clear().type('This is an edited test list.')
-    cy.get('[data-cy=image-input-type-trigger]').click()
-    cy.get('input[type="file"]').selectFile('cypress/fixtures/placeholder.jpg')
 
     // Submit the form
     cy.get('button[data-cy="edit-list-submit"]').click()

@@ -2,15 +2,15 @@ import { fillSignUpForm } from "../support/utils"
 
 before(() => {
   // Check if we are using the test databases
-  expect(Cypress.env('MONGODB_DBNAME_SUFFIX')).to.equal('_test');
+  expect(Cypress.env('MONGODB_DBNAME_SUFFIX')).to.equal('_test')
 
   // Clear the databases before running tests
-  cy.task('clearTestDbs')
+  cy.task('clearAuth')
 })
 
 beforeEach(() => {
   // Start at the sign-up page
-  cy.visit('/sign-up');
+  cy.visit('/sign-up')
 })
 
 describe('Sign-up page', () => {
@@ -74,7 +74,7 @@ describe('Sign-up page', () => {
     cy.intercept('POST', '/sign-up').as('signUp')
     cy.get('button[type="submit"]').click()
     cy.wait('@signUp')
-    cy.url({ timeout: 10000 }).should('include', '/')
+    cy.location('pathname').should('eq', '/')
   })
 
   it('Unsuccessfully sign-up with an existing email', () => {

@@ -26,6 +26,7 @@ describe('Restaurant page', () => {
 
     // Fill out the add form
     cy.get('input[name="dish-name"]').type('Burrito bowl')
+    cy.get('input[name="img-file"]').selectFile('cypress/fixtures/placeholder.jpg')
 
     // Submit the form
     cy.get('button[type="submit"]').click()
@@ -41,10 +42,11 @@ describe('Restaurant page', () => {
     cy.get('[data-cy=edit-dish-modal]').should('be.visible')
 
     // Fill out the update form
-    cy.get('input[name="img-url"]').clear().type('https://www.chipotle.com/content/dam/chipotle/menu/meal-types/burrito-bowl/web-mobile/order.png')
+    cy.get('input[name="dish-name"]').clear().type('Edited burrito bowl')
 
     // Submit the form
     cy.get('button[data-cy="edit-dish-submit"]').click()
+    cy.get('[data-cy=dish]').find('h3').should('contain.text', 'Edited burrito bowl')
   })
 
   it('Add review', () => {

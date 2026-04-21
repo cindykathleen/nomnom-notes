@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "dev-test": "env-cmd -f .env.test next dev --turbopack",
+    "dev:test": "env-cmd -f .env.test next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
-    "cy:open": "cypress open"
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress": "start-server-and-test dev:test http://localhost:3000 cypress:open"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.948.0",
@@ -37,6 +39,7 @@
     "cross-env": "^10.1.0",
     "cypress": "^14.5.4",
     "env-cmd": "^11.0.0",
+    "start-server-and-test": "^2.1.5",
     "tailwindcss": "^4.1.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
