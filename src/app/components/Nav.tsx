@@ -29,7 +29,7 @@ export default async function Nav({ userId }: { userId: string }) {
               </svg>
             </li>
           </Link>
-          <li>
+          <li data-cy="profile-button">
             <ProfileNav user={user} />
           </li>
         </ul>

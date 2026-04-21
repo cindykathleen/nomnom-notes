@@ -38,7 +38,8 @@ export default function Tabs({ user }: { user: User }) {
       {/* Tabs content (desktop) */}
       <div className="tab-title">
         {tabs.map((tab, index) => (
-          <button key={index} onClick={() => { handleTabChange(index) }}
+          <button key={index} data-cy={`tab-${TAB_HASHES[index]}`} 
+            onClick={() => { handleTabChange(index) }}
             className={`flex-1 ${activeIndex === index ? 'active' : ''} xl:flex-0`}
           >
             {tab.title}
