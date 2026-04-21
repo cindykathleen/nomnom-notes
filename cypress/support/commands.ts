@@ -18,12 +18,8 @@ Cypress.Commands.add('signIn', (email, password) => {
       cy.get('input[name="email"]').type(email);
       cy.get('input[name="password"]').type(password);
       cy.get('button[type="submit"]').click();
-      cy.url().should('include', '/');
+      cy.location('pathname').should('eq', '/');
+      cy.getCookie(Cypress.env('BETTER_AUTH_SESSION_TOKEN')).should('exist');
     },
-    {
-      validate: () => {
-        cy.getCookie(Cypress.env('BETTER_AUTH_SESSION_TOKEN')).should('exist');
-      },
-    }
   )
 })

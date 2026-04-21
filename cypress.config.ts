@@ -1,13 +1,14 @@
-import { defineConfig } from 'cypress';
-import { config as loadEnv } from 'dotenv';
-import { MongoClient } from 'mongodb'
-import { User, List, Restaurant } from './src/app/interfaces/interfaces'
-import { v4 as uuidv4 } from 'uuid';
+import dotenv from 'dotenv';
 
 // Only load .env.test when running locally
 if (!process.env.CI) {
-  loadEnv({ path: '.env.test' });
+  dotenv.config({ path: '.env.test' });
 }
+
+import { defineConfig } from 'cypress';
+import clientPromise from './src/app/lib/mongoDb';
+import { User, List, Restaurant } from './src/app/interfaces/interfaces'
+import { v4 as uuidv4 } from 'uuid';
 
 export default defineConfig({
   e2e: {
@@ -20,41 +21,31 @@ export default defineConfig({
     },
     setupNodeEvents(on, config) {
       on('task', {
-        async clearTestDbs() {
-          const client = new MongoClient(process.env.MONGODB_URI || '');
-          await client.connect();
+        async clearAuth() {
+          const client = await clientPromise;
+          const mainDb = client.db('nomnom_notes' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
+          const authDb = client.db('nomnom_notes_auth' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
 
-          const mainDb = client.db('nomnom_notes_test');
-          const authDb = client.db('nomnom_notes_auth_test');
-
-          const collections = await mainDb.collections();
-          for (const col of collections) {
-            await col.deleteMany({});
-          }
+          await mainDb.collection('users').deleteMany({});
 
           const authCollections = await authDb.collections();
           for (const col of authCollections) {
             await col.deleteMany({});
           }
 
-          await client.close();
           return null;
         },
         async clearSessions() {
-          const client = new MongoClient(process.env.MONGODB_URI || '');
-          await client.connect();
+          const client = await clientPromise;
+          const db = client.db('nomnom_notes_auth' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
 
-          const db = client.db('nomnom_notes_auth_test');
           await db.collection('session').deleteMany({});
 
-          await client.close();
           return null;
         },
         async clearData() {
-          const client = new MongoClient(process.env.MONGODB_URI || '');
-          await client.connect();
-
-          const db = client.db('nomnom_notes_test');
+          const client = await clientPromise;
+          const db = client.db('nomnom_notes' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
 
           await db.collection('users').updateMany(
             {},
@@ -62,16 +53,12 @@ export default defineConfig({
           );
           await db.collection('lists').deleteMany({});
           await db.collection('restaurants').deleteMany({});
-          await db.collection('photos').deleteMany({});
 
-          await client.close();
           return null;
         },
         async 'db:seed'() {
-          const client = new MongoClient(process.env.MONGODB_URI || '');
-          await client.connect();
-
-          const db = client.db('nomnom_notes_test');
+          const client = await clientPromise;
+          const db = client.db('nomnom_notes' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
 
           const user = await db.collection<User>('users').findOne({});
           if (!user) return null;
@@ -83,7 +70,7 @@ export default defineConfig({
             visibility: 'private',
             name: 'Test List',
             description: 'This is a test list.',
-            photoUrl: '',
+            photoUrl: 'https://pub-ade72a2b901940aa8064a0e8a76b5b67.r2.dev/placeholder.jpg',
             restaurants: [],
             dateAdded: new Date,
             dateUpdated: new Date,
@@ -108,7 +95,7 @@ export default defineConfig({
               longitude: -121.9320587
             },
             mapsUrl: "https://maps.google.com/?cid=5825659302684031711&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
-            photoUrl: '',
+            photoUrl: 'https://pub-ade72a2b901940aa8064a0e8a76b5b67.r2.dev/placeholder.jpg',
             reviews: [],
             dishes: [],
             dateAdded: new Date,
@@ -125,10 +112,8 @@ export default defineConfig({
           return null;
         },
         async addSearches() {
-          const client = new MongoClient(process.env.MONGODB_URI || '');
-          await client.connect();
-
-          const db = client.db('nomnom_notes_test');
+          const client = await clientPromise;
+          const db = client.db('nomnom_notes' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
 
           const searches = Array.from({ length: 100 }, () => new Date());
 
@@ -139,21 +124,6 @@ export default defineConfig({
 
           return null;
         },
-        async addMapViews() {
-          const client = new MongoClient(process.env.MONGODB_URI || '');
-          await client.connect();
-
-          const db = client.db('nomnom_notes_test');
-
-          const mapViews = Array.from({ length: 250 }, () => new Date());
-
-          await db.collection('users').updateOne(
-            {},
-            { $set: { mapRate: mapViews } }
-          );
-
-          return null;
-        }
       });
     },
   },

@@ -6,10 +6,11 @@ before(() => {
 })
 
 beforeEach(() => {
+  cy.viewport(1280, 720)
   cy.signIn('test@test.com', 'password123')
 
   // Start at the lists page and click into a list
-  cy.visit('/');
+  cy.visit('/')
   cy.get('[data-cy=list]').click()
 })
 
@@ -17,7 +18,7 @@ describe('List page', () => {
   it('Confirm list page', () => {
     cy.get('[data-cy=number-of-restaurants]').should('contain', '1 Place')
     cy.get('[data-cy=restaurant]').should('be.visible')
-    cy.get('[data-cy=map-display]').should('be.visible')
+    cy.get('[data-cy=map-display]').should('contain', 'Mock map display for testing')
   })
 
   it('Add review', () => {

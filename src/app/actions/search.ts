@@ -31,13 +31,13 @@ export const searchQuery = async (
 
   // Send a new search request
   const searchedPlaces = await searchPlace(query, coords);
-  
-  // Store the new search into the database
-  await addSearchResult(query, searchedPlaces);
 
   if (searchedPlaces.length === 0) {
     return { kind: 'error', message: 'No results found. Please try a different search query.' };
   }
+
+  // Store the new search into the database
+  await addSearchResult(query, searchedPlaces);
 
   return { kind: 'success', places: searchedPlaces };
 }
