@@ -59,6 +59,8 @@ export interface Review {
   name: string;
   rating: number;
   note: string;
+  dateAdded: Date;
+  dateUpdated: Date;
 }
 
 export type SearchQueryResult =

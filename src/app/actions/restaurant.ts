@@ -19,14 +19,17 @@ export const updateReview = async (note: string, userId: string, restaurantId: s
       createdBy: userId,
       name: name,
       rating: rating,
-      note: note
+      note: note,
+      dateAdded: new Date(),
+      dateUpdated: new Date(),
     }
   } else {
     // Update the existing review
     updatedReview = {
       ...existingReview,
       rating: rating,
-      note: note
+      note: note,
+      dateUpdated: new Date(),
     }
   }
 

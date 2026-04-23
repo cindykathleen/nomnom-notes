@@ -292,7 +292,9 @@ describe('Update database', async () => {
       createdBy: 'user-1-test',
       name: 'Test User 1',
       rating: 4,
-      note: 'One of our go-to places for boba'
+      note: 'One of our go-to places for boba',
+      dateAdded: new Date(),
+      dateUpdated: new Date(),
     }
 
     restaurant.reviews.push(review);
@@ -313,7 +315,9 @@ describe('Update database', async () => {
       createdBy: 'user-1-test',
       name: 'Test User 1',
       rating: 4.5,
-      note: 'Omg, yum!'
+      note: 'Omg, yum!',
+      dateAdded: new Date(),
+      dateUpdated: new Date(),
     }
 
     dish.reviews.push(review);
