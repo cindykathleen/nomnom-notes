@@ -90,7 +90,9 @@ export const updateReview = async (formData: FormData, userId: string, dishId: s
       createdBy: userId,
       name: name,
       rating: rating,
-      note: note
+      note: note,
+      dateAdded: new Date(),
+      dateUpdated: new Date(),
     }
 
     updatedReviews = [...existingDish.reviews, updatedReview];
@@ -99,7 +101,8 @@ export const updateReview = async (formData: FormData, userId: string, dishId: s
     updatedReview = {
       ...existingReview,
       rating: rating,
-      note: note
+      note: note,
+      dateUpdated: new Date(),
     }
 
     updatedReviews = (existingDish.reviews).map((review) =>
