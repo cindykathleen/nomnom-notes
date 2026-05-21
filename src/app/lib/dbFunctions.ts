@@ -51,6 +51,8 @@ export async function addUserDb(userId: string, name: string, email: string) {
     location: '',
     profilePrivacy: true,
     photos: [],
+    following: [],
+    follwers: [],
   });
 }
 

@@ -9,6 +9,9 @@ export interface User {
   location: string;
   profilePrivacy: boolean;
   photos: string[];
+  following: string[];
+  follwers: string[];
+  followRequests?: string[];
 }
 
 export interface List {
