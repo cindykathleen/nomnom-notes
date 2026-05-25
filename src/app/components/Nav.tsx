@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { flags } from '@/app/lib/flags';
 import { getUser } from '@/app/lib/dbFunctions';
 import ProfileNav from './ProfileNav';
 
@@ -29,6 +30,22 @@ export default async function Nav({ userId }: { userId: string }) {
               </svg>
             </li>
           </Link>
+          {flags.socialFeature && (
+            <Link href="/social">
+              <li className="nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="currentColor" strokeWidth="2" stroke="currentColor" className="size-8 md:size-9">
+                  <g id="SVGRepo_bgCarrier" strokeWidth="0" />
+                  <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
+                  <g id="SVGRepo_iconCarrier">
+                    <circle cx="22.83" cy="22.57" r="7.51" />
+                    <path d="M38,49.94a15.2,15.2,0,0,0-15.21-15.2h0a15.2,15.2,0,0,0-15.2,15.2Z" />
+                    <circle cx="44.13" cy="27.22" r="6.05" />
+                    <path d="M42.4,49.94h14A12.24,12.24,0,0,0,44.13,37.7h0a12.21,12.21,0,0,0-5.75,1.43" />
+                  </g>
+                </svg>
+              </li>
+            </Link>
+          )}
           <li data-cy="profile-button">
             <ProfileNav user={user} />
           </li>
