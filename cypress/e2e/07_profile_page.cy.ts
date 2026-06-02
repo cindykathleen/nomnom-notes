@@ -14,10 +14,33 @@ beforeEach(() => {
 
 describe('Profile page', () => {
   it('Confirm profile privacy', () => {
-    const privateUserId = cy.task('addPrivateUser')
-    cy.visit(`/profile/${privateUserId}`)
-    cy.get('h1').should('contain.text', 'Uh oh!')
-    cy.get('p').should('contain.text', 'This user turned on their profile privacy. Please contact them for access.')
+    cy.task('addPrivateUser').then((privateUserId) => {
+      cy.visit(`/profile/${privateUserId}`)
+      cy.get('h1').should('contain.text', 'Private User')
+      cy.get('[data-cy=profile-location]').should('not.exist')
+      cy.get('[data-cy=follow-button]').should('be.visible')
+      cy.get('[data-cy=profile-privacy-message]').should(
+        'contain.text',
+        'This user turned on their profile privacy. Please contact them for access.'
+      )
+      cy.get('[data-cy=profile-lists-count]').should('not.exist')
+    })
+  })
+
+  it('Follow and unfollow private user', () => {
+    cy.task('addPrivateUser').then((privateUserId) => {
+      cy.visit(`/profile/${privateUserId}`)
+
+      cy.get('[data-cy=follow-button]').click()
+      cy.get('[data-cy=profile-location]').should('contain.text', 'San Jose, CA')
+      cy.get('[data-cy=unfollow-button]').should('be.visible')
+      cy.get('[data-cy=profile-privacy-message]').should('not.exist')
+
+      cy.get('[data-cy=unfollow-button]').click()
+      cy.get('[data-cy=follow-button]').should('be.visible')
+      cy.get('[data-cy=profile-location]').should('not.exist')
+      cy.get('[data-cy=profile-privacy-message]').should('be.visible')
+    })
   })
 
   it('Confirm non-existent user', () => {

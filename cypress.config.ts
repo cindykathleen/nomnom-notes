@@ -139,6 +139,8 @@ export default defineConfig({
             location: 'San Jose, CA',
             profilePrivacy: true,
             photos: [],
+            following: [],
+            followers: [],
           };
 
           await db.collection<User>('users').insertOne(privateUser);
