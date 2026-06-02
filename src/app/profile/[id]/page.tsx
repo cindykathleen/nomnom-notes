@@ -1,38 +1,54 @@
-import { getUser } from '@/app/lib/dbFunctions';
+import { Suspense } from 'react';
+import { getUser, isFollowingDb } from '@/app/lib/dbFunctions';
 import getCurrentUser from '@/app/lib/getCurrentUser';
 import Nav from '@/app/components/Nav';
-import Profile from './Profile';
+import Hero from './Hero';
+import ProfileLoading from './ProfileLoading';
+import ProfileDetails from './ProfileDetails';
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const user = await getUser(id);
   const currentUserId = await getCurrentUser(false);
 
+  const isFollowing = user
+    ? await isFollowingDb(currentUserId, user._id)
+    : false;
+
+  const canViewDetails = user && (
+    user.profilePrivacy !== true ||
+    user._id === currentUserId ||
+    isFollowing
+  );
+
   return (
     <div>
       <Nav userId={currentUserId} />
-      { // User not found
-        !user && (
-          <div className="gated-page-layout">
-            <div className="gated-page-layout-inner">
-              <h1 className="page-heading">Uh oh!</h1>
-              <p className="text-xl">We are not able to find the user you are looking for. Please double-check the user ID and try again.</p>
-            </div>
+      {!user && (
+        <div className="gated-page-layout">
+          <div className="gated-page-layout-inner">
+            <h1 className="page-heading">Uh oh!</h1>
+            <p className="text-xl">We are not able to find the user you are looking for. Please double-check the user ID and try again.</p>
           </div>
-        )
-      }
-      { // User found and the profile privacy is off or it is the user's own profile
-        user && (user.profilePrivacy !== true || user._id === currentUserId) ? (
-          <Profile user={user} />
-        ) : (
-          <div className="gated-page-layout">
-            <div className="gated-page-layout-inner">
-              <h1 className="page-heading">Uh oh!</h1>
-              <p className="text-xl">This user turned on their profile privacy. Please contact them for access.</p>
-            </div>
+        </div>
+      )}
+      {user && (
+        <div className="gated-page-layout">
+          <div className="gated-page-layout-inner">
+            <Hero user={user} currentUserId={currentUserId} isFollowing={isFollowing} />
+            <hr className="border-lightgray" />
+            {canViewDetails ? (
+              <Suspense fallback={<ProfileLoading />}>
+                <ProfileDetails user={user} />
+              </Suspense>
+            ) : (
+              <p className="text-xl" data-cy="profile-privacy-message">
+                This user turned on their profile privacy. Please contact them for access.
+              </p>
+            )}
           </div>
-        )
-      }
+        </div>
+      )}
     </div>
   );
 }

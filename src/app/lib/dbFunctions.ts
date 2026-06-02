@@ -52,8 +52,83 @@ export async function addUserDb(userId: string, name: string, email: string) {
     profilePrivacy: true,
     photos: [],
     following: [],
-    follwers: [],
+    followers: [],
   });
+}
+
+export async function isFollowingDb(followerId: string, followeeId: string): Promise<boolean> {
+  const database: Db = await db();
+
+  const follower = await database.collection<User>('users').findOne(
+    { _id: followerId },
+    { projection: { following: 1 } }
+  );
+
+  return follower?.following?.includes(followeeId) ?? false;
+}
+
+export async function followUserDb(followerId: string, followeeId: string) {
+  if (followerId === followeeId) {
+    throw new Error('Cannot follow yourself');
+  }
+
+  const database: Db = await db();
+
+  const [follower, followee] = await Promise.all([
+    database.collection<User>('users').findOne({ _id: followerId }),
+    database.collection<User>('users').findOne({ _id: followeeId }),
+  ]);
+
+  if (!follower || !followee) {
+    throw new Error('User not found');
+  }
+
+  if (follower.following?.includes(followeeId)) {
+    return;
+  }
+
+  await Promise.all([
+    database.collection<User>('users').updateOne(
+      { _id: followerId },
+      { $addToSet: { following: followeeId } }
+    ),
+    database.collection<User>('users').updateOne(
+      { _id: followeeId },
+      { $addToSet: { followers: followerId } }
+    ),
+  ]);
+}
+
+export async function unfollowUserDb(followerId: string, followeeId: string) {
+  if (followerId === followeeId) {
+    throw new Error('Cannot unfollow yourself');
+  }
+
+  const database: Db = await db();
+
+  const [follower, followee] = await Promise.all([
+    database.collection<User>('users').findOne({ _id: followerId }),
+    database.collection<User>('users').findOne({ _id: followeeId }),
+  ]);
+
+  if (!follower || !followee) {
+    throw new Error('User not found');
+  }
+
+  if (!follower.following?.includes(followeeId)) {
+    return;
+  }
+
+  await Promise.all([
+    database.collection<User>('users').updateOne(
+      { _id: followerId },
+      { $pull: { following: followeeId } }
+    ),
+    database.collection<User>('users').updateOne(
+      { _id: followeeId },
+      { $pull: { followers: followerId } }
+    ),
+  ]);
 }
 
 export async function updateUserDb(user: User) {

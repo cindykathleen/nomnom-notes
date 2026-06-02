@@ -10,7 +10,7 @@ export interface User {
   profilePrivacy: boolean;
   photos: string[];
   following: string[];
-  follwers: string[];
+  followers: string[];
   followRequests?: string[];
 }
 

@@ -13,7 +13,8 @@ import {
   updateListDb, moveListDb,
   updateRestaurantDb, getExistingRestaurantReview,
   updateDishDb, getExistingDishReview, moveDishDb,
-  removeListDb, removeUserDb, deleteDishDb, deleteRestaurantDb, deleteListDb
+  removeListDb, removeUserDb, deleteDishDb, deleteRestaurantDb, deleteListDb,
+  isFollowingDb, followUserDb, unfollowUserDb,
 } from './dbFunctions';
 
 dotenv.config({ path: '.env.test' });
@@ -362,5 +363,44 @@ describe('Delete from database', async () => {
     await deleteListDb('list-1-test');
     const list = await getList('list-1-test');
     expect(list).toBeNull();
+  })
+})
+
+describe('Follow / unfollow', () => {
+  it('isFollowingDb returns false when not following', async () => {
+    expect(await isFollowingDb('user-1-test', 'user-2-test')).toBe(false);
+  })
+
+  it('followUserDb updates following and followers', async () => {
+    await followUserDb('user-1-test', 'user-2-test');
+
+    const follower = await getUser('user-1-test');
+    const followee = await getUser('user-2-test');
+
+    expect(follower.following).toContain('user-2-test');
+    expect(followee.followers).toContain('user-1-test');
+    expect(await isFollowingDb('user-1-test', 'user-2-test')).toBe(true);
+  })
+
+  it('followUserDb is a no-op when already following', async () => {
+    await followUserDb('user-1-test', 'user-2-test');
+
+    const follower = await getUser('user-1-test');
+    expect(follower.following.filter((id) => id === 'user-2-test')).toHaveLength(1);
+  })
+
+  it('unfollowUserDb removes from following and followers', async () => {
+    await unfollowUserDb('user-1-test', 'user-2-test');
+
+    const follower = await getUser('user-1-test');
+    const followee = await getUser('user-2-test');
+
+    expect(follower.following).not.toContain('user-2-test');
+    expect(followee.followers).not.toContain('user-1-test');
+    expect(await isFollowingDb('user-1-test', 'user-2-test')).toBe(false);
+  })
+
+  it('followUserDb rejects self-follow', async () => {
+    await expect(followUserDb('user-1-test', 'user-1-test')).rejects.toThrow('Cannot follow yourself');
   })
 })
