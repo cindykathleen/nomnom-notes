@@ -11,7 +11,7 @@ export interface User {
   photos: string[];
   following: string[];
   followers: string[];
-  followRequests?: string[];
+  followRequests: string[];
 }
 
 export interface List {

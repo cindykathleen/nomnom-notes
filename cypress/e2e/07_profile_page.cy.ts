@@ -21,7 +21,7 @@ describe('Profile page', () => {
       cy.get('[data-cy=follow-button]').should('be.visible')
       cy.get('[data-cy=profile-privacy-message]').should(
         'contain.text',
-        'This user turned on their profile privacy. Please contact them for access.'
+        'This user turned on their profile privacy. Please request access from them.'
       )
       cy.get('[data-cy=profile-lists-count]').should('not.exist')
     })
@@ -29,17 +29,25 @@ describe('Profile page', () => {
 
   it('Follow and unfollow private user', () => {
     cy.task('addPrivateUser').then((privateUserId) => {
-      cy.visit(`/profile/${privateUserId}`)
+      cy.task('getUserIdByEmail', 'test@test.com').then((testUserId) => {
+        cy.visit(`/profile/${privateUserId}`)
 
-      cy.get('[data-cy=follow-button]').click()
-      cy.get('[data-cy=profile-location]').should('contain.text', 'San Jose, CA')
-      cy.get('[data-cy=unfollow-button]').should('be.visible')
-      cy.get('[data-cy=profile-privacy-message]').should('not.exist')
+        cy.get('[data-cy=follow-button]').click()
+        cy.get('[data-cy=requested-button]').should('be.visible').and('be.disabled')
+        cy.get('[data-cy=profile-location]').should('not.exist')
+        cy.get('[data-cy=profile-privacy-message]').should('be.visible')
 
-      cy.get('[data-cy=unfollow-button]').click()
-      cy.get('[data-cy=follow-button]').should('be.visible')
-      cy.get('[data-cy=profile-location]').should('not.exist')
-      cy.get('[data-cy=profile-privacy-message]').should('be.visible')
+        cy.task('approveFollowRequest', { ownerId: privateUserId, requesterId: testUserId })
+        cy.visit(`/profile/${privateUserId}`)
+        cy.get('[data-cy=profile-location]').should('contain.text', 'San Jose, CA')
+        cy.get('[data-cy=unfollow-button]').should('be.visible')
+        cy.get('[data-cy=profile-privacy-message]').should('not.exist')
+
+        cy.get('[data-cy=unfollow-button]').click()
+        cy.get('[data-cy=follow-button]').should('be.visible')
+        cy.get('[data-cy=profile-location]').should('not.exist')
+        cy.get('[data-cy=profile-privacy-message]').should('be.visible')
+      })
     })
   })
 

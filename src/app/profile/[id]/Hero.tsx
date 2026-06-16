@@ -7,9 +7,10 @@ interface Props {
   user: User;
   currentUserId: string;
   isFollowing: boolean;
+  hasPendingRequest: boolean;
 }
 
-export default function Hero({ user, currentUserId, isFollowing }: Props) {
+export default function Hero({ user, currentUserId, isFollowing, hasPendingRequest }: Props) {
   const showLocation =
     !user.profilePrivacy || user._id === currentUserId || isFollowing;
 
@@ -42,7 +43,11 @@ export default function Hero({ user, currentUserId, isFollowing }: Props) {
           </button>
         </Link>
       ) : (
-        <FollowButton targetUserId={user._id} initialIsFollowing={isFollowing} />
+        <FollowButton
+          targetUserId={user._id}
+          initialIsFollowing={isFollowing}
+          initialHasPendingRequest={hasPendingRequest}
+        />
       )}
     </div>
   );

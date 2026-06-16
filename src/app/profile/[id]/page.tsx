@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { getUser, isFollowingDb } from '@/app/lib/dbFunctions';
+import { getUser, isFollowingDb, hasPendingFollowRequestDb } from '@/app/lib/dbFunctions';
 import getCurrentUser from '@/app/lib/getCurrentUser';
 import Nav from '@/app/components/Nav';
 import Hero from './Hero';
@@ -13,6 +13,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
   const isFollowing = user
     ? await isFollowingDb(currentUserId, user._id)
+    : false;
+
+  const hasPendingRequest = user
+    ? await hasPendingFollowRequestDb(currentUserId, user._id)
     : false;
 
   const canViewDetails = user && (
@@ -35,7 +39,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       {user && (
         <div className="gated-page-layout">
           <div className="gated-page-layout-inner">
-            <Hero user={user} currentUserId={currentUserId} isFollowing={isFollowing} />
+            <Hero
+              user={user}
+              currentUserId={currentUserId}
+              isFollowing={isFollowing}
+              hasPendingRequest={hasPendingRequest}
+            />
             <hr className="border-lightgray" />
             {canViewDetails ? (
               <Suspense fallback={<ProfileLoading />}>
@@ -43,7 +52,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               </Suspense>
             ) : (
               <p className="text-xl" data-cy="profile-privacy-message">
-                This user turned on their profile privacy. Please contact them for access.
+                This user turned on their profile privacy. Please request access from them.
               </p>
             )}
           </div>

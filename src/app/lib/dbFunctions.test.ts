@@ -15,6 +15,8 @@ import {
   updateDishDb, getExistingDishReview, moveDishDb,
   removeListDb, removeUserDb, deleteDishDb, deleteRestaurantDb, deleteListDb,
   isFollowingDb, followUserDb, unfollowUserDb,
+  hasPendingFollowRequestDb, requestFollowDb, approveFollowRequestDb, denyFollowRequestDb,
+  getUsersByIds,
 } from './dbFunctions';
 
 dotenv.config({ path: '.env.test' });
@@ -402,5 +404,53 @@ describe('Follow / unfollow', () => {
 
   it('followUserDb rejects self-follow', async () => {
     await expect(followUserDb('user-1-test', 'user-1-test')).rejects.toThrow('Cannot follow yourself');
+  })
+})
+
+describe('Follow requests', () => {
+  it('hasPendingFollowRequestDb returns false when no request', async () => {
+    expect(await hasPendingFollowRequestDb('user-1-test', 'user-3-test')).toBe(false);
+  })
+
+  it('requestFollowDb adds to followRequests', async () => {
+    await requestFollowDb('user-1-test', 'user-3-test');
+
+    const followee = await getUser('user-3-test');
+    expect(followee.followRequests).toContain('user-1-test');
+    expect(await hasPendingFollowRequestDb('user-1-test', 'user-3-test')).toBe(true);
+  })
+
+  it('requestFollowDb is a no-op when already requested', async () => {
+    await requestFollowDb('user-1-test', 'user-3-test');
+
+    const followee = await getUser('user-3-test');
+    expect(followee.followRequests.filter((id) => id === 'user-1-test')).toHaveLength(1);
+  })
+
+  it('approveFollowRequestDb creates following and followers', async () => {
+    await approveFollowRequestDb('user-3-test', 'user-1-test');
+
+    const requester = await getUser('user-1-test');
+    const owner = await getUser('user-3-test');
+
+    expect(requester.following).toContain('user-3-test');
+    expect(owner.followers).toContain('user-1-test');
+    expect(owner.followRequests).not.toContain('user-1-test');
+    expect(await isFollowingDb('user-1-test', 'user-3-test')).toBe(true);
+  })
+
+  it('denyFollowRequestDb removes from followRequests', async () => {
+    await requestFollowDb('user-2-test', 'user-3-test');
+    await denyFollowRequestDb('user-3-test', 'user-2-test');
+
+    const owner = await getUser('user-3-test');
+    expect(owner.followRequests).not.toContain('user-2-test');
+    expect(await isFollowingDb('user-2-test', 'user-3-test')).toBe(false);
+  })
+
+  it('getUsersByIds returns matching users', async () => {
+    const users = await getUsersByIds(['user-1-test', 'user-2-test']);
+    expect(users).toHaveLength(2);
+    expect(users.map((u) => u._id).sort()).toEqual(['user-1-test', 'user-2-test']);
   })
 })
