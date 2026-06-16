@@ -8,6 +8,7 @@ if (!process.env.CI) {
 import { defineConfig } from 'cypress';
 import clientPromise from './src/app/lib/mongoDb';
 import { User, List, Restaurant } from './src/app/interfaces/interfaces'
+import { requestFollowDb, approveFollowRequestDb } from './src/app/lib/dbFunctions';
 import { v4 as uuidv4 } from 'uuid';
 
 export default defineConfig({
@@ -18,6 +19,7 @@ export default defineConfig({
       MONGODB_DBNAME_SUFFIX: process.env.MONGODB_DBNAME_SUFFIX,
       BETTER_AUTH_SESSION_TOKEN: process.env.BETTER_AUTH_SESSION_TOKEN,
       SIGNUP_ACCESS_SECRET: process.env.SIGNUP_ACCESS_SECRET,
+      NEXT_PUBLIC_SOCIAL_FEATURE_FLAG: 'true',
     },
     setupNodeEvents(on, config) {
       on('task', {
@@ -141,11 +143,38 @@ export default defineConfig({
             photos: [],
             following: [],
             followers: [],
+            followRequests: [],
           };
 
           await db.collection<User>('users').insertOne(privateUser);
 
           return privateUser._id;
+        },
+        async getUserIdByEmail(email: string) {
+          const client = await clientPromise;
+          const db = client.db('nomnom_notes' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
+
+          const user = await db.collection<User>('users').findOne({ email });
+          return user?._id ?? null;
+        },
+        async requestFollow({ requesterId, followeeId }: { requesterId: string; followeeId: string }) {
+          await requestFollowDb(requesterId, followeeId);
+          return null;
+        },
+        async approveFollowRequest({ ownerId, requesterId }: { ownerId: string; requesterId: string }) {
+          await approveFollowRequestDb(ownerId, requesterId);
+          return null;
+        },
+        async resetUserSocial(userId: string) {
+          const client = await clientPromise;
+          const db = client.db('nomnom_notes' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
+
+          await db.collection<User>('users').updateOne(
+            { _id: userId },
+            { $set: { following: [], followers: [], followRequests: [] } }
+          );
+
+          return null;
         },
       });
     },

@@ -53,7 +53,20 @@ export async function addUserDb(userId: string, name: string, email: string) {
     photos: [],
     following: [],
     followers: [],
+    followRequests: [],
   });
+}
+
+export async function getUsersByIds(userIds: string[]): Promise<User[]> {
+  if (userIds.length === 0) {
+    return [];
+  }
+
+  const database: Db = await db();
+
+  return await database.collection<User>('users')
+    .find({ _id: { $in: userIds } })
+    .toArray();
 }
 
 export async function isFollowingDb(followerId: string, followeeId: string): Promise<boolean> {
@@ -129,6 +142,83 @@ export async function unfollowUserDb(followerId: string, followeeId: string) {
       { $pull: { followers: followerId } }
     ),
   ]);
+}
+
+export async function hasPendingFollowRequestDb(requesterId: string, followeeId: string): Promise<boolean> {
+  const database: Db = await db();
+
+  const followee = await database.collection<User>('users').findOne(
+    { _id: followeeId },
+    { projection: { followRequests: 1 } }
+  );
+
+  return followee?.followRequests?.includes(requesterId) ?? false;
+}
+
+export async function requestFollowDb(requesterId: string, followeeId: string) {
+  if (requesterId === followeeId) {
+    throw new Error('Cannot follow yourself');
+  }
+
+  const database: Db = await db();
+
+  const [requester, followee] = await Promise.all([
+    database.collection<User>('users').findOne({ _id: requesterId }),
+    database.collection<User>('users').findOne({ _id: followeeId }),
+  ]);
+
+  if (!requester || !followee) {
+    throw new Error('User not found');
+  }
+
+  if (requester.following?.includes(followeeId)) {
+    return;
+  }
+
+  if (followee.followRequests?.includes(requesterId)) {
+    return;
+  }
+
+  await database.collection<User>('users').updateOne(
+    { _id: followeeId },
+    { $addToSet: { followRequests: requesterId } }
+  );
+}
+
+export async function approveFollowRequestDb(ownerId: string, requesterId: string) {
+  const database: Db = await db();
+
+  const owner = await database.collection<User>('users').findOne({ _id: ownerId });
+
+  if (!owner) {
+    throw new Error('User not found');
+  }
+
+  if (!owner.followRequests?.includes(requesterId)) {
+    throw new Error('Follow request not found');
+  }
+
+  await database.collection<User>('users').updateOne(
+    { _id: ownerId },
+    { $pull: { followRequests: requesterId } }
+  );
+
+  await followUserDb(requesterId, ownerId);
+}
+
+export async function denyFollowRequestDb(ownerId: string, requesterId: string) {
+  const database: Db = await db();
+
+  const owner = await database.collection<User>('users').findOne({ _id: ownerId });
+
+  if (!owner) {
+    throw new Error('User not found');
+  }
+
+  await database.collection<User>('users').updateOne(
+    { _id: ownerId },
+    { $pull: { followRequests: requesterId } }
+  );
 }
 
 export async function updateUserDb(user: User) {

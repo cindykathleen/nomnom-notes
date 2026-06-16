@@ -1,7 +1,14 @@
 'use server';
 
 import { auth } from '@/app/lib/auth';
-import { followUserDb, unfollowUserDb } from '@/app/lib/dbFunctions';
+import {
+  followUserDb,
+  unfollowUserDb,
+  requestFollowDb,
+  approveFollowRequestDb,
+  denyFollowRequestDb,
+  getUser,
+} from '@/app/lib/dbFunctions';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
@@ -20,7 +27,18 @@ async function getFollowerId() {
 export const followUser = async (targetUserId: string) => {
   try {
     const followerId = await getFollowerId();
-    await followUserDb(followerId, targetUserId);
+    const target = await getUser(targetUserId);
+
+    if (!target) {
+      return { error: 'User not found' };
+    }
+
+    if (target.profilePrivacy === true) {
+      await requestFollowDb(followerId, targetUserId);
+    } else {
+      await followUserDb(followerId, targetUserId);
+    }
+
     revalidatePath(`/profile/${targetUserId}`);
     return { success: true };
   } catch (err) {
@@ -36,5 +54,29 @@ export const unfollowUser = async (targetUserId: string) => {
     return { success: true };
   } catch (err) {
     return { error: `Error unfollowing user: ${err}` };
+  }
+};
+
+export const approveFollowRequest = async (requesterId: string) => {
+  try {
+    const ownerId = await getFollowerId();
+    await approveFollowRequestDb(ownerId, requesterId);
+    revalidatePath('/social');
+    revalidatePath(`/profile/${requesterId}`);
+    revalidatePath(`/profile/${ownerId}`);
+    return { success: true };
+  } catch (err) {
+    return { error: `Error approving follow request: ${err}` };
+  }
+};
+
+export const denyFollowRequest = async (requesterId: string) => {
+  try {
+    const ownerId = await getFollowerId();
+    await denyFollowRequestDb(ownerId, requesterId);
+    revalidatePath('/social');
+    return { success: true };
+  } catch (err) {
+    return { error: `Error denying follow request: ${err}` };
   }
 };

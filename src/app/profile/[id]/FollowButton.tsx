@@ -6,9 +6,14 @@ import { followUser, unfollowUser } from '@/app/actions/follow';
 interface Props {
   targetUserId: string;
   initialIsFollowing: boolean;
+  initialHasPendingRequest: boolean;
 }
 
-export default function FollowButton({ targetUserId, initialIsFollowing }: Props) {
+export default function FollowButton({
+  targetUserId,
+  initialIsFollowing,
+  initialHasPendingRequest,
+}: Props) {
   const [isPending, startTransition] = useTransition();
 
   const handleClick = () => {
@@ -20,6 +25,19 @@ export default function FollowButton({ targetUserId, initialIsFollowing }: Props
       }
     });
   };
+
+  if (initialHasPendingRequest) {
+    return (
+      <button
+        type="button"
+        className="button-disabled"
+        disabled
+        data-cy="requested-button"
+      >
+        Requested
+      </button>
+    );
+  }
 
   return (
     <button
@@ -36,7 +54,6 @@ export default function FollowButton({ targetUserId, initialIsFollowing }: Props
           </svg>
           Unfollow
         </>
-
       ) : (
         <>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-4">
