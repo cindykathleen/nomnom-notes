@@ -24,6 +24,8 @@ describe('Profile page', () => {
         'This user turned on their profile privacy. Please request access from them.'
       )
       cy.get('[data-cy=profile-lists-count]').should('not.exist')
+      
+      cy.task('removePrivateUser', privateUserId)
     })
   })
 
@@ -47,6 +49,8 @@ describe('Profile page', () => {
         cy.get('[data-cy=follow-button]').should('be.visible')
         cy.get('[data-cy=profile-location]').should('not.exist')
         cy.get('[data-cy=profile-privacy-message]').should('be.visible')
+
+        cy.task('removePrivateUser', privateUserId)
       })
     })
   })
@@ -72,6 +76,7 @@ describe('Profile page', () => {
 
     // Submit the form
     cy.get('button[data-cy="edit-profile-submit"]').click()
+    cy.contains('Profile updated successfully').should('be.visible')
 
     // Confirm that the profile has been updated
     cy.get('[data-cy=profile-button]').click()

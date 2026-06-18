@@ -150,6 +150,13 @@ export default defineConfig({
 
           return privateUser._id;
         },
+        async removePrivateUser(userId: string) {
+          const client = await clientPromise;
+          const db = client.db('nomnom_notes' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
+
+          await db.collection<User>('users').deleteOne({ _id: userId });
+          return null;
+        },
         async getUserIdByEmail(email: string) {
           const client = await clientPromise;
           const db = client.db('nomnom_notes' + (process.env.MONGODB_DBNAME_SUFFIX || ''));
