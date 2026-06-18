@@ -21,6 +21,8 @@ describe('Social page', () => {
         cy.get('[data-cy=approve-follow-request]').click()
         cy.get('[data-cy=no-follow-requests]').should('be.visible')
         cy.get('[data-cy=followers-list]').should('contain.text', 'Private User')
+
+        cy.task('removePrivateUser', requesterId)
       })
     })
   })
@@ -35,6 +37,8 @@ describe('Social page', () => {
         cy.get('[data-cy=deny-follow-request]').click()
         cy.get('[data-cy=no-follow-requests]').should('be.visible')
         cy.get('[data-cy=no-followers]').should('be.visible')
+
+        cy.task('removePrivateUser', requesterId)
       })
     })
   })
