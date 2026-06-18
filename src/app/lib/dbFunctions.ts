@@ -1,4 +1,4 @@
-import getDb from '@/app/lib/db';
+import getDb from './db';
 import { Db } from 'mongodb';
 import { User, List, Restaurant, Dish, Place, SearchResult, Invitation, ProfileItem } from '@/app/interfaces/interfaces';
 

@@ -45,6 +45,9 @@ This full-stack web application enables users to create and manage personalized 
 * Collaborators can add and remove restaurants and dishes in the list
 * Collaborators can add their own reviews for all restaurants and dishes in the list
 
+### Social features
+* Users can follow and be followed by other registered users
+
 ## Tech Stack
 
 **Frontend:** React, Next.js, Tailwind CSS
