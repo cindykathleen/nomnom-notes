@@ -5,8 +5,8 @@ export default function Nav() {
   return (
     <div className="nav-layout">
       <div className="nav-layout-inner">
-        <div>
-          <Link href="/">
+      <div>
+          <Link href="/about">
             {/* Mobile logo */}
             <Image src="/logo-mobile.png" alt="NomNom Notes logo"
               width={70} height={45} className="block md:hidden"
@@ -17,9 +17,17 @@ export default function Nav() {
             />
           </Link>
         </div>
-        <ul className="flex flex-row items-center gap-6 text-md font-semibold md:text-lg">
-          <li><Link href="/sign-in">Sign In</Link></li>
-          <li><Link href="/sign-up">Sign Up</Link></li>
+        <ul className="flex flex-row items-center gap-4">
+          <Link href="/sign-in">
+            <li className="nav-button-text">
+              Sign In
+            </li>
+          </Link>
+          <Link href="/sign-up">
+            <li className="nav-button-text text-snowwhite bg-darkpink">
+              Sign Up
+            </li>
+          </Link>
         </ul>
       </div>
     </div>
