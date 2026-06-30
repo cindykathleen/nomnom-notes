@@ -53,6 +53,10 @@
     @apply w-[40px] h-[40px] flex items-center justify-center rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition md:w-[50px] md:h-[50px];
     background: #F3F3F3;
   }
+  .nav-button-text {
+    @apply px-6 py-2 flex items-center justify-center rounded-lg font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition;
+    background: #F3F3F3;
+  }
   .nav-submenu {
     @apply absolute p-2 w-[225px] top-[45px] right-0 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/5 rounded-xl md:w-[250px] md:top-[55px];
   }
