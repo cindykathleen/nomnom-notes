@@ -115,7 +115,7 @@
     @apply font-semibold cursor-pointer hover:text-mauve transition-colors;
   }
   .input {
-    @apply px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
+    @apply h-[40px] px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
   }
   textarea.input {
     @apply h-[100px] lg:h-auto
