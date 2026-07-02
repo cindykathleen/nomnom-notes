@@ -114,6 +114,9 @@
   .link {
     @apply font-semibold cursor-pointer hover:text-mauve transition-colors;
   }
+  .link-cta {
+    @apply inline-flex items-center gap-1 text-darkpink font-semibold hover:text-mauve transition-colors;
+  }
   .input {
     @apply h-[40px] px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
   }
