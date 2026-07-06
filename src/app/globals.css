@@ -43,11 +43,17 @@
   .gated-page-layout-inner {
     @apply max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8;
   }
-  .search-page-layout {
-    @apply relative top-[60px] h-[calc(100vh-60px)] w-screen overflow-y-auto md:top-[80px] md:h-[calc(100vh-80px)];
+  .snap-layout {
+    @apply relative top-[60px] h-[calc(100vh-60px)] w-screen box-border p-8 flex justify-center 
+    overflow-y-auto snap-y snap-mandatory
+    md:top-[80px] md:h-[calc(100vh-80px)] xl:p-12;
   }
-  .search-page-layout-inner {
-    @apply min-h-full max-w-[1440px] px-8 py-16 mx-auto flex flex-col items-center justify-start sm:py-[clamp(96px,20vh,220px)] xl:px-16;
+  .snap-layout-inner {
+    @apply max-w-[1440px] w-full flex flex-col items-center;
+  }
+  .snap-layout section {
+    @apply w-full snap-start;
+    min-height: calc(100vh - 80px);
   }
   .nav-button {
     @apply w-[40px] h-[40px] flex items-center justify-center rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition md:w-[50px] md:h-[50px];
@@ -63,44 +69,11 @@
   .nav-submenu li {
     @apply p-2 flex gap-2 rounded-xl hover:bg-[#F5F5F5];
   }
-  .form-layout {
-    @apply h-fit max-w-3xl px-8 py-6 bg-snowwhite rounded-3xl xl:px-12 xl:py-10;
+  .page-heading {
+    @apply text-3xl font-semibold xl:text-4xl;
   }
-  .form-heading {
-    @apply pb-2 text-2xl font-semibold text-center xl:text-3xl;
-  }
-  .form-paragraph {
-    @apply pb-4 text-base font-semibold text-center;
-  }
-  .modal {
-    @apply fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99;
-  }
-  .modal-inner {
-    @apply relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5;
-  }
-  .modal-alert-inner {
-    @apply relative w-[90%] px-4 py-4 flex flex-col gap-4 bg-snowwhite rounded-lg overflow-scroll lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5;
-  }
-  .modal-heading {
-    @apply text-2xl font-semibold text-darkpink lg:text-3xl;
-  }
-  .modal-alert-heading {
-    @apply text-2xl font-semibold text-darkpink;
-  }
-  .cards {
-    @apply pb-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-16 xl:pb-16 xl:grid-cols-4;
-  }
-  .cards-outline {
-    @apply relative p-4 flex border border-lightgray rounded-3xl;
-  }
-  .review-cards {
-    @apply mt-6 grid gap-6 lg:grid-cols-2 lg:gap-8;
-  }
-  .menu-modal {
-    @apply absolute min-w-30 p-2 flex flex-col gap-2 bg-snowwhite border border-lightgray rounded-sm z-99;
-  }
-  .menu-modal-item {
-    @apply px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink;
+  .page-subheading {
+    @apply pb-2 text-xl font-semibold xl:text-2xl;
   }
   .button-primary {
     @apply min-w-[100px] px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors;
@@ -117,6 +90,15 @@
   .link-cta {
     @apply inline-flex items-center gap-1 text-darkpink font-semibold hover:text-mauve transition-colors;
   }
+  .form-layout {
+    @apply h-fit max-w-3xl px-8 py-6 bg-snowwhite rounded-3xl xl:px-12 xl:py-10;
+  }
+  .form-heading {
+    @apply pb-2 text-2xl font-semibold text-center xl:text-3xl;
+  }
+  .form-paragraph {
+    @apply pb-4 text-base font-semibold text-center;
+  }
   .input {
     @apply h-[40px] px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
   }
@@ -126,11 +108,35 @@
   .input-file {
     @apply file:px-3 file:py-1 file:mr-2 file:font-semibold file:border file:border-charcoal file:rounded-lg file:cursor-pointer;
   }
-  .page-heading {
-    @apply text-3xl font-semibold xl:text-4xl;
+  .modal {
+    @apply fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99;
   }
-  .page-subheading {
-    @apply pb-2 text-xl font-semibold xl:text-2xl;
+  .modal-inner {
+    @apply relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5;
+  }
+  .modal-alert-inner {
+    @apply relative w-[90%] px-4 py-4 flex flex-col gap-4 bg-snowwhite rounded-lg overflow-scroll lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5;
+  }
+  .modal-heading {
+    @apply text-2xl font-semibold text-darkpink lg:text-3xl;
+  }
+  .modal-alert-heading {
+    @apply text-2xl font-semibold text-darkpink;
+  }
+  .menu-modal {
+    @apply absolute min-w-30 p-2 flex flex-col gap-2 bg-snowwhite border border-lightgray rounded-sm z-99;
+  }
+  .menu-modal-item {
+    @apply px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink;
+  }
+  .cards {
+    @apply pb-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-16 xl:pb-16 xl:grid-cols-4;
+  }
+  .cards-outline {
+    @apply relative p-4 flex border border-lightgray rounded-3xl;
+  }
+  .review-cards {
+    @apply mt-6 grid gap-6 lg:grid-cols-2 lg:gap-8;
   }
   .review-text {
     display: -webkit-box;
@@ -202,6 +208,15 @@
   }
   .toggle-switch input:checked + .slider::before {
     @apply translate-x-[28px];
+  }
+  .checklist {
+    @apply space-y-2;
+  }
+  .checklist li {
+    @apply flex items-start gap-2 text-lg xl:text-xl;
+  }
+  .checklist li span {
+    @apply xl:pt-[2px];
   }
 }
 
