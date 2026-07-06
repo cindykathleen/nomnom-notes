@@ -41,8 +41,8 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
   dishes.sort((a, b) => a.index - b.index);
 
   return (
-    <div className="gated-page-layout">
-      <div className="gated-page-layout-inner">
+    <div className="page-layout">
+      <div className="page-layout-inner space-y-6 xl:space-y-8">
         <div className="flex flex-wrap gap-2">
           { // Don't display private pages for anyone other than the list owner / collaborator
             isOwnerOrCollaborator && (

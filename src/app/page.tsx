@@ -9,10 +9,10 @@ export default async function HomePage() {
   const userId = await getCurrentUser(false);
 
   return (
-    <div>
+    <div className="outer-layout">
       <Nav userId={userId} />
-      <div className="gated-page-layout">
-        <div className="gated-page-layout-inner">
+      <div className="page-layout">
+        <div className="page-layout-inner space-y-6 xl:space-y-8">
           <h1 className="page-heading">My lists</h1>
           <Suspense fallback={<ListsLoading />}>
             <DndWrapper>

@@ -8,10 +8,10 @@ export default async function Page() {
   const user = await getUser(userId);
 
   return (
-    <>
+    <div className="outer-layout">
       <Nav userId={userId} />
-      <div className="gated-page-layout">
-        <div className="gated-page-layout-inner">
+      <div className="page-layout">
+        <div className="page-layout-inner space-y-6 xl:space-y-8">
           { user && (
             <>
               <h1 className="page-heading">Account settings</h1>
@@ -26,6 +26,6 @@ export default async function Page() {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -9,12 +9,12 @@ export default async function Page() {
   const userId = await getCurrentUser(true);
 
   return (
-    <>
+    <div className="outer-layout">
       { // Display a different nav bar for public users
         userId === 'public' ? <PublicNav /> : <Nav userId={userId} />
       }
-      <div className="snap-layout">
-        <div className="snap-layout-inner">
+      <div className="page-layout snap-scroll">
+        <div className="page-layout-inner">
           <section>
             <Hero />
           </section>
@@ -26,6 +26,6 @@ export default async function Page() {
           </section>
         </div>
       </div>
-    </>
+    </div>
   );
 }
