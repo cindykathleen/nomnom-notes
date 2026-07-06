@@ -63,8 +63,8 @@ export default function Hero() {
           </Link>
         </p>
       </div>
-      <div className="flex items-center">
-        <img src="https://placehold.co/800" />
+      <div className="flex items-center justify-end">
+        <img src="https://placehold.co/600" />
       </div>
     </div>
   );
