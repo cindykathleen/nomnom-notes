@@ -44,12 +44,12 @@
     @apply max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8;
   }
   .snap-layout {
-    @apply relative top-[60px] h-[calc(100vh-60px)] w-screen box-border p-8 flex justify-center 
+    @apply relative w-full box-border flex justify-center 
     overflow-y-auto snap-y snap-mandatory
-    md:top-[80px] md:h-[calc(100vh-80px)] xl:p-12;
+    ;
   }
   .snap-layout-inner {
-    @apply max-w-[1440px] w-full flex flex-col items-center;
+    @apply max-w-[1440px] w-full p-8 flex flex-col items-center xl:p-12;
   }
   .snap-layout section {
     @apply w-full snap-start;
