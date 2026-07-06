@@ -1,6 +1,7 @@
 import { getOwnerByToken } from '@/app/lib/dbFunctions';
 import { User } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
+import PublicNav from '@/app/components/PublicNav';
 import { SignInForm } from './SignInForm';
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
@@ -19,24 +20,27 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ [
   }
 
   return (
-    <div className="page-layout">
-      <div className="page-layout-inner">
-        <div className="form-layout">
-          <h2 className="form-heading">Sign in</h2>
-          { // If the user was redirected from an invitation link, show this message
-            redirect && owner && (
-              <p className="form-paragraph">
-                {owner.name} has invited you to collaborate on their list. Sign in to your account to accept the invitation.
-              </p>
-            )
-          }
-          <p className="form-paragraph">
-            Don't have an account? Click
-            <Link href={signUpUrl} className="link text-darkpink"> here </Link>
-            to create one.
-          </p>
-          <hr className="border-slategray" />
-          <SignInForm />
+    <div className="outer-layout">
+      <PublicNav />
+      <div className="page-layout h-screen bg-coolbeige">
+        <div className="page-layout-inner items-center justify-center">
+          <div className="form-layout">
+            <h2 className="form-heading">Sign In</h2>
+            { // If the user was redirected from an invitation link, show this message
+              redirect && owner && (
+                <p className="form-paragraph">
+                  {owner.name} has invited you to collaborate on their list. Sign in to your account to accept the invitation.
+                </p>
+              )
+            }
+            <p className="form-paragraph">
+              Don't have an account? Click
+              <Link href={signUpUrl} className="link text-darkpink"> here </Link>
+              to create one.
+            </p>
+            <hr className="border-slategray" />
+            <SignInForm />
+          </div>
         </div>
       </div>
     </div>

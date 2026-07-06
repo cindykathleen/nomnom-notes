@@ -15,7 +15,7 @@ export default async function Page({ params, searchParams }: { params: Params, s
   const userId = await getCurrentUser(isPublic);
 
   return (
-    <div>
+    <div className="outer-layout">
       { // Display a different nav bar for public users
         userId === 'public' ? <PublicNav /> : <Nav userId={userId} />
       }

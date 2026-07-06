@@ -26,19 +26,19 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   );
 
   return (
-    <div>
+    <div className="outer-layout">
       <Nav userId={currentUserId} />
       {!user && (
-        <div className="gated-page-layout">
-          <div className="gated-page-layout-inner">
+        <div className="page-layout">
+          <div className="page-layout-inner">
             <h1 className="page-heading">Uh oh!</h1>
             <p className="text-xl">We are not able to find the user you are looking for. Please double-check the user ID and try again.</p>
           </div>
         </div>
       )}
       {user && (
-        <div className="gated-page-layout">
-          <div className="gated-page-layout-inner">
+        <div className="page-layout">
+          <div className="page-layout-inner space-y-6 xl:space-y-8">
             <Hero
               user={user}
               currentUserId={currentUserId}

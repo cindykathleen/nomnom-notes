@@ -24,37 +24,37 @@
 }
 
 @layer components {
+  /** layout */
+  .outer-layout {
+    @apply flex h-screen flex-col overflow-hidden;
+  }
   .nav-layout {
-    @apply fixed top-0 h-[60px] w-full px-8 flex items-center justify-center z-50 bg-snowwhite md:h-[80px] xl:px-12;
+    @apply h-[60px] w-full px-8 flex shrink-0 items-center justify-center z-50 bg-snowwhite md:h-[80px] xl:px-12;
     box-shadow: 0 2px 0 rgba(0,0,0,0.04);
   }
   .nav-layout-inner {
     @apply max-w-[1440px] w-full flex items-center justify-between;
   }
   .page-layout {
-    @apply relative min-h-screen h-auto w-screen p-8 flex items-center justify-center bg-coolbeige xl:p-12;
+    @apply h-full w-full p-8 flex flex-1 justify-center overflow-y-auto xl:p-12;
   }
   .page-layout-inner {
-    @apply max-w-[1440px] w-full flex flex-col items-center;
+    @apply max-w-[1440px] w-full flex flex-col;
   }
-  .gated-page-layout {
-    @apply relative top-[60px] h-[calc(100vh-60px)] w-screen box-border p-8 flex justify-center md:top-[80px] md:h-[calc(100vh-80px)] xl:p-12;
+  .full-screen-page-layout {
+    @apply min-h-0 w-full p-8 flex flex-1 justify-center xl:p-12;
   }
-  .gated-page-layout-inner {
-    @apply max-w-[1440px] w-full flex flex-col space-y-6 xl:space-y-8;
+  .full-screen-page-layout-inner {
+    @apply min-h-0 max-w-[1440px] w-full flex flex-col flex-1;
   }
-  .snap-layout {
-    @apply relative w-full box-border flex justify-center 
-    overflow-y-auto snap-y snap-mandatory
-    ;
+  .snap-scroll {
+    @apply overflow-y-auto snap-y snap-mandatory;
   }
-  .snap-layout-inner {
-    @apply max-w-[1440px] w-full p-8 flex flex-col items-center xl:p-12;
+  .snap-scroll section {
+    @apply min-h-[calc(100vh-60px)] w-full snap-start md:min-h-[calc(100vh-80px)];
   }
-  .snap-layout section {
-    @apply w-full snap-start;
-    min-height: calc(100vh - 80px);
-  }
+
+  /** navigation **/ 
   .nav-button {
     @apply w-[40px] h-[40px] flex items-center justify-center rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition md:w-[50px] md:h-[50px];
     background: #F3F3F3;
@@ -69,12 +69,16 @@
   .nav-submenu li {
     @apply p-2 flex gap-2 rounded-xl hover:bg-[#F5F5F5];
   }
+
+  /** headings **/ 
   .page-heading {
     @apply text-3xl font-semibold xl:text-4xl;
   }
   .page-subheading {
     @apply pb-2 text-xl font-semibold xl:text-2xl;
   }
+
+  /** buttons & links **/ 
   .button-primary {
     @apply min-w-[100px] px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors;
   }
@@ -90,45 +94,8 @@
   .link-cta {
     @apply inline-flex items-center gap-1 text-darkpink font-semibold hover:text-mauve transition-colors;
   }
-  .form-layout {
-    @apply h-fit max-w-3xl px-8 py-6 bg-snowwhite rounded-3xl xl:px-12 xl:py-10;
-  }
-  .form-heading {
-    @apply pb-2 text-2xl font-semibold text-center xl:text-3xl;
-  }
-  .form-paragraph {
-    @apply pb-4 text-base font-semibold text-center;
-  }
-  .input {
-    @apply h-[40px] px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
-  }
-  textarea.input {
-    @apply h-[100px] lg:h-auto
-  }
-  .input-file {
-    @apply file:px-3 file:py-1 file:mr-2 file:font-semibold file:border file:border-charcoal file:rounded-lg file:cursor-pointer;
-  }
-  .modal {
-    @apply fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99;
-  }
-  .modal-inner {
-    @apply relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5;
-  }
-  .modal-alert-inner {
-    @apply relative w-[90%] px-4 py-4 flex flex-col gap-4 bg-snowwhite rounded-lg overflow-scroll lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5;
-  }
-  .modal-heading {
-    @apply text-2xl font-semibold text-darkpink lg:text-3xl;
-  }
-  .modal-alert-heading {
-    @apply text-2xl font-semibold text-darkpink;
-  }
-  .menu-modal {
-    @apply absolute min-w-30 p-2 flex flex-col gap-2 bg-snowwhite border border-lightgray rounded-sm z-99;
-  }
-  .menu-modal-item {
-    @apply px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink;
-  }
+
+  /** reusable components **/ 
   .cards {
     @apply pb-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-16 xl:pb-16 xl:grid-cols-4;
   }
@@ -145,21 +112,6 @@
     line-clamp: 3;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  .profile-section {
-    @apply relative px-8 py-6 flex flex-col gap-2 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/5 rounded-xl;
-  }
-  .profile-section-heading {
-    @apply pb-1 text-xl text-slategray font-semibold uppercase xl:pb-2 xl:text-2xl;
-  }
-  .profile-section-photos {
-    @apply grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3;
-  }
-  .profile-section-highlights {
-    @apply grid grid-cols-2 gap-2 sm:grid-cols-4;
-  }
-  .profile-section-highlights-text {
-    @apply pt-2 text-lg text-center line-clamp-1;
   }
   .tabs {
     @apply w-full pb-8 flex flex-col gap-8 xl:pb-16 xl:flex-row xl:gap-16;
@@ -217,6 +169,66 @@
   }
   .checklist li span {
     @apply xl:pt-[2px];
+  }
+
+  /** modals & alerts **/ 
+  .modal {
+    @apply fixed h-full w-full inset-0 flex items-center justify-center bg-(--modal-background) z-99;
+  }
+  .modal-inner {
+    @apply relative max-h-[90%] w-[90%] px-4 py-4 bg-snowwhite rounded-lg overflow-scroll lg:w-3/5 lg:px-6 lg:py-8 xl:w-2/5;
+  }
+  .modal-alert-inner {
+    @apply relative w-[90%] px-4 py-4 flex flex-col gap-4 bg-snowwhite rounded-lg overflow-scroll lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5;
+  }
+  .modal-heading {
+    @apply text-2xl font-semibold text-darkpink lg:text-3xl;
+  }
+  .modal-alert-heading {
+    @apply text-2xl font-semibold text-darkpink;
+  }
+  .menu-modal {
+    @apply absolute min-w-30 p-2 flex flex-col gap-2 bg-snowwhite border border-lightgray rounded-sm z-99;
+  }
+  .menu-modal-item {
+    @apply px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink;
+  }
+
+  /** forms **/ 
+  .form-layout {
+    @apply h-fit max-w-3xl px-8 py-6 bg-snowwhite rounded-3xl xl:px-12 xl:py-10;
+  }
+  .form-heading {
+    @apply pb-2 text-2xl font-semibold text-center xl:text-3xl;
+  }
+  .form-paragraph {
+    @apply pb-4 text-base font-semibold text-center;
+  }
+  .input {
+    @apply h-[40px] px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
+  }
+  textarea.input {
+    @apply h-[100px] lg:h-auto
+  }
+  .input-file {
+    @apply file:px-3 file:py-1 file:mr-2 file:font-semibold file:border file:border-charcoal file:rounded-lg file:cursor-pointer;
+  }
+
+  /** profile page **/ 
+  .profile-section {
+    @apply relative px-8 py-6 flex flex-col gap-2 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/5 rounded-xl;
+  }
+  .profile-section-heading {
+    @apply pb-1 text-xl text-slategray font-semibold uppercase xl:pb-2 xl:text-2xl;
+  }
+  .profile-section-photos {
+    @apply grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3;
+  }
+  .profile-section-highlights {
+    @apply grid grid-cols-2 gap-2 sm:grid-cols-4;
+  }
+  .profile-section-highlights-text {
+    @apply pt-2 text-lg text-center line-clamp-1;
   }
 }
 
