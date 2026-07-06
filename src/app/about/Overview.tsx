@@ -5,7 +5,7 @@ export default function Overview() {
         <img src="https://placehold.co/600" />
       </div>
       <div className="flex flex-col justify-center gap-4 xl:gap-8">
-        <h1 className="page-heading">Discover the Features</h1>
+        <h2 className="page-heading">Discover the Features</h2>
         <ul className="checklist">
           {[
             "Create custom restaurant lists",
