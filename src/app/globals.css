@@ -55,7 +55,7 @@
     @apply p-8 xl:p-12;
   }
   .homepage-layout section.bg-texture {
-    @apply min-h-[calc(100vh-60px)] md:min-h-[calc(100vh-80px)]
+    @apply relative flex flex-col h-[calc(100vh-60px)] md:h-[calc(100vh-80px)] shrink-0
       bg-[url('/images/bg-texture.png')] bg-cover bg-center bg-no-repeat;
   }
   .homepage-layout section:not(.bg-texture) {
@@ -65,10 +65,6 @@
   /** navigation **/ 
   .nav-button {
     @apply w-[40px] h-[40px] flex items-center justify-center rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition md:w-[50px] md:h-[50px];
-    background: #F3F3F3;
-  }
-  .nav-button-text {
-    @apply px-6 py-2 flex items-center justify-center rounded-[10px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition;
     background: #F3F3F3;
   }
   .nav-submenu {

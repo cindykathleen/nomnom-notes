@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useFormStatus } from 'react-dom';
-import ImageInput from './ImageInput';
+import ImageInput from '@/app/components/ImageInput';
 import { addList } from '@/app/actions/list';
 import { uploadImage } from '@/app/lib/uploadImage';
 
