@@ -6,7 +6,7 @@ export default function Nav() {
     <div className="nav-layout">
       <div className="nav-layout-inner">
       <div>
-          <Link href="/about">
+          <Link href="/">
             {/* Mobile logo */}
             <Image src="/logo-mobile.png" alt="NomNom Notes logo"
               width={70} height={45} className="block md:hidden"
@@ -18,15 +18,11 @@ export default function Nav() {
           </Link>
         </div>
         <ul className="flex flex-row items-center gap-4">
-          <Link href="/sign-in">
-            <li className="nav-button-text">
-              Sign In
-            </li>
+          <Link href="/sign-in" className="button-secondary text-center">
+            <li>Sign In</li>
           </Link>
-          <Link href="/sign-up">
-            <li className="nav-button-text text-snowwhite bg-darkpink">
-              Sign Up
-            </li>
+          <Link href="/sign-up" className="button-primary text-center">
+            <li>Sign Up</li>
           </Link>
         </ul>
       </div>
