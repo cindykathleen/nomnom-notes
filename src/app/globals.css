@@ -7,6 +7,7 @@
 }
 
 @theme {
+  --color-extralightpink: #FEF3F5;
   --color-lightpink: #FDECEF;
   --color-dustypink: #E8B4BC;
   --color-lightgray: #D9DCE1;
@@ -47,11 +48,18 @@
   .full-screen-page-layout-inner {
     @apply min-h-0 max-w-[1440px] w-full flex flex-col flex-1;
   }
-  .snap-scroll {
-    @apply overflow-y-auto snap-y snap-mandatory;
+  .homepage-layout {
+    @apply h-full w-full flex flex-col flex-1 gap-1 overflow-y-auto;
   }
-  .snap-scroll section {
-    @apply min-h-[calc(100vh-60px)] w-full snap-start md:min-h-[calc(100vh-80px)];
+  .homepage-layout-inner {
+    @apply p-8 xl:p-12;
+  }
+  .homepage-layout section.bg-texture {
+    @apply min-h-[calc(100vh-60px)] md:min-h-[calc(100vh-80px)]
+      bg-[url('/images/bg-texture.png')] bg-cover bg-center bg-no-repeat;
+  }
+  .homepage-layout section:not(.bg-texture) {
+    @apply max-w-[1440px] w-full m-auto py-12 xl:py-16;
   }
 
   /** navigation **/ 
@@ -60,7 +68,7 @@
     background: #F3F3F3;
   }
   .nav-button-text {
-    @apply px-6 py-2 flex items-center justify-center rounded-lg font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition;
+    @apply px-6 py-2 flex items-center justify-center rounded-[10px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)] transition;
     background: #F3F3F3;
   }
   .nav-submenu {
@@ -71,28 +79,43 @@
   }
 
   /** headings **/ 
-  .page-heading {
-    @apply text-3xl font-semibold xl:text-4xl;
+  h1 {
+    @apply text-5xl/14 font-light xl:text-6xl/18;
   }
-  .page-subheading {
-    @apply pb-2 text-xl font-semibold xl:text-2xl;
+  h2 {
+    @apply text-4xl font-light xl:text-5xl;
+  }
+  h3 {
+    @apply text-3xl font-light xl:text-4xl;
+  }
+  h4 {
+    @apply text-lg font-normal xl:text-xl;
+  }
+  p.subheading {
+    @apply text-xl font-extralight xl:text-2xl;
+  }
+  p.description {
+    @apply text-lg font-extralight xl:text-xl;
+  }
+  p.description-sm {
+    @apply text-base font-extralight xl:text-lg;
   }
 
   /** buttons & links **/ 
   .button-primary {
-    @apply min-w-[100px] px-4 py-2 self-start text-snowwhite font-bold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors;
+    @apply min-w-[100px] px-4 py-2 self-start text-snowwhite bg-darkpink rounded-[10px] cursor-pointer hover:bg-mauve transition-colors;
   }
   .button-secondary {
-    @apply min-w-[100px] px-4 py-2 self-start text-darkpink font-bold bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors;
+    @apply min-w-[100px] px-4 py-2 self-start text-darkpink bg-transparent border border-darkpink rounded-[10px] cursor-pointer hover:text-mauve hover:border-mauve transition-colors;
   }
   .button-disabled {
-    @apply min-w-[100px] px-4 py-2 self-start text-charcoal font-bold bg-lightgray border border-lightgray rounded-lg cursor-not-allowed;
+    @apply min-w-[100px] px-4 py-2 self-start text-charcoal bg-lightgray border border-lightgray rounded-[10px] cursor-not-allowed;
   }
   .link {
     @apply font-semibold cursor-pointer hover:text-mauve transition-colors;
   }
   .link-cta {
-    @apply inline-flex items-center gap-1 text-darkpink font-semibold hover:text-mauve transition-colors;
+    @apply inline-flex items-center gap-1 text-darkpink hover:text-mauve transition-colors;
   }
 
   /** reusable components **/ 
@@ -112,6 +135,12 @@
     line-clamp: 3;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .flex-cards {
+    @apply w-full flex flex-1 gap-4;
+  }
+  .flex-card {
+    @apply w-full p-12 flex flex-col gap-10 bg-extralightpink border border-dashed border-lightgray rounded-2xl;
   }
   .tabs {
     @apply w-full pb-8 flex flex-col gap-8 xl:pb-16 xl:flex-row xl:gap-16;
@@ -165,7 +194,7 @@
     @apply space-y-2;
   }
   .checklist li {
-    @apply flex items-start gap-2 text-lg xl:text-xl;
+    @apply flex items-start gap-2 text-lg font-extralight xl:text-xl;
   }
   .checklist li span {
     @apply xl:pt-[2px];
@@ -189,7 +218,7 @@
     @apply w-full h-auto;
   }
   .swiper-slide p {
-    @apply pt-4 pb-12 text-lg text-center md:text-2xl;
+    @apply pt-4 pb-12 text-xl font-extralight text-center md:text-2xl;
   }
 
   /** modals & alerts **/ 
@@ -226,7 +255,7 @@
     @apply pb-4 text-base font-semibold text-center;
   }
   .input {
-    @apply h-[40px] px-2 py-1 mb-6 border border-charcoal rounded-sm focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
+    @apply h-[40px] px-4 py-3 mb-6 font-light border border-lightgray rounded-[10px] focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
   }
   textarea.input {
     @apply h-[100px] lg:h-auto

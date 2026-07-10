@@ -13,11 +13,11 @@ export default async function Page() {
       { // Display a different nav bar for public users
         userId === 'public' ? <PublicNav /> : <Nav userId={userId} />
       }
-      <div className="page-layout snap-scroll">
-        <div className="page-layout-inner">
-          <section>
-            <Hero />
-          </section>
+      <div className="homepage-layout">
+        <section className="bg-texture">
+          <Hero />
+        </section>
+        <div className="homepage-layout-inner">
           <section>
             <Overview />
           </section>
