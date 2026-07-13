@@ -7,7 +7,7 @@ import { updateEmail } from '@/app/actions/authentication';
 import { updateUserEmail } from '@/app/actions/user';
 
 export default function Email({ user }: { user: User }) {
-  const [inputEmail, setInputEmail] = useState('');
+  const [inputEmail, setInputEmail] = useState<string>('');
   const [message, setMessage] = useState<string | null>(null);
 
   const { pending } = useFormStatus();
