@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { requestAccess } from '@/app/actions/home';
 
 export default function Hero() {
-  const [inputEmail, setInputEmail] = useState('');
+  const [inputEmail, setInputEmail] = useState<string>('');
   const [message, setMessage] = useState<string | null>(null);
 
   const { pending } = useFormStatus();
@@ -22,7 +22,7 @@ export default function Hero() {
     if (result.error) {
       setMessage('An error occurred. Please try again.');
     } else {
-      setMessage('Request sent successfully! Please allow a few days for approval.');
+      setMessage('Request sent successfully! Please allow a few days for the access code.');
     }
 
     setInputEmail('');
