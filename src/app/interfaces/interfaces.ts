@@ -93,3 +93,21 @@ export interface ProfileItem {
   rating?: number;
   note?: string;
 }
+
+export interface ActivityItem {
+  _id: string;
+  userId: string;
+  type: ActivityType;
+  createdAt: Date;
+  listId?: string;
+  restaurantId?: string;
+  dishId?: string;
+}
+
+export enum ActivityType {
+  LIST_CREATED = "LIST_CREATED",
+  LIST_JOINED = "LIST_JOINED",
+  RESTAURANT_SAVED = "RESTAURANT_SAVED",
+  RESTAURANT_REVIEWED = "RESTAURANT_REVIEWED",
+  DISH_REVIEWED = "DISH_REVIEWED",
+}
