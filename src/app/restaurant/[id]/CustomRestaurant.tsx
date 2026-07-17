@@ -43,30 +43,30 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
   return (
     <div className="page-layout">
       <div className="page-layout-inner space-y-6 xl:space-y-8">
-        <div className="flex flex-wrap gap-2">
+        <div className="breadcrumb flex flex-wrap gap-2">
           { // Don't display private pages for anyone other than the list owner / collaborator
             isOwnerOrCollaborator && (
               <>
-                <Link href="/" className="link">
+                <Link href="/lists" className="link">
                   Lists
                 </Link>
-                <p className="font-semibold">/</p>
+                <p>/</p>
               </>
             )}
           <Link href={`/list/${list._id}`} className="link">
             {list!.name}
           </Link>
-          <p className="font-semibold">/</p>
+          <p>/</p>
           <p>{restaurant.name}</p>
         </div>
         <div className="flex flex-col gap-2">
-          <h1 className="page-heading">{restaurant.name}</h1>
+          <h2>{restaurant.name}</h2>
           <RestaurantReview userId={userId} restaurant={restaurant} />
         </div>
-        <h2 className="text-2xl font-semibold xl:text-3xl">Dishes</h2>
+        <h3>Dishes</h3>
         { // Display an error message if there are no dishes and the user is not the list owner
           (dishes.length === 0 && !isOwnerOrCollaborator) && (
-            <p className="text-md md:text-lg">The owner of this list has not added any dishes.</p>
+            <p className="description">The owner of this list has not added any dishes.</p>
           )
         }
         <div className="cards">

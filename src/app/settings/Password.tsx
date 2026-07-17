@@ -34,16 +34,16 @@ export default function Password() {
 
   return (
     <div>
-      <h3 className="tab-content-heading">Change your account password</h3>
+      <h4 className="tab-content-heading">Change Your Account Password</h4>
       <hr className="hidden border-lightgray xl:block" />
       <form onSubmit={handleSubmit} className="max-w-[700px] pt-2 flex flex-col xl:pt-8">
-        <label htmlFor="current-password" className="pb-1 font-semibold">Current password</label>
+        <label htmlFor="current-password">Current password</label>
         <input id="current-password" name="current-password" type="password" required value={oldPassword} onChange={e => setOldPassword(e.target.value)}
           className="input" autoComplete="off" />
-        <label htmlFor="new-password" className="pb-1 font-semibold">New password</label>
+        <label htmlFor="new-password">New password</label>
         <input id="new-password" name="new-password" type="password" required value={newPassword} onChange={e => setNewPassword(e.target.value)}
           className="input" autoComplete="off" />
-        <label htmlFor="password-confirmation" className="pb-1 font-semibold">Re-enter your new password</label>
+        <label htmlFor="password-confirmation">Re-enter your new password</label>
         {!passwordMatch && confirmation && (<p className="pb-3 text-sm text-red-600 font-semibold">The passwords do not match</p>)}
         <input id="password-confirmation" name="password-confirmation" type="password" required value={confirmation} onChange={e => setConfirmation(e.target.value)}
           className="input" autoComplete="off" />

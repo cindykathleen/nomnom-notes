@@ -64,14 +64,14 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
           <div className="modal" data-cy="add-dish-modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h2 className="modal-heading">Add a dish</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAddModal(false) }}>
+                <h3 className="modal-heading">Add a Dish</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="modal-close" onClick={() => { setShowAddModal(false) }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
-              <hr className="border-slategray" />
+              <hr className="border-lightgray" />
               <form onSubmit={handleSubmit} className="p-4 flex flex-col">
-                <label htmlFor="dish-name" className="pb-1 font-semibold">Name *</label>
+                <label htmlFor="dish-name">Name *</label>
                 <input id="dish-name" name="dish-name" type="text" required value={dishName} onChange={e => setDishName(e.target.value)}
                   className="input" autoComplete="off" />
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
@@ -88,7 +88,7 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
                     : ("Add")
                   }
                 </button>
-                <p className="mt-6 text-sm font-semibold">* Required fields</p>
+                <p className="required">* Required fields</p>
               </form>
             </div>
           </div>

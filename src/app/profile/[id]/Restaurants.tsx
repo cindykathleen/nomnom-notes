@@ -2,10 +2,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ProfileItem } from '@/app/interfaces/interfaces';
 
-export default async function Restaurants({ restaurants }: { restaurants: ProfileItem[] }) {
+export default async function Restaurants({ restaurants, stats }: { restaurants: ProfileItem[], stats: number }) {
   return (
     <div className="profile-section">
-      <h4 className="profile-section-heading">Restaurants</h4>
+      <div className="profile-section-heading">
+        <h4>Restaurants</h4>
+        <p className="description-sm link">View all ({stats})</p>
+      </div>
       { // Display restaurants if available
         restaurants.length > 0 && (
           <div className="profile-section-highlights">
@@ -14,7 +17,7 @@ export default async function Restaurants({ restaurants }: { restaurants: Profil
                 <Image src={restaurant.photoUrl!} alt={restaurant.name} width='300' height='300'
                   className="aspect-square object-cover rounded-sm"
                 />
-                <span className="profile-section-highlights-text">{restaurant.name}</span>
+                <h5 className="pt-2 line-clamp-1">{restaurant.name}</h5>
               </Link>
             ))}
           </div>
@@ -22,7 +25,7 @@ export default async function Restaurants({ restaurants }: { restaurants: Profil
       }
       { // Display an error message if no restaurants are found
         restaurants.length === 0 && (
-          <p className="text-lg">The user does not have any restaurants saved.</p>
+          <p className="description">The user does not have any restaurants saved.</p>
         )
       }
     </div>

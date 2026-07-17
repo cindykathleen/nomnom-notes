@@ -69,11 +69,11 @@ export default function SearchResults({ userId, listId, query }: { userId: strin
       <div className="modal-inner">
         <div className="p-2 flex items-center justify-between lg:p-4">
           <h2 className="modal-heading">Search results</h2>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={clearQuery}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="modal-close" onClick={clearQuery}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
           </svg>
         </div>
-        <hr className="border-slategray" />
+        <hr className="border-lightgray" />
         <div className="px-2 py-4 flex flex-col lg:px-4">
           { // Display a loading message while waiting for results
             !results && <p className="text-lg">Loading results...</p>

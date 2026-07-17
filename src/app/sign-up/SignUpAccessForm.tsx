@@ -6,12 +6,13 @@ import { SignUpButton } from './SignUpButton';
 
 export const SignUpAccessForm = ({
   handleAccessFormSubmit,
-  errorMessage
+  errorMessage,
+  clearErrorMessage,
 }: {
-  handleAccessFormSubmit: (accessCode: string) => void,
-  errorMessage: string
+  handleAccessFormSubmit: (accessCode: string) => void;
+  errorMessage: string;
+  clearErrorMessage: () => void;
 }) => {
-  const [isAllowed, setIsAllowed] = useState<boolean>(false);
   const [accessCode, setAccessCode] = useState<string>('');
 
   const formIsValid = accessCode.trim() !== '';
@@ -23,39 +24,34 @@ export const SignUpAccessForm = ({
     handleAccessFormSubmit(accessCode);
   }
 
-  // If the user is allowed, do not display the modal
-  if (isAllowed) return;
-
   // If the user is not allowed, display the modal asking for the access code
   return (
     <div className="form-layout">
-      {
-        errorMessage === '' && (
-          <>
-            <h2 className="form-heading">Please enter the access code</h2>
-            <p className="form-paragraph">If you do not have one, please ask the application owner.</p>
-            <p className="form-paragraph">
-              Already have an account? Click
-              <Link href="/sign-in/" className="link text-darkpink"> here </Link>
-              to sign in.
-            </p>
-          </>
-        )
-      }
-      { // Display for errors
-        errorMessage && (
-          <>
-            <h2 className="pb-2 text-3xl font-semibold text-center">{errorMessage}</h2>
-            <p className="form-paragraph">The access code you have entered is not correct. Please try again or contact the application owner.</p>
-          </>
-        )
-      }
-      <hr className="border-slategray" />
+      <h3 className="form-heading">Enter the Access Code</h3>
+      <p className="form-description description-sm">If you do not have one, please ask the application owner.</p>
+      <p className="form-description description-sm">
+        Already have an account? Click
+        <Link href="/sign-in/" className="link text-darkpink"> here </Link>
+        to sign in.
+      </p>
+      <hr className="border-lightgray" />
       <form onSubmit={handleSubmit} className="w-full p-4 flex flex-col">
-        <label htmlFor="access-code" className="pb-1 font-semibold">Access code</label>
+        <label htmlFor="access-code">Access code</label>
         <input id="access-code" name="access-code" type="access-code" required value={accessCode} onChange={e => setAccessCode(e.target.value)}
           className="input" autoComplete="off" />
         <SignUpButton disabled={!formIsValid} />
+        { // Alert for errors
+          errorMessage && (
+            <div className="modal">
+              <div role="alert" className="modal-alert-inner items-center justify-center">
+                <h4>{errorMessage}</h4>
+                <button type="button" className="button-primary" onClick={clearErrorMessage}>
+                  Try again
+                </button>
+              </div>
+            </div>
+          )
+        }
       </form>
     </div>
   );

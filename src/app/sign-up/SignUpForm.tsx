@@ -44,50 +44,49 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
 
   return (
     <div className="form-layout">
-      <h2 className="form-heading">Create an account</h2>
+      <h3 className="form-heading">Create an Account</h3>
       { // If the user was redirected from an invitation link, show this message
         redirect && owner && (
-          <p className="form-paragraph">
+          <p className="form-description description-sm">
             {owner.name} has invited you to collaborate on their list. Create an account to accept the invitation.
           </p>
         )
       }
-      <p className="form-paragraph">
+      <p className="form-description description-sm">
         Already have an account? Click
         <Link href={signInUrl} className="link text-darkpink"> here </Link>
         to sign in.
       </p>
-      <hr className="border-slategray" />
+      <hr className="border-lightgray" />
       <form onSubmit={handleSubmit} className="p-4 flex flex-col">
-        <label htmlFor="display-name" className="pb-1 font-semibold">Display name</label>
+        <label htmlFor="display-name">Display name</label>
         <input id="display-name" name="display-name" type="text" required value={displayName} onChange={e => setDisplayName(e.target.value)}
           className="input" autoComplete="off" />
-        <label htmlFor="email" className="pb-1 font-semibold">Email</label>
+        <label htmlFor="email">Email</label>
         <input id="email" name="email" type="email" required value={email} onChange={e => setEmail(e.target.value)}
           onInvalid={e => { e.preventDefault(); setErrorMessage('Invalid email address'); }}
           className="input" autoComplete="off" />
-        <label htmlFor="password" className="pb-1 font-semibold">Password</label>
+        <label htmlFor="password">Password</label>
         <input id="password" name="password" type="password" required value={password} onChange={e => setPassword(e.target.value)}
           className="input" autoComplete="off" />
-        <label htmlFor="password-confirmation" className="pb-1 font-semibold">Re-enter your password</label>
-        {!passwordMatch && confirmation && (<p className="pb-3 text-sm text-red-600 font-semibold">The passwords do not match</p>)}
+        <label htmlFor="password-confirmation">Re-enter your password</label>
+        {!passwordMatch && confirmation && (<p className="pb-3 text-sm text-red-600 font-normal">The passwords do not match</p>)}
         <input id="password-confirmation" type="password" required value={confirmation} onChange={e => setConfirmation(e.target.value)}
           className="input" autoComplete="off" />
         <SignUpButton disabled={!formIsValid} />
         { // Alert for errors
-          errorMessage && (
-            <div className="modal">
-              <div role="alert" className="relative px-6 py-8 w-1/5 text-center bg-snowwhite rounded-lg">
-                <p className="mb-4 text-lg font-semibold">{errorMessage}</p>
-                <button type="button"
-                  className="px-8 py-1.5 mr-4 text-sm text-snowwhite font-semibold bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-                  onClick={() => setErrorMessage('')}>
-                  Try again
-                </button>
-              </div>
+        errorMessage && (
+          <div className="modal">
+            <div role="alert" className="modal-alert-inner items-center justify-center">
+              <h4>{errorMessage}</h4>
+              <button type="button" className="button-primary"
+                onClick={() => setErrorMessage('')}>
+                Try again
+              </button>
             </div>
-          )
-        }
+          </div>
+        )
+      }
       </form>
     </div>
   );

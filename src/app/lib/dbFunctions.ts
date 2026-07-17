@@ -599,17 +599,17 @@ export async function getInvitationByToken(token: string) {
 
   // Check to make sure the invitation exists
   if (!invitation) {
-    throw new Error('Not a valid invitation link');
+    throw new Error('Not a valid invitation link.');
   }
 
   // Check to make sure the invitation hasn't already been used
   if (invitation.usedBy !== '') {
-    throw new Error('Invitation link has already been used');
+    throw new Error('Invitation link has already been used.');
   }
 
   // Check to make sure the invitation hasn't expired
   if (new Date(invitation.expiresAt) < new Date()) {
-    throw new Error('Invitation link has expired');
+    throw new Error('Invitation link has expired.');
   }
 
   return invitation;
@@ -631,18 +631,18 @@ export async function acceptInvitationDb(userId: string, token: string) {
   const invitation = await database.collection<Invitation>('invitations').findOne({ token: token });
 
   // Check to make sure the invitation exists
-  if (!invitation) throw new Error('Invitation not found');
+  if (!invitation) throw new Error('Invitation not found.');
 
   // Check to make sure the user doesn't already collaborate on this list
   const user = await database.collection<User>('users').findOne({ _id: userId });
 
   if (user!.lists.includes(invitation.listId)) {
-    throw new Error('You are already a collaborator on this list');
+    throw new Error('You are already a collaborator on this list.');
   }
 
   // Check to make sure the user hasn't already used this invitation
   if (invitation.usedBy === userId) {
-    throw new Error('Invitation already used by this user');
+    throw new Error('Invitation already used by this user.');
   }
 
   // Add the user ID to the usedBy field of the invitation
@@ -664,13 +664,13 @@ export async function declineInvitationDb(userId: string, token: string) {
   const invitation = await database.collection<Invitation>('invitations').findOne({ token: token });
 
   // Check to make sure the invitation exists
-  if (!invitation) throw new Error('Invitation not found');
+  if (!invitation) throw new Error('Invitation not found.');
 
   // Check to make sure the user doesn't already collaborate on this list
   const user = await database.collection<User>('users').findOne({ _id: userId });
 
   if (user!.lists.includes(invitation.listId)) {
-    throw new Error('You are already a collaborator on this list');
+    throw new Error('You are already a collaborator on this list.');
   }
 
   // Void the invitation

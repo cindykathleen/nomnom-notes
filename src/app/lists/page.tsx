@@ -12,8 +12,7 @@ export default async function Page() {
     <div className="outer-layout">
       <Nav userId={userId} />
       <div className="page-layout">
-        <div className="page-layout-inner space-y-6 xl:space-y-8">
-          <h1 className="page-heading">My lists</h1>
+        <div className="page-layout-inner">
           <Suspense fallback={<ListsLoading />}>
             <DndWrapper>
               <CustomLists userId={userId} />

@@ -63,18 +63,18 @@ export default function ListAddCard({ userId }: { userId: string }) {
             data-cy="add-list-modal">
             <div className="modal-inner">
               <div className="p-2 flex items-center justify-between lg:p-4">
-                <h2 className="modal-heading">New list</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowAddModal(false) }}>
+                <h3 className="modal-heading">New List</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="modal-close" onClick={() => { setShowAddModal(false) }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
-              <hr className="border-slategray" />
+              <hr className="border-lightgray" />
               <form onSubmit={handleSubmit} className="px-2 py-4 flex flex-col lg:px-4">
-                <label htmlFor="list-name" className="pb-1 font-semibold">Name *</label>
+                <label htmlFor="list-name">Name *</label>
                 <input id="list-name" name="list-name" type="text" required value={listName} onChange={e => setListName(e.target.value)}
                   className="input" autoComplete="off" />
                 <fieldset className="mb-4">
-                  <legend className="pb-1 font-semibold">Visibility *</legend>
+                  <legend>Visibility *</legend>
                   <label className="mr-4">
                     <input type="radio" name="list-visibility" value="private" className="mr-1" defaultChecked />Private
                   </label>
@@ -82,7 +82,7 @@ export default function ListAddCard({ userId }: { userId: string }) {
                     <input type="radio" name="list-visibility" value="public" className="mr-1" />Public
                   </label>
                 </fieldset>
-                <label htmlFor="list-description" className="pb-1 font-semibold">Description</label>
+                <label htmlFor="list-description">Description</label>
                 <textarea id="list-description" name="list-description" placeholder="Add a description for this list" className="input"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
                 <button type="submit" disabled={!formIsValid}
@@ -98,7 +98,7 @@ export default function ListAddCard({ userId }: { userId: string }) {
                     : ("Create")
                   }
                 </button>
-                <p className="mt-6 text-sm font-semibold">* Required fields</p>
+                <p className="required">* Required fields</p>
               </form>
             </div>
           </div>
