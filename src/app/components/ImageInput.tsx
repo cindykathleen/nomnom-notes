@@ -26,13 +26,13 @@ export default function ImageInput({ currImage, setNewImage }: { currImage: stri
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="font-semibold">Image</label>
+      <label>Image</label>
       {previewImage !== '' && (
         <img src={previewImage} alt="Preview image" className="max-w-36 mb-1 aspect-square object-contain" />
       )}
       <div className="flex flex-col gap-2 mb-6">
         <input name="img-file" key="file-input" type="file" accept="image/*" className="input-file" onChange={handleFileChange} />
-        <p className="text-small text-slategray">Maximum file size: 10 MB</p>
+        <p className="font-extralight">Maximum file size: 10 MB</p>
       </div>
     </div>
   );

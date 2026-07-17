@@ -150,12 +150,12 @@ export default function DishCard({
       className="flex flex-col relative bg-snowwhite rounded-sm" data-cy="dish">
       <Image src={dish.photoUrl} alt={dish.name} width={500} height={500} className="aspect-square object-cover rounded-lg" />
       <div className="flex flex-col gap-2 p-4">
-        <div className="relative flex justify-between gap-4">
-          <h3 className="text-xl font-semibold">{dish.name}</h3>
+        <div className="relative flex items-center justify-between gap-4">
+          <h5>{dish.name}</h5>
           { // Don't display menu options for anyone other than the list owner / collaborator
             isOwnerOrCollaborator && (
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                className="size-9 cursor-pointer" data-cy="dish-menu-modal-trigger"
+                className="menu-modal-expand" data-cy="dish-menu-modal-trigger"
                 onClick={() => setShowMenuModal(!showMenuModal)}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
               </svg>
@@ -186,12 +186,12 @@ export default function DishCard({
         <RatingDisplay rating={getAvgRating(dish.reviews)} />
         { // Display the review note if there is only one
           dish.reviews.length === 1 && (
-            <p className="whitespace-pre-line">{dish.reviews[0].note}</p>
+            <p className="description-sm whitespace-pre-line">{dish.reviews[0].note}</p>
           )
         }
         { // Display the number of reviews if there are multiple
           dish.reviews.length > 1 && (
-            <p className="w-fit whitespace-pre-line cursor-pointer hover:text-mauve transition-colors"
+            <p className="w-fit description-sm whitespace-pre-line cursor-pointer hover:text-mauve transition-colors"
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowAllReviews(true); }}>
               {dish.reviews.length} notes
             </p>
@@ -204,13 +204,15 @@ export default function DishCard({
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="modal-heading">Edit the dish</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => setShowEditModal(false)}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                  className="modal-close" data-cy="edit-dish-modal-close"
+                  onClick={() => setShowEditModal(false)}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
               <hr className="border-gray-300" />
               <form onSubmit={handleSubmit} className="p-4 flex flex-col">
-                <label htmlFor="dish-name" className="pb-1 font-semibold">Name</label>
+                <label htmlFor="dish-name">Name</label>
                 <input id="dish-name" name="dish-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
                   className="w-full input" autoComplete="off" />
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
@@ -228,20 +230,22 @@ export default function DishCard({
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="modal-heading">Review the dish</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => setShowReviewModal(false)}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                  className="modal-close" data-cy="review-dish-modal-close"
+                  onClick={() => setShowReviewModal(false)}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
               <hr className="border-gray-300" />
               <form onSubmit={handleReviewSubmit} className="p-4 flex flex-col">
-                <label htmlFor="dish-rating" className="pb-1 font-semibold">Rating</label>
+                <label htmlFor="dish-rating">Rating</label>
                 <div id="dish-rating" className="w-fit mb-6" onMouseEnter={() => setRatingHover(true)} onMouseLeave={() => setRatingHover(false)}>
                   {ratingHover
                     ? <RatingSystem currRating={rating} setNewRating={newRating => setRating(newRating)} />
                     : <RatingDisplay rating={rating} />
                   }
                 </div>
-                <label htmlFor="dish-note" className="pb-1 font-semibold">Note</label>
+                <label htmlFor="dish-note">Note</label>
                 <textarea id="dish-note" name="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="input"></textarea>
                 <button type="submit" className="button-primary" data-cy="add-review-submit">
@@ -256,7 +260,7 @@ export default function DishCard({
         showDeleteAlert && (
           <div className="modal" data-cy="delete-dish-modal">
             <div role="alert" className="modal-alert-inner">
-              <h3 className="modal-alert-heading">Are you sure you want to delete this dish?</h3>
+              <h4 className="modal-heading">Are you sure you want to delete this dish?</h4>
               <div className="flex gap-4">
                 <button type="button" data-cy="delete-dish-button" className="button-primary" onClick={() => { deleteDish(restaurant._id, dish._id) }}>
                   Yes
@@ -274,12 +278,14 @@ export default function DishCard({
           <div className="modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between gap-2">
-                <h2 className="modal-heading">Reviews for {dish.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-9 min-w-[36px] cursor-pointer" onClick={() => { setShowAllReviews(false); }}>
+                <h3 className="modal-heading">Reviews for {dish.name}</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                  className="modal-close" 
+                  onClick={() => { setShowAllReviews(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
-              <hr className="border-slategray" />
+              <hr className="border-lightgray" />
               <div className="review-cards">
                 {dish.reviews.map((review: Review, index: number) => (
                   <ReviewCard key={index} index={index} review={review} />

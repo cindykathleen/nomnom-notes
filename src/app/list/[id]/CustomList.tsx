@@ -47,15 +47,15 @@ export default async function CustomList({ userId, listId, query }: { userId: st
       <div className="full-screen-page-layout-inner space-y-6 xl:space-y-8">
         { // Don't display private pages for anyone other than the list owner / collaborator
           isOwnerOrCollaborator && (
-            <div className="flex flex-wrap gap-2">
-              <Link href="/" className="link">
+            <div className="breadcrumb flex flex-wrap gap-2">
+              <Link href="/lists" className="link">
                 Lists
               </Link>
-              <p className="font-semibold">/</p>
+              <p>/</p>
               <p>{list.name}</p>
             </div>
           )}
-        <h1 className="page-heading">{list.name}</h1>
+        <h2>{list.name}</h2>
         <div className="min-h-0 flex flex-1 gap-8 overflow-y-auto">
           <RestaurantDisplay
             userId={userId}

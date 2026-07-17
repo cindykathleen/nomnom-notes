@@ -69,16 +69,16 @@ export default function RestaurantCard({
             className="h-[100px] w-[100px] self-center aspect-square object-cover rounded-lg"
           />
           <div className="flex flex-col flex-1 gap-1">
-            <h3 className="text-lg font-semibold md:text-lg">{restaurant.name}</h3>
+            <h5>{restaurant.name}</h5>
             <RatingDisplay rating={getAvgRating(restaurant.reviews)} />
             { // Display the review note if there is only one
               restaurant.reviews.length === 1 && (
-                <p className="text-md whitespace-pre-line">{restaurant.reviews[0].note}</p>
+                <p className="description-sm whitespace-pre-line">{restaurant.reviews[0].note}</p>
               )
             }
             { // Display the number of reviews if there are multiple
               restaurant.reviews.length > 1 && (
-                <p className="w-fit text-md hover:text-mauve transition-colors"
+                <p className="w-fit description-sm hover:text-mauve transition-colors"
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowAllReviews(true); }}>
                   {restaurant.reviews.length} notes
                 </p>
@@ -88,7 +88,7 @@ export default function RestaurantCard({
           { // Don't display menu options for anyone other than the list owner
             isOwnerOrCollaborator && (
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                className="size-8 cursor-pointer" data-cy="restaurant-menu-modal-trigger"
+                className="shrink-0 size-8 cursor-pointer" data-cy="restaurant-menu-modal-trigger"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(!showMenuModal); }}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
               </svg>
@@ -96,7 +96,7 @@ export default function RestaurantCard({
           }
           { // Modal for menu options
             showMenuModal && (
-              <div className="menu-modal right-4 top-12 md:right-8 md:top-16" data-cy="restaurant-menu-modal">
+              <div className="menu-modal right-4 top-12 md:right-4 md:top-12" data-cy="restaurant-menu-modal">
                 <button data-cy="review-restaurant-modal-trigger" className="menu-modal-item"
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenuModal(false); setShowReviewModal(true); }}
                 >
@@ -118,20 +118,20 @@ export default function RestaurantCard({
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="modal-heading">Review {restaurant.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { setShowReviewModal(false); }}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="modal-close" onClick={() => { setShowReviewModal(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
-              <hr className="border-slategray" />
+              <hr className="border-lightgray" />
               <form className="p-4 flex flex-col" onSubmit={handleSubmit}>
-                <label htmlFor="restaurant-rating" className="pb-1 font-semibold">Rating</label>
+                <label htmlFor="restaurant-rating">Rating</label>
                 <div id="restaurant-rating" className="w-fit mb-6" onMouseEnter={() => setRatingHover(true)} onMouseLeave={() => setRatingHover(false)}>
                   {ratingHover
                     ? <RatingSystem currRating={rating} setNewRating={newRating => setRating(newRating)} />
                     : <RatingDisplay rating={rating} />
                   }
                 </div>
-                <label htmlFor="restaurant-note" className="pb-1 font-semibold">Note</label>
+                <label htmlFor="restaurant-note">Note</label>
                 <textarea id="restaurant-note" name="restaurant-note" placeholder="Add a note for this restaurant" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="input"></textarea>
                 <button className="button-primary" data-cy="add-review-submit">
@@ -146,7 +146,7 @@ export default function RestaurantCard({
         showDeleteAlert && (
           <div className="modal" data-cy="delete-restaurant-modal">
             <div role="alert" className="modal-alert-inner">
-              <h3 className="modal-alert-heading">Are you sure you want to delete this restaurant?</h3>
+              <h4 className="modal-heading">Are you sure you want to delete this restaurant?</h4>
               <div className="flex gap-4">
                 <button type="button" data-cy="delete-restaurant-button" className="button-primary"
                   onClick={async () => {
@@ -169,12 +169,14 @@ export default function RestaurantCard({
           <div className="modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h2 className="modal-heading">Reviews for {restaurant.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 min-w-[24px] cursor-pointer lg:size-9 lg:min-w-[36px]" onClick={() => { setShowAllReviews(false); }}>
+                <h3 className="modal-heading">Reviews for {restaurant.name}</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                  className="modal-close"
+                  onClick={() => { setShowAllReviews(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
-              <hr className="border-slategray" />
+              <hr className="border-lightgray" />
               <div className="review-cards">
                 {restaurant.reviews.map((review: Review, index: number) => (
                   <ReviewCard key={index} index={index} review={review} />

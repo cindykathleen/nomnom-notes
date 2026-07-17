@@ -9,10 +9,9 @@ export const SignInButton: React.FC<Props> = ({ disabled }) => {
 
   return (
     <button type="submit" disabled={disabled}
-      className={`w-full py-2 text-snowwhite font-bold rounded-lg 
-      ${disabled
-        ? 'bg-lightgray cursor-not-allowed'
-        : 'bg-darkpink cursor-pointer hover:bg-mauve transition-colors'
+      className={`${disabled
+        ? 'button-disabled'
+        : 'button-primary'
       }`}>
       {pending
         ? (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="block m-auto size-6 animate-spin" >

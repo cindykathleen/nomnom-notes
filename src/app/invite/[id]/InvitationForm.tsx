@@ -5,7 +5,7 @@ import { User, List } from '@/app/interfaces/interfaces';
 import { acceptInvitation, declineInvitation } from '@/app/actions/invitation';
 
 export default function InvitationForm({ user, owner, list, token }: { user: User, owner: User, list: List, token: string }) {
-  const [heading, setHeading] = useState<string>('Share your notes');
+  const [heading, setHeading] = useState<string>('Share Your Notes');
   const [message, setMessage] = useState<string | React.ReactNode>(`${owner.name} has invited you to collaborate on their list, ${list.name}.`);
   const [showButtons, setShowButtons] = useState<boolean>(true);
 
@@ -15,12 +15,12 @@ export default function InvitationForm({ user, owner, list, token }: { user: Use
     setShowButtons(false);
 
     if ('error' in invitation) {
-      setHeading('Error accepting invitation');
+      setHeading('Error Accepting Invitation');
       setMessage(`${invitation.error}`);
       return;
     }
 
-    setHeading('You have accepted the invitation');
+    setHeading('You Have Accepted the Invitation');
     setMessage(
       <>
         <a href={`/list/${list._id}`}
@@ -38,30 +38,26 @@ export default function InvitationForm({ user, owner, list, token }: { user: Use
     setShowButtons(false);
 
     if ('error' in invitation) {
-      setHeading('Error declining invitation');
+      setHeading('Error Declining Invitation');
       setMessage(`${invitation.error}`);
       return;
     }
 
-    setHeading('You have declined the invitation');
+    setHeading('You Have Declined the Invitation');
     setMessage('Please contact the list owner if you change your mind.');
   }
 
   return (
     <div className="form-layout space-y-4 text-center">
-      <h2 className="text-2xl font-semibold xl:text-3xl">{heading}</h2>
-      <p className="text-lg xl:text-xl">{message}</p>
+      <h3 className="form-heading">{heading}</h3>
+      <p className="form-description description">{message}</p>
       { // Show buttons only if the invitation hasn't been responded to yet
         showButtons && (
           <div className="flex items-center justify-center gap-4">
-            <button type="button"
-              className="px-8 py-1.5 text-sm text-snowwhite font-semibold text-center bg-darkpink rounded-lg cursor-pointer hover:bg-mauve transition-colors"
-              onClick={handleAccept}>
+            <button type="button" className="button-primary" onClick={handleAccept}>
               Accept
             </button>
-            <button type="button"
-              className="px-8 py-1.5 text-sm text-darkpink font-semibold text-center bg-transparent border border-darkpink rounded-lg cursor-pointer hover:text-mauve hover:border-mauve transition-colors"
-              onClick={handleDecline}>
+            <button type="button" className="button-secondary" onClick={handleDecline}>
               Decline
             </button>
           </div>

@@ -21,7 +21,7 @@
 
 @theme inline {
   --input-shadow: 0 0 4px rgba(0,115,187,.3);
-  --modal-background: rgba(0,0,0,.8);
+  --modal-background: rgba(0,0,0,.4);
 }
 
 @layer components {
@@ -71,8 +71,12 @@
     @apply absolute p-2 w-[225px] top-[45px] right-0 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/5 rounded-xl md:w-[250px] md:top-[55px];
   }
   .nav-submenu li {
-    @apply p-2 flex gap-2 rounded-xl hover:bg-[#F5F5F5];
+    @apply p-2 flex gap-2 font-light rounded-xl hover:bg-[#F5F5F5];
   }
+  .breadcrumb a, .breadcrumb p {
+    @apply text-base font-extralight xl:text-lg;
+  }
+  
 
   /** headings **/ 
   h1 {
@@ -85,6 +89,9 @@
     @apply text-3xl font-light xl:text-4xl;
   }
   h4 {
+    @apply text-2xl font-light xl:text-3xl;
+  }
+  h5 {
     @apply text-lg font-normal xl:text-xl;
   }
   p.subheading {
@@ -96,19 +103,23 @@
   p.description-sm {
     @apply text-base font-extralight xl:text-lg;
   }
+  p.required,
+  p.review-user {
+    @apply mt-6 text-sm font-normal;
+  }
 
   /** buttons & links **/ 
   .button-primary {
-    @apply min-w-[100px] px-4 py-2 self-start text-snowwhite bg-darkpink rounded-[10px] cursor-pointer hover:bg-mauve transition-colors;
+    @apply min-w-[100px] px-4 py-2 text-snowwhite bg-darkpink rounded-[10px] cursor-pointer hover:bg-mauve transition-colors;
   }
   .button-secondary {
-    @apply min-w-[100px] px-4 py-2 self-start text-darkpink bg-transparent border border-darkpink rounded-[10px] cursor-pointer hover:text-mauve hover:border-mauve transition-colors;
+    @apply min-w-[100px] px-4 py-2 text-darkpink bg-transparent border border-darkpink rounded-[10px] cursor-pointer hover:text-mauve hover:border-mauve transition-colors;
   }
   .button-disabled {
-    @apply min-w-[100px] px-4 py-2 self-start text-charcoal bg-lightgray border border-lightgray rounded-[10px] cursor-not-allowed;
+    @apply min-w-[100px] px-4 py-2 text-charcoal bg-lightgray border border-lightgray rounded-[10px] cursor-not-allowed;
   }
   .link {
-    @apply font-semibold cursor-pointer hover:text-mauve transition-colors;
+    @apply font-normal! cursor-pointer hover:text-mauve transition-colors;
   }
   .link-cta {
     @apply inline-flex items-center gap-1 text-darkpink hover:text-mauve transition-colors;
@@ -121,6 +132,7 @@
   .cards-outline {
     @apply relative p-4 flex border border-lightgray rounded-3xl;
   }
+  
   .review-cards {
     @apply mt-6 grid gap-6 lg:grid-cols-2 lg:gap-8;
   }
@@ -145,7 +157,7 @@
     @apply hidden w-full md:flex md:gap-6 xl:w-1/5 xl:flex-col xl:gap-0;
   }
   .tab-title button {
-    @apply p-4 text-lg font-semibold text-center border-b-2 border-b-lightgray border-l-4 border-l-transparent cursor-pointer xl:text-left xl:border-b-1 xl:hover:bg-[#F5F5F5] transition-colors;
+    @apply p-4 text-lg font-normal text-center border-b-2 border-b-lightgray border-l-4 border-l-transparent cursor-pointer xl:text-left xl:border-b-1 xl:hover:bg-[#F5F5F5] transition-colors;
   }
   .tab-title button:first-of-type {
     @apply xl:border-t xl:border-t-lightgray;
@@ -160,7 +172,7 @@
     @apply w-full xl:w-4/5;
   }
   .tab-content-heading {
-    @apply hidden pb-6 text-2xl font-semibold xl:block xl:text-3xl;
+    @apply hidden pb-6 xl:block;
   }
   .tabs input {
     @apply border-lightgray focus:border-dustypink;
@@ -228,16 +240,19 @@
     @apply relative w-[90%] px-4 py-4 flex flex-col gap-4 bg-snowwhite rounded-lg overflow-scroll lg:w-2/5 lg:px-6 lg:py-8 xl:w-1/5;
   }
   .modal-heading {
-    @apply text-2xl font-semibold text-darkpink lg:text-3xl;
+    @apply text-darkpink;
   }
-  .modal-alert-heading {
-    @apply text-2xl font-semibold text-darkpink;
+  .modal-close {
+    @apply shrink-0 size-6 cursor-pointer lg:size-8;
   }
   .menu-modal {
-    @apply absolute min-w-30 p-2 flex flex-col gap-2 bg-snowwhite border border-lightgray rounded-sm z-99;
+    @apply absolute min-w-30 p-2 flex flex-col gap-2 bg-snowwhite border border-lightgray rounded-[10px] z-99;
   }
   .menu-modal-item {
-    @apply px-2 py-1 text-left rounded-sm cursor-pointer hover:bg-lightpink;
+    @apply px-2 py-1 text-left text-base font-light rounded-sm cursor-pointer hover:bg-lightpink xl:text-lg;
+  }
+  .menu-modal-expand {
+    @apply shrink-0 size-9 cursor-pointer;
   }
 
   /** forms **/ 
@@ -245,19 +260,29 @@
     @apply h-fit max-w-3xl px-8 py-6 bg-snowwhite rounded-3xl xl:px-12 xl:py-10;
   }
   .form-heading {
-    @apply pb-2 text-2xl font-semibold text-center xl:text-3xl;
+    @apply pb-2 text-center;
   }
-  .form-paragraph {
-    @apply pb-4 text-base font-semibold text-center;
+  .form-description {
+    @apply pb-4 text-center;
+  }
+  label, legend {
+    @apply block mb-1 font-normal;
   }
   .input {
     @apply h-[40px] px-4 py-3 mb-6 font-light border border-lightgray rounded-[10px] focus:outline-none focus:border-darkpink focus:shadow-(--input-shadow);
+  }
+  textarea {
+    @apply font-light;
   }
   textarea.input {
     @apply h-[100px] lg:h-auto
   }
   .input-file {
-    @apply file:px-3 file:py-1 file:mr-2 file:font-semibold file:border file:border-charcoal file:rounded-lg file:cursor-pointer;
+    @apply file:px-3 file:py-1 file:mr-2 file:font-light file:border file:border-lightgray file:rounded-lg file:cursor-pointer;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    @apply font-extralight;
   }
 
   /** profile page **/ 
@@ -265,16 +290,13 @@
     @apply relative px-8 py-6 flex flex-col gap-2 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/5 rounded-xl;
   }
   .profile-section-heading {
-    @apply pb-1 text-xl text-slategray font-semibold uppercase xl:pb-2 xl:text-2xl;
+    @apply pb-1 flex items-end justify-between xl:pb-2;
   }
   .profile-section-photos {
     @apply grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3;
   }
   .profile-section-highlights {
     @apply grid grid-cols-2 gap-2 sm:grid-cols-4;
-  }
-  .profile-section-highlights-text {
-    @apply pt-2 text-lg text-center line-clamp-1;
   }
 }
 

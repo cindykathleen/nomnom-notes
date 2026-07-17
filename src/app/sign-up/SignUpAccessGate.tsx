@@ -24,7 +24,7 @@ export const SignUpAccessGate = ({ signInUrl, owner }: { signInUrl: string, owne
     <>
       { // Display the sign-up access form 
         !isAllowed && (
-          <SignUpAccessForm handleAccessFormSubmit={handleAccessFormSubmit} errorMessage={errorMessage} />
+          <SignUpAccessForm handleAccessFormSubmit={handleAccessFormSubmit} errorMessage={errorMessage} clearErrorMessage={() => setErrorMessage('')} />
         )
       }
       { // Display the sign-up form if the user has passed the access gate

@@ -37,14 +37,11 @@ export default function Email({ user }: { user: User }) {
 
   return (
     <div>
-      <h3 className="tab-content-heading">Change your account email</h3>
+      <h4 className="tab-content-heading">Change Your Account Email</h4>
       <hr className="hidden border-lightgray xl:block" />
       <form onSubmit={handleSubmit} className="max-w-[700px] pt-2 flex flex-col xl:pt-8">
-        <div className="mb-6">
-          <span className="font-semibold">Current email address: </span>
-          <span>{user.email}</span>
-        </div>
-        <label htmlFor="user-email" className="pb-1 font-semibold">New email address</label>
+        <p className="mb-6 description-sm"><span className="font-normal">Current email address:</span> {user.email}</p>
+        <label htmlFor="user-email">New email address</label>
         <input id="user-email" name="user-email" type="email" value={inputEmail} onChange={(e) => setInputEmail(e.target.value)}
           className="w-full input" autoComplete="off" />
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">

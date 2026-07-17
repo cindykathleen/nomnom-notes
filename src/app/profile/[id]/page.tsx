@@ -30,28 +30,23 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       <Nav userId={currentUserId} />
       {!user && (
         <div className="page-layout">
-          <div className="page-layout-inner">
-            <h1 className="page-heading">Uh oh!</h1>
-            <p className="text-xl">We are not able to find the user you are looking for. Please double-check the user ID and try again.</p>
+          <div className="page-layout-inner gap-4 xl:gap-8">
+            <h1>Uh oh!</h1>
+            <p className="subheading">We are not able to find the user you are looking for. Please double-check the user ID and try again.</p>
           </div>
         </div>
       )}
       {user && (
         <div className="page-layout">
           <div className="page-layout-inner space-y-6 xl:space-y-8">
-            <Hero
-              user={user}
-              currentUserId={currentUserId}
-              isFollowing={isFollowing}
-              hasPendingRequest={hasPendingRequest}
-            />
+            <Hero user={user} currentUserId={currentUserId} isFollowing={isFollowing} hasPendingRequest={hasPendingRequest} />
             <hr className="border-lightgray" />
             {canViewDetails ? (
               <Suspense fallback={<ProfileLoading />}>
                 <ProfileDetails user={user} />
               </Suspense>
             ) : (
-              <p className="text-xl" data-cy="profile-privacy-message">
+              <p className="subheading" data-cy="profile-privacy-message">
                 This user turned on their profile privacy. Please request access from them.
               </p>
             )}

@@ -2,10 +2,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ProfileItem } from '@/app/interfaces/interfaces';
 
-export default async function Lists({ lists }: { lists: ProfileItem[] }) {
+export default async function Lists({ lists, stats }: { lists: ProfileItem[], stats: number }) {
   return (
     <div className="profile-section">
-      <h4 className="profile-section-heading">Lists</h4>
+      <div className="profile-section-heading">
+        <h4>Lists</h4>
+        <p className="description-sm link">View all ({stats})</p>
+      </div>
       { // Display lists if available
         lists.length > 0 && (
           <div className="profile-section-highlights">
@@ -14,7 +17,7 @@ export default async function Lists({ lists }: { lists: ProfileItem[] }) {
                 <Image src={list.photoUrl!} alt={list.name} width='300' height='300'
                   className="aspect-square object-cover rounded-sm"
                 />
-                <span className="profile-section-highlights-text">{list.name}</span>
+                <h5 className="pt-2 line-clamp-1">{list.name}</h5>
               </Link>
             ))}
           </div>
@@ -22,7 +25,7 @@ export default async function Lists({ lists }: { lists: ProfileItem[] }) {
       }
       { // Display an error message if no lists are found
         lists.length === 0 && (
-          <p className="text-lg">The user does not have any lists.</p>
+          <p className="description">The user does not have any lists.</p>
         )
       }
     </div>

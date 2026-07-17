@@ -77,14 +77,14 @@ export default function Profile({ user }: { user: User }) {
 
   return (
     <div>
-      <h3 className="tab-content-heading">Update your profile</h3>
+      <h4 className="tab-content-heading">Update Your Profile</h4>
       <hr className="hidden border-lightgray xl:block" />
       <form onSubmit={handleSubmit} className="pt-2 flex flex-col-reverse justify-between gap-8 md:flex-row md:items-center md:gap-16 xl:pt-8">
         <div className="w-full md:w-3/5 lg:w-[700px]">
-          <label htmlFor="user-name" className="block pb-1 font-semibold">Display name</label>
+          <label htmlFor="user-name">Display name</label>
           <input id="user-name" name="user-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
             className="w-full input" autoComplete="off" />
-          <label htmlFor="user-location" className="block pb-1 font-semibold">Location</label>
+          <label htmlFor="user-location">Location</label>
           <input id="user-location" name="user-location" type="text" value={inputLocation} onChange={(e) => setInputLocation(e.target.value)}
             className="w-full input" placeholder="City, State/Country" autoComplete="off" />
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">

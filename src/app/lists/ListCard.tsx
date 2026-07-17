@@ -167,15 +167,12 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
         <Image src={list.photoUrl} alt={list.name} width={500} height={500} className="aspect-square object-cover rounded-lg" />
       </Link>
       <div className="flex flex-col py-4">
-        <div className="relative flex justify-between gap-4">
+        <div className="relative flex items-center justify-between gap-4">
           <Link href={`/list/${list._id}`}>
-            <p>
-              <span className="text-2xl font-semibold">{list.name}</span>
-              <span className="text-lg capitalize"> ({role})</span>
-            </p>
+            <h5>{list.name}</h5>
           </Link>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-            className="size-9 min-w-[36px] cursor-pointer" data-cy="list-menu-modal-trigger"
+            className="menu-modal-expand" data-cy="list-menu-modal-trigger"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); dispatch({ type: 'showMenuModal' }); }}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
           </svg>
@@ -206,26 +203,25 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
             )
           }
         </div>
-        <p className="py-1 text-lg/6 whitespace-pre-line">{list.description}</p>
+        <p className="description-sm">{list.description}</p>
       </div>
       { // Modal for editing lists
         modalState.showEditModal && (
-          <div className="modal"
-            data-cy="edit-list-modal">
+          <div className="modal" data-cy="edit-list-modal">
             <div className="modal-inner">
               <div className="p-2 flex items-center justify-between lg:p-4">
                 <h2 className="modal-heading">Edit {list.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { dispatch({ type: 'showEditModal' }) }}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="modal-close" onClick={() => { dispatch({ type: 'showEditModal' }) }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
-              <hr className="border-slategray" />
+              <hr className="border-lightgray" />
               <form onSubmit={handleSubmit} className="px-2 py-4 flex flex-col lg:px-4">
-                <label htmlFor="list-name" className="pb-1 font-semibold">Name</label>
+                <label htmlFor="list-name">Name</label>
                 <input id="list-name" name="list-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
                   className="w-full input" autoComplete="off" />
                 <fieldset className="mb-4">
-                  <legend className="pb-1 font-semibold">Visibility</legend>
+                  <legend>Visibility</legend>
                   <label className="mr-4">
                     <input type="radio" name="list-visibility" value="private" className="mr-1"
                       checked={inputVisibility === 'private'} onChange={() => setInputVisibility('private')} />Private
@@ -235,11 +231,11 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
                       checked={inputVisibility === 'public'} onChange={() => setInputVisibility('public')} />Public
                   </label>
                 </fieldset>
-                <label htmlFor="list-description" className="pb-1 font-semibold">Description</label>
+                <label htmlFor="list-description">Description</label>
                 <textarea id="list-description" name="list-description" placeholder="Add a description for this list" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
                   className="input"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button type="submit" className="button-primary" data-cy="edit-list-submit">
+                <button type="submit" className="button-primary self-start" data-cy="edit-list-submit">
                   Update
                 </button>
               </form>
@@ -253,24 +249,27 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
             <div className="modal-inner">
               <div className="p-2 flex items-center justify-between lg:p-4">
                 <h2 className="modal-heading">Share {list.name}</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer lg:size-8" onClick={() => { dispatch({ type: 'showShareModal' }) }}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                  className="modal-close" data-cy="share-list-modal-close"
+                  onClick={() => { dispatch({ type: 'showShareModal' }) }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
-              <hr className="border-slategray" />
+              <hr className="border-lightgray" />
               <div className="px-2 py-4 flex flex-col lg:px-4">
-                <h4 className="mb-4 text-xl font-semibold">People with access</h4>
+                <h5 className="mb-4">People with access</h5>
                 {users.map((user: User) => (
                   <div key={user._id} className="w-full mb-2 flex items-center justify-between">
-                    <p>
-                      <span className="font-semibold">{user.name}</span>
-                      {user._id === list.owner && (<span className="font-semibold"> (you)</span>)}<br />
-                      <span className="opacity-75">{user.email}</span>
+                    <p className="description-sm">
+                      <span>{user.name}</span>
+                      {user._id === list.owner && (<span> (you)</span>)}<br />
+                      <span>{user.email}</span>
                     </p>
                     {user._id === list.owner && (<p className="opacity-75">Owner</p>)}
                     {user._id !== list.owner && (
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
-                        className="size-6 opacity-75 cursor-pointer" onClick={() => { setCollaboratorToRemove(user); }}>
+                        className="shrink-0 size-6 opacity-75 cursor-pointer" 
+                        onClick={() => { setCollaboratorToRemove(user); }}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                       </svg>
                     )}
@@ -279,7 +278,8 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
               </div>
               <div className="px-2 flex justify-between lg:px-4">
                 <button type="button" className="button-secondary flex items-center gap-1" onClick={handleShareClick}>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" 
+                    className="size-5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
                   </svg>
                   <span>Copy invitation link</span>
@@ -301,7 +301,7 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
         modalState.showDeleteAlert && (
           <div className="modal" data-cy="delete-list-modal">
             <div role="alert" className="modal-alert-inner">
-              <h3 className="modal-alert-heading">Are you sure you want to delete this list?</h3>
+              <h4 className="modal-heading">Are you sure you want to delete this list?</h4>
               <div className="flex gap-4">
                 <button type="button" data-cy="delete-list-button" className="button-primary" onClick={() => { deleteList(list._id) }}>
                   Yes
@@ -318,7 +318,7 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
         modalState.showRemoveAlert && (
           <div className="modal">
             <div role="alert" className="modal-alert-inner">
-              <h3 className="modal-alert-heading">Are you sure you want to remove this list?</h3>
+              <h4 className="modal-heading">Are you sure you want to remove this list?</h4>
               <div className="flex gap-4">
                 <button type="button" className="button-primary" onClick={() => { removeList(userId, list._id) }}>
                   Yes
@@ -335,7 +335,7 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
         collaboratorToRemove && (
           <div className="modal">
             <div role="alert" className="modal-alert-inner">
-              <h3 className="modal-alert-heading">Are you sure you want to remove this user as a collaborator?</h3>
+              <h4 className="modal-heading">Are you sure you want to remove this user as a collaborator?</h4>
               <div className="flex gap-4">
                 <button type="button" className="button-primary" onClick={() => { removeUser(collaboratorToRemove._id, list._id); setCollaboratorToRemove(null); }}>
                   Yes

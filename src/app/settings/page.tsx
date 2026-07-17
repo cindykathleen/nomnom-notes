@@ -14,14 +14,14 @@ export default async function Page() {
         <div className="page-layout-inner space-y-6 xl:space-y-8">
           { user && (
             <>
-              <h1 className="page-heading">Account settings</h1>
+              <h2>Account Settings</h2>
               <Tabs user={user} />
             </>
           )}
           { !user && (
             <>
-              <h1 className="page-heading">Uh oh!</h1>
-              <p className="text-xl">We are not able to load your account information. Please try again.</p>
+              <h2>Uh oh!</h2>
+              <p className="subheading">We are not able to load your account information. Please try again.</p>
             </>
           )}
         </div>

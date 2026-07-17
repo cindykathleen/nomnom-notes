@@ -14,10 +14,10 @@ export default function Profile({ user }: { user: User }) {
 
   return (
     <div>
-      <h3 className="tab-content-heading">Set your profile privacy</h3>
+      <h4 className="tab-content-heading">Set Your Profile Privacy</h4>
       <hr className="hidden border-lightgray xl:block" />
       <div className="pt-2 flex gap-4 items-center xl:pt-8">
-        <span className="text-lg">Private profile</span>
+        <p className="description-sm font-normal">Private profile</p>
         <label className="toggle-switch">
           <input type="checkbox" checked={isPrivate} onChange={(e) => handleChange(e.target.checked)} />
           <span className="slider" />
