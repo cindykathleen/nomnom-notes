@@ -1,6 +1,6 @@
 import getDb from './db';
 import { Db } from 'mongodb';
-import { User, List, Restaurant, Dish, Place, SearchResult, Invitation, ProfileItem } from '@/app/interfaces/interfaces';
+import { User, List, Restaurant, Dish, Place, SearchResult, Invitation, ProfileItem, ActivityItem, ActivityType } from '@/app/interfaces/interfaces';
 
 async function db() {
   return await getDb();
@@ -812,4 +812,88 @@ export async function getProfileData(userId: string) {
     restaurants: profileRestaurants,
     reviews: profileReviews,
   };
+}
+
+// Activity functions
+const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+
+export async function ensureActivityIndexes() {
+  const database: Db = await db();
+  const activities = database.collection<ActivityItem>('activities');
+
+  await activities.createIndex({ userId: 1, createdAt: -1 });
+  await activities.createIndex({ userId: 1, restaurantId: 1, type: 1, createdAt: -1 });
+}
+
+export async function addActivityDb(activity: ActivityItem) {
+  const database: Db = await db();
+
+  await database.collection<ActivityItem>('activities').insertOne(activity);
+}
+
+export async function getActivityDb(activityId: string): Promise<ActivityItem | null> {
+  const database: Db = await db();
+
+  return await database.collection<ActivityItem>('activities').findOne({ _id: activityId });
+}
+
+export async function updateActivityDb(activity: ActivityItem) {
+  const database: Db = await db();
+
+  await database.collection<ActivityItem>('activities').replaceOne(
+    { _id: activity._id },
+    activity
+  );
+}
+
+export async function deleteActivityDb(activityId: string) {
+  const database: Db = await db();
+
+  await database.collection<ActivityItem>('activities').deleteOne({ _id: activityId });
+}
+
+export async function getActivitiesByUserIdsDb(
+  userIds: string[],
+  options: { limit?: number; before?: Date } = {}
+): Promise<ActivityItem[]> {
+  const database: Db = await db();
+  const { limit = 10, before } = options;
+
+  if (userIds.length === 0) {
+    return [];
+  }
+
+  const filter: { userId: { $in: string[] }; createdAt?: { $lt: Date } } = {
+    userId: { $in: userIds },
+  };
+
+  if (before) {
+    filter.createdAt = { $lt: before };
+  }
+
+  return await database
+    .collection<ActivityItem>('activities')
+    .find(filter)
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .toArray();
+}
+
+export async function findOpenReviewBatchDb(
+  userId: string,
+  restaurantId: string,
+  windowMs: number = TWO_HOURS_MS
+): Promise<ActivityItem | null> {
+  const database: Db = await db();
+  const windowStart = new Date(Date.now() - windowMs);
+
+  return await database.collection<ActivityItem>('activities').findOne(
+    {
+      userId,
+      restaurantId,
+      type: ActivityType.REVIEWS_BATCHED,
+      windowStartedAt: { $gte: windowStart },
+    },
+    { sort: { createdAt: -1 } }
+  );
 }

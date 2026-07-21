@@ -17,7 +17,10 @@ import {
   isFollowingDb, followUserDb, unfollowUserDb,
   hasPendingFollowRequestDb, requestFollowDb, approveFollowRequestDb, denyFollowRequestDb,
   getUsersByIds,
+  ensureActivityIndexes, addActivityDb, getActivityDb, updateActivityDb, deleteActivityDb,
+  getActivitiesByUserIdsDb, findOpenReviewBatchDb,
 } from './dbFunctions';
+import { ActivityType } from '@/app/interfaces/interfaces';
 
 dotenv.config({ path: '.env.test' });
 
@@ -454,3 +457,158 @@ describe('Follow requests', () => {
     expect(users.map((u) => u._id).sort()).toEqual(['user-1-test', 'user-2-test']);
   })
 })
+
+describe('activities', () => {
+  beforeAll(async () => {
+    await ensureActivityIndexes();
+  });
+
+  it('addActivityDb and getActivityDb round-trip a LIST_CREATED activity', async () => {
+    const activity = {
+      _id: 'activity-list-1-test',
+      userId: 'user-1-test',
+      type: ActivityType.LIST_CREATED,
+      createdAt: new Date('2026-07-20T15:00:00.000Z'),
+      listId: 'list-1-test',
+    };
+
+    await addActivityDb(activity);
+
+    const found = await getActivityDb('activity-list-1-test');
+    expect(found).not.toBeNull();
+    expect(found?._id).toBe('activity-list-1-test');
+    expect(found?.type).toBe(ActivityType.LIST_CREATED);
+    expect(found?.userId).toBe('user-1-test');
+    expect(found?.listId).toBe('list-1-test');
+  });
+
+  it('updateActivityDb replaces activity fields', async () => {
+    const updated = {
+      _id: 'activity-list-1-test',
+      userId: 'user-1-test',
+      type: ActivityType.LIST_CREATED,
+      createdAt: new Date('2026-07-20T16:00:00.000Z'),
+      listId: 'list-2-test',
+    };
+
+    await updateActivityDb(updated);
+
+    const found = await getActivityDb('activity-list-1-test');
+    expect(found?.listId).toBe('list-2-test');
+    expect(found?.createdAt).toEqual(new Date('2026-07-20T16:00:00.000Z'));
+  });
+
+  it('deleteActivityDb removes an activity', async () => {
+    await deleteActivityDb('activity-list-1-test');
+    expect(await getActivityDb('activity-list-1-test')).toBeNull();
+  });
+
+  it('getActivitiesByUserIdsDb filters by user, sorts newest first, and respects limit', async () => {
+    await addActivityDb({
+      _id: 'activity-a-test',
+      userId: 'user-1-test',
+      type: ActivityType.LIST_CREATED,
+      createdAt: new Date('2026-07-20T10:00:00.000Z'),
+      listId: 'list-1-test',
+    });
+    await addActivityDb({
+      _id: 'activity-b-test',
+      userId: 'user-1-test',
+      type: ActivityType.RESTAURANT_SAVED,
+      createdAt: new Date('2026-07-20T12:00:00.000Z'),
+      listId: 'list-1-test',
+      restaurantId: 'restaurant-1-test',
+    });
+    await addActivityDb({
+      _id: 'activity-c-test',
+      userId: 'user-2-test',
+      type: ActivityType.LIST_JOINED,
+      createdAt: new Date('2026-07-20T14:00:00.000Z'),
+      listId: 'list-1-test',
+    });
+    await addActivityDb({
+      _id: 'activity-d-test',
+      userId: 'user-1-test',
+      type: ActivityType.DISH_REVIEWED,
+      createdAt: new Date('2026-07-20T11:00:00.000Z'),
+      restaurantId: 'restaurant-1-test',
+      dishId: 'dish-1-test',
+    });
+
+    const forUser1 = await getActivitiesByUserIdsDb(['user-1-test'], { limit: 10 });
+    expect(forUser1.map((a) => a._id)).toEqual([
+      'activity-b-test',
+      'activity-d-test',
+      'activity-a-test',
+    ]);
+
+    const limited = await getActivitiesByUserIdsDb(['user-1-test'], { limit: 2 });
+    expect(limited).toHaveLength(2);
+    expect(limited.map((a) => a._id)).toEqual(['activity-b-test', 'activity-d-test']);
+
+    const forBoth = await getActivitiesByUserIdsDb(['user-1-test', 'user-2-test'], { limit: 10 });
+    expect(forBoth.map((a) => a._id)).toEqual([
+      'activity-c-test',
+      'activity-b-test',
+      'activity-d-test',
+      'activity-a-test',
+    ]);
+
+    const beforeCursor = await getActivitiesByUserIdsDb(['user-1-test'], {
+      limit: 10,
+      before: new Date('2026-07-20T12:00:00.000Z'),
+    });
+    expect(beforeCursor.map((a) => a._id)).toEqual(['activity-d-test', 'activity-a-test']);
+
+    expect(await getActivitiesByUserIdsDb([], { limit: 10 })).toEqual([]);
+  });
+
+  it('findOpenReviewBatchDb returns in-window batch and null when outside or wrong restaurant', async () => {
+    const now = Date.now();
+
+    await addActivityDb({
+      _id: 'activity-batch-open-test',
+      userId: 'user-1-test',
+      type: ActivityType.REVIEWS_BATCHED,
+      createdAt: new Date(now - 30 * 60 * 1000),
+      windowStartedAt: new Date(now - 30 * 60 * 1000),
+      restaurantId: 'restaurant-1-test',
+      dishIds: ['dish-1-test', 'dish-2-test'],
+      includesRestaurantReview: true,
+    });
+
+    await addActivityDb({
+      _id: 'activity-batch-expired-test',
+      userId: 'user-1-test',
+      type: ActivityType.REVIEWS_BATCHED,
+      createdAt: new Date(now - 3 * 60 * 60 * 1000),
+      windowStartedAt: new Date(now - 3 * 60 * 60 * 1000),
+      restaurantId: 'restaurant-1-test',
+      dishIds: ['dish-1-test'],
+    });
+
+    await addActivityDb({
+      _id: 'activity-batch-other-rest-test',
+      userId: 'user-1-test',
+      type: ActivityType.REVIEWS_BATCHED,
+      createdAt: new Date(now - 15 * 60 * 1000),
+      windowStartedAt: new Date(now - 15 * 60 * 1000),
+      restaurantId: 'restaurant-2-test',
+      dishIds: ['dish-3-test'],
+    });
+
+    const open = await findOpenReviewBatchDb('user-1-test', 'restaurant-1-test');
+    expect(open?._id).toBe('activity-batch-open-test');
+
+    const wrongRestaurant = await findOpenReviewBatchDb('user-1-test', 'restaurant-2-test');
+    expect(wrongRestaurant?._id).toBe('activity-batch-other-rest-test');
+
+    const noMatch = await findOpenReviewBatchDb('user-2-test', 'restaurant-1-test');
+    expect(noMatch).toBeNull();
+
+    // Expired batch only: delete the open one and confirm lookup misses the 3h-old batch
+    await deleteActivityDb('activity-batch-open-test');
+    expect(await findOpenReviewBatchDb('user-1-test', 'restaurant-1-test')).toBeNull();
+  });
+})
+

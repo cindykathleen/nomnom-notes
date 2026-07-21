@@ -102,6 +102,9 @@ export interface ActivityItem {
   listId?: string;
   restaurantId?: string;
   dishId?: string;
+  windowStartedAt?: Date;
+  dishIds?: string[];
+  includesRestaurantReview?: boolean;
 }
 
 export enum ActivityType {
@@ -110,4 +113,5 @@ export enum ActivityType {
   RESTAURANT_SAVED = "RESTAURANT_SAVED",
   RESTAURANT_REVIEWED = "RESTAURANT_REVIEWED",
   DISH_REVIEWED = "DISH_REVIEWED",
+  REVIEWS_BATCHED = "REVIEWS_BATCHED",
 }
