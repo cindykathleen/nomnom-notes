@@ -897,3 +897,22 @@ export async function findOpenReviewBatchDb(
     { sort: { createdAt: -1 } }
   );
 }
+
+export async function findRecentSingleReviewActivityDb(
+  userId: string,
+  restaurantId: string,
+  windowMs: number = TWO_HOURS_MS
+): Promise<ActivityItem | null> {
+  const database: Db = await db();
+  const windowStart = new Date(Date.now() - windowMs);
+
+  return await database.collection<ActivityItem>('activities').findOne(
+    {
+      userId,
+      restaurantId,
+      type: { $in: [ActivityType.RESTAURANT_REVIEWED, ActivityType.DISH_REVIEWED] },
+      createdAt: { $gte: windowStart },
+    },
+    { sort: { createdAt: -1 } }
+  );
+}

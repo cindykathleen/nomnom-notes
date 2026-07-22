@@ -80,7 +80,7 @@ export default function DishCard({
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    await updateReview(formData, userId, dish._id, rating);
+    await updateReview(formData, userId, dish._id, rating, restaurant._id);
     setShowReviewModal(false);
   }
 
