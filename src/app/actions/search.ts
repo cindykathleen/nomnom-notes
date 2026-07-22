@@ -1,9 +1,10 @@
 'use server';
 
 import { getSearchResults, addSearchResult, addRestaurant } from '@/app/lib/dbFunctions';
+import { recordActivity } from '@/app/lib/recordActivity';
 import checkRate from '@/app/lib/checkRate';
 import { searchPlace } from '@/app/lib/GooglePlacesAPI';
-import { Place, Restaurant, SearchQueryResult } from '@/app/interfaces/interfaces';
+import { ActivityType, Place, Restaurant, SearchQueryResult } from '@/app/interfaces/interfaces';
 import { getGooglePhoto } from './images';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -42,7 +43,7 @@ export const searchQuery = async (
   return { kind: 'success', places: searchedPlaces };
 }
 
-export const addPlace = async (listId: string, place: Place) => {
+export const addPlace = async (listId: string, place: Place, userId: string) => {
   // TODO: Check if the restaurant is already in the list
 
   // Get the restaurant cover photo from Google
@@ -74,4 +75,10 @@ export const addPlace = async (listId: string, place: Place) => {
   }
 
   await addRestaurant(listId, newRestaurant);
+  await recordActivity({
+    userId,
+    type: ActivityType.RESTAURANT_SAVED,
+    listId,
+    restaurantId: newRestaurant._id,
+  });
 }

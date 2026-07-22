@@ -2,7 +2,8 @@
 
 import { addInvitation, getInvitationByToken, 
   acceptInvitationDb, declineInvitationDb } from '@/app/lib/dbFunctions';
-import { Invitation } from "@/app/interfaces/interfaces";
+import { recordActivity } from '@/app/lib/recordActivity';
+import { ActivityType, Invitation } from "@/app/interfaces/interfaces";
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -43,7 +44,13 @@ export const checkInvitation = async (token: string) => {
 
 export const acceptInvitation = async (userId: string, token: string) => {
   try {
+    const invitation = await getInvitationByToken(token);
     await acceptInvitationDb(userId, token);
+    await recordActivity({
+      userId,
+      type: ActivityType.LIST_JOINED,
+      listId: invitation.listId,
+    });
     return { success: true };
   } catch (err: any) {
     return { error: err?.response?.data?.message || err.message || 'Error accepting invitation' };
