@@ -2,6 +2,7 @@
 
 import { getExistingRestaurantReview, getUserName, getRestaurant,
   updateRestaurantDb, deleteRestaurantDb } from '@/app/lib/dbFunctions';
+import { recordReviewActivity } from '@/app/lib/recordReviewActivity';
 import { Restaurant, Review } from "@/app/interfaces/interfaces";
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
@@ -64,6 +65,12 @@ export const updateRestaurant = async (userId: string, restaurantId: string, upd
     };
 
     await updateRestaurantDb(updatedRestaurant);
+    await recordReviewActivity({
+      userId,
+      restaurantId,
+      kind: 'restaurant',
+      isNewReview: !existingReview,
+    });
     revalidatePath('/list');
     return { message: 'Restaurant updated successfully' };
   } catch (err) {

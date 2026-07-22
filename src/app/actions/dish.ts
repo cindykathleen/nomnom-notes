@@ -3,6 +3,7 @@
 import { getRestaurant, getHighestDishIndex, 
   addDishDb, getDish, updateDishDb, deleteDishDb, getExistingDishReview,
   moveDishDb, getUserName } from '@/app/lib/dbFunctions';
+import { recordReviewActivity } from '@/app/lib/recordReviewActivity';
 import { Dish, Review } from '@/app/interfaces/interfaces';
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
@@ -68,7 +69,13 @@ export const updateDish = async (formData: FormData, dishId: string, photoUrl: s
   }
 }
 
-export const updateReview = async (formData: FormData, userId: string, dishId: string, rating: number) => {
+export const updateReview = async (
+  formData: FormData,
+  userId: string,
+  dishId: string,
+  rating: number,
+  restaurantId: string
+) => {
   const note = formData.get('dish-note') as string;
 
   const existingDish = await getDish(dishId);
@@ -118,6 +125,13 @@ export const updateReview = async (formData: FormData, userId: string, dishId: s
 
   try {
     await updateDishDb(updatedDish);
+    await recordReviewActivity({
+      userId,
+      restaurantId,
+      kind: 'dish',
+      dishId,
+      isNewReview: !existingReview,
+    });
     revalidatePath('/restaurant');
     return { message: 'Dish updated successfully' };
   } catch (err) {
