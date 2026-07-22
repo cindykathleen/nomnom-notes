@@ -59,7 +59,7 @@ export default function SearchResults({ userId, listId, query }: { userId: strin
   }
 
   const handleClick = async (place: Place) => {
-    await addPlace(listId, place);
+    await addPlace(listId, place, userId);
     setPlaceId(place._id);
     setShowConfirmation(true);
   }

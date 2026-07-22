@@ -2,7 +2,8 @@
 
 import { addListDb, getList, updateListDb, deleteListDb,
   removeListDb, moveListDb } from '@/app/lib/dbFunctions';
-import { List } from "@/app/interfaces/interfaces";
+import { recordActivity } from '@/app/lib/recordActivity';
+import { ActivityType, List } from "@/app/interfaces/interfaces";
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -25,6 +26,11 @@ export const addList = async (userId: string, formData: FormData, photoUrl: stri
 
   try {
     await addListDb(userId, newList);
+    await recordActivity({
+      userId,
+      type: ActivityType.LIST_CREATED,
+      listId: newList._id,
+    });
     revalidatePath('/');
     return { message: 'List added successfully' };
   } catch (err) {
