@@ -3,6 +3,7 @@
 import { addListDb, getList, updateListDb, deleteListDb,
   removeListDb, moveListDb } from '@/app/lib/dbFunctions';
 import { recordActivity } from '@/app/lib/recordActivity';
+import { removeActivitiesForList, removeListJoinedActivity } from '@/app/lib/removeActivity';
 import { ActivityType, List } from "@/app/interfaces/interfaces";
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
@@ -70,6 +71,7 @@ export const updateList = async (formData: FormData, listId: string, photoUrl: s
 export const deleteList = async (listId: string) => {
   try {
     await deleteListDb(listId);
+    await removeActivitiesForList(listId);
     revalidatePath('/');
     return { message: 'List deleted successfully' };
   } catch (err) {
@@ -80,6 +82,7 @@ export const deleteList = async (listId: string) => {
 export const removeList = async (userId: string, listId: string) => {
   try {
     await removeListDb(userId, listId);
+    await removeListJoinedActivity(userId, listId);
     revalidatePath('/');
     return { message: 'List removed successfully' };
   } catch (err) {

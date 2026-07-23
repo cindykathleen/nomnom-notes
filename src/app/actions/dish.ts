@@ -4,6 +4,7 @@ import { getRestaurant, getHighestDishIndex,
   addDishDb, getDish, updateDishDb, deleteDishDb, getExistingDishReview,
   moveDishDb, getUserName } from '@/app/lib/dbFunctions';
 import { recordReviewActivity } from '@/app/lib/recordReviewActivity';
+import { removeDishFromReviewActivities } from '@/app/lib/removeActivity';
 import { Dish, Review } from '@/app/interfaces/interfaces';
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
@@ -142,6 +143,7 @@ export const updateReview = async (
 export const deleteDish = async (restaurantId: string, dishId: string) => {
   try {
     await deleteDishDb(restaurantId, dishId);
+    await removeDishFromReviewActivities(dishId);
     revalidatePath('/restaurant');
     return { message: 'Dish deleted successfully' };
   } catch (err) {
