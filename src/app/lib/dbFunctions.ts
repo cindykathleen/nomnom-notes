@@ -283,6 +283,19 @@ export async function getList(listId: string) {
   return await database.collection<List>('lists').findOne({ _id: listId });
 }
 
+export async function getListsByIds(listIds: string[]): Promise<List[]> {
+  if (listIds.length === 0) {
+    return [];
+  }
+
+  const database: Db = await db();
+
+  return await database
+    .collection<List>('lists')
+    .find({ _id: { $in: listIds } })
+    .toArray();
+}
+
 export async function getListByRestaurantId(restaurantId: string) {
   const database: Db = await db();
 
@@ -406,6 +419,19 @@ export async function getRestaurant(restaurantId: string) {
   return await database.collection<Restaurant>('restaurants').findOne({ _id: restaurantId });
 }
 
+export async function getRestaurantsByIds(restaurantIds: string[]): Promise<Restaurant[]> {
+  if (restaurantIds.length === 0) {
+    return [];
+  }
+
+  const database: Db = await db();
+
+  return await database
+    .collection<Restaurant>('restaurants')
+    .find({ _id: { $in: restaurantIds } })
+    .toArray();
+}
+
 export async function addRestaurant(listId: string, restaurant: Restaurant) {
   const database: Db = await db();
 
@@ -449,6 +475,19 @@ export async function getDish(dishId: string) {
   const database: Db = await db();
 
   return await database.collection<Dish>('dishes').findOne({ _id: dishId });
+}
+
+export async function getDishesByIds(dishIds: string[]): Promise<Dish[]> {
+  if (dishIds.length === 0) {
+    return [];
+  }
+
+  const database: Db = await db();
+
+  return await database
+    .collection<Dish>('dishes')
+    .find({ _id: { $in: dishIds } })
+    .toArray();
 }
 
 export async function addDishDb(restaurantId: string, dish: Dish) {
