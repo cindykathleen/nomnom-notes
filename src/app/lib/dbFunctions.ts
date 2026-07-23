@@ -916,3 +916,39 @@ export async function findRecentSingleReviewActivityDb(
     { sort: { createdAt: -1 } }
   );
 }
+
+export async function deleteActivitiesByListIdDb(listId: string) {
+  const database: Db = await db();
+
+  await database.collection<ActivityItem>('activities').deleteMany({ listId });
+}
+
+export async function deleteListJoinedActivityDb(userId: string, listId: string) {
+  const database: Db = await db();
+
+  await database.collection<ActivityItem>('activities').deleteMany({
+    userId,
+    listId,
+    type: ActivityType.LIST_JOINED,
+  });
+}
+
+export async function deleteActivitiesByRestaurantIdDb(restaurantId: string) {
+  const database: Db = await db();
+
+  await database.collection<ActivityItem>('activities').deleteMany({ restaurantId });
+}
+
+export async function findActivitiesReferencingDishDb(dishId: string): Promise<ActivityItem[]> {
+  const database: Db = await db();
+
+  return await database
+    .collection<ActivityItem>('activities')
+    .find({
+      $or: [
+        { dishId },
+        { dishIds: dishId },
+      ],
+    })
+    .toArray();
+}

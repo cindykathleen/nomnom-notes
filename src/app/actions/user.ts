@@ -1,6 +1,7 @@
 'use server';
 
 import { getUser, getUsers, addUserDb, updateUserDb, removeUserDb } from '@/app/lib/dbFunctions';
+import { removeListJoinedActivity } from '@/app/lib/removeActivity';
 import { User } from "@/app/interfaces/interfaces";
 import { auth } from '@/app/lib/auth';
 import { headers } from 'next/headers';
@@ -123,6 +124,7 @@ export const addPhotoToUser = async (userId: string, photoUrl: string) => {
 export const removeUser = async (userId: string, listId: string) => {
   try {
     await removeUserDb(userId, listId);
+    await removeListJoinedActivity(userId, listId);
     revalidatePath('/');
     return { success: true };
   } catch (err) {
