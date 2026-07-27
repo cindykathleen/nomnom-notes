@@ -1,6 +1,9 @@
 import { isOwnerOrCollaboratorDb, getRestaurant, getDish } from '@/app/lib/dbFunctions';
-import { List, Dish } from '@/app/interfaces/interfaces';
+import { List, Dish, Review } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
+import getAvgRating from '@/app/lib/getAvgRating';
+import RatingDisplay from '@/app/components/RatingDisplay';
+import ReviewCard from '@/app/components/ReviewCard';
 import RestaurantReview from './RestaurantReview';
 import DishCard from './DishCard';
 import DishAddCard from './DishAddCard';
@@ -61,7 +64,20 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
         </div>
         <div className="flex flex-col gap-2">
           <h2>{restaurant.name}</h2>
-          <RestaurantReview userId={userId} restaurant={restaurant} />
+          {isOwnerOrCollaborator ? (
+            <RestaurantReview userId={userId} restaurant={restaurant} />
+          ) : (
+            <>
+              <RatingDisplay rating={getAvgRating(restaurant.reviews)} />
+              {restaurant.reviews.length > 0 && (
+                <div className="review-cards">
+                  {restaurant.reviews.map((review: Review, index: number) => (
+                    <ReviewCard key={review._id} index={index} review={review} />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
         <h3>Dishes</h3>
         { // Display an error message if there are no dishes and the user is not the list owner

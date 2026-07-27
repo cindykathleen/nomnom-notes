@@ -64,7 +64,7 @@ export default function RestaurantDisplay({
           {`${restaurants.length} ${restaurants.length === 1 ? 'Place' : 'Places'}`}
         </h3>
         <div className="w-full">
-          {!showSearch &&
+          {isOwnerOrCollaborator && !showSearch &&
             <div className="h-[50px] flex items-center justify-end">
               <span onClick={() => setShowSearch(true)}
                 className="flex items-center gap-1 link text-lg xl:text-xl" data-cy="restaurant-add-trigger">
@@ -75,7 +75,7 @@ export default function RestaurantDisplay({
               </span>
             </div>
           }
-          {showSearch && <SearchForm />}
+          {isOwnerOrCollaborator && showSearch && <SearchForm />}
         </div>
       </div>
       <form className="flex items-center w-fit my-2">

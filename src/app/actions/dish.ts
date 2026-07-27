@@ -2,7 +2,7 @@
 
 import { getRestaurant, getHighestDishIndex, 
   addDishDb, getDish, updateDishDb, deleteDishDb, getExistingDishReview,
-  moveDishDb, getUserName } from '@/app/lib/dbFunctions';
+  moveDishDb, getUserName, getListByRestaurantId, isOwnerOrCollaboratorDb } from '@/app/lib/dbFunctions';
 import { recordReviewActivity } from '@/app/lib/recordReviewActivity';
 import { removeDishFromReviewActivities } from '@/app/lib/removeActivity';
 import { Dish, Review } from '@/app/interfaces/interfaces';
@@ -77,6 +77,11 @@ export const updateReview = async (
   rating: number,
   restaurantId: string
 ) => {
+  const list = await getListByRestaurantId(restaurantId);
+  if (!list || !(await isOwnerOrCollaboratorDb(userId, list._id))) {
+    return { error: 'Not authorized to review this dish' };
+  }
+
   const note = formData.get('dish-note') as string;
 
   const existingDish = await getDish(dishId);

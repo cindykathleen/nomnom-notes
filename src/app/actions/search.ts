@@ -1,6 +1,6 @@
 'use server';
 
-import { getSearchResults, addSearchResult, addRestaurant } from '@/app/lib/dbFunctions';
+import { getSearchResults, addSearchResult, addRestaurant, isOwnerOrCollaboratorDb } from '@/app/lib/dbFunctions';
 import { recordActivity } from '@/app/lib/recordActivity';
 import checkRate from '@/app/lib/checkRate';
 import { searchPlace } from '@/app/lib/GooglePlacesAPI';
@@ -44,6 +44,10 @@ export const searchQuery = async (
 }
 
 export const addPlace = async (listId: string, place: Place, userId: string) => {
+  if (!(await isOwnerOrCollaboratorDb(userId, listId))) {
+    return { error: 'Not authorized to add restaurants to this list' };
+  }
+
   // TODO: Check if the restaurant is already in the list
 
   // Get the restaurant cover photo from Google

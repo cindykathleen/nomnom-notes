@@ -1,7 +1,8 @@
 'use server';
 
 import { getExistingRestaurantReview, getUserName, getRestaurant,
-  updateRestaurantDb, deleteRestaurantDb } from '@/app/lib/dbFunctions';
+  updateRestaurantDb, deleteRestaurantDb, getListByRestaurantId,
+  isOwnerOrCollaboratorDb } from '@/app/lib/dbFunctions';
 import { recordReviewActivity } from '@/app/lib/recordReviewActivity';
 import { removeActivitiesForRestaurant } from '@/app/lib/removeActivity';
 import { Restaurant, Review } from "@/app/interfaces/interfaces";
@@ -40,6 +41,11 @@ export const updateReview = async (note: string, userId: string, restaurantId: s
 
 export const updateRestaurant = async (userId: string, restaurantId: string, updatedReview: Review) => {
   try {
+    const list = await getListByRestaurantId(restaurantId);
+    if (!list || !(await isOwnerOrCollaboratorDb(userId, list._id))) {
+      return { error: 'Not authorized to review this restaurant' };
+    }
+
     const existingReview = await getExistingRestaurantReview(userId, restaurantId);
     const existingRestaurant = await getRestaurant(restaurantId);
 
@@ -79,8 +85,12 @@ export const updateRestaurant = async (userId: string, restaurantId: string, upd
   }
 }
 
-export const deleteRestaurant = async (listId: string, restaurantId: string) => {
+export const deleteRestaurant = async (listId: string, restaurantId: string, userId: string) => {
   try {
+    if (!(await isOwnerOrCollaboratorDb(userId, listId))) {
+      return { error: 'Not authorized to remove restaurants from this list' };
+    }
+
     await deleteRestaurantDb(listId, restaurantId);
     await removeActivitiesForRestaurant(restaurantId);
     revalidatePath('/list');

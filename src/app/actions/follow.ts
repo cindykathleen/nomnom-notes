@@ -40,6 +40,8 @@ export const followUser = async (targetUserId: string) => {
     }
 
     revalidatePath(`/profile/${targetUserId}`);
+    revalidatePath('/');
+    revalidatePath('/social/following');
     return { success: true };
   } catch (err) {
     return { error: `Error following user: ${err}` };
@@ -51,6 +53,8 @@ export const unfollowUser = async (targetUserId: string) => {
     const followerId = await getFollowerId();
     await unfollowUserDb(followerId, targetUserId);
     revalidatePath(`/profile/${targetUserId}`);
+    revalidatePath('/');
+    revalidatePath('/social/following');
     return { success: true };
   } catch (err) {
     return { error: `Error unfollowing user: ${err}` };
@@ -61,7 +65,10 @@ export const approveFollowRequest = async (requesterId: string) => {
   try {
     const ownerId = await getFollowerId();
     await approveFollowRequestDb(ownerId, requesterId);
-    revalidatePath('/social');
+    revalidatePath('/');
+    revalidatePath('/social/requests');
+    revalidatePath('/social/followers');
+    revalidatePath('/social/following');
     revalidatePath(`/profile/${requesterId}`);
     revalidatePath(`/profile/${ownerId}`);
     return { success: true };
@@ -74,7 +81,8 @@ export const denyFollowRequest = async (requesterId: string) => {
   try {
     const ownerId = await getFollowerId();
     await denyFollowRequestDb(ownerId, requesterId);
-    revalidatePath('/social');
+    revalidatePath('/');
+    revalidatePath('/social/requests');
     return { success: true };
   } catch (err) {
     return { error: `Error denying follow request: ${err}` };
