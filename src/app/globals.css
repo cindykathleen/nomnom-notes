@@ -132,6 +132,10 @@
   .cards-outline {
     @apply relative p-4 flex border border-lightgray rounded-3xl;
   }
+
+  .feed-item {
+    @apply pb-6 border-b border-lightgray/80 last:border-b-0 last:pb-0;
+  }
   
   .review-cards {
     @apply mt-6 grid gap-6 lg:grid-cols-2 lg:gap-8;

@@ -10,13 +10,14 @@ beforeEach(() => {
   })
 })
 
-describe('Social page', () => {
+describe('Homepage social sidebar', () => {
   it('shows follower request and approve adds to followers', () => {
     cy.task('getUserIdByEmail', 'test@test.com').then((testUserId) => {
       cy.task('addPrivateUser').then((requesterId) => {
         cy.task('requestFollow', { requesterId, followeeId: testUserId })
 
-        cy.visit('/social')
+        cy.visit('/')
+        cy.get('[data-cy=social-sidebar]').should('be.visible')
         cy.get(`[data-cy=social-user-${requesterId}]`).should('contain.text', 'Private User')
         cy.get('[data-cy=approve-follow-request]').click()
         cy.get('[data-cy=no-follow-requests]').should('be.visible')
@@ -32,7 +33,7 @@ describe('Social page', () => {
       cy.task('addPrivateUser').then((requesterId) => {
         cy.task('requestFollow', { requesterId, followeeId: testUserId })
 
-        cy.visit('/social')
+        cy.visit('/')
         cy.get(`[data-cy=social-user-${requesterId}]`).should('be.visible')
         cy.get('[data-cy=deny-follow-request]').click()
         cy.get('[data-cy=no-follow-requests]').should('be.visible')

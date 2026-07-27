@@ -70,7 +70,9 @@ export default async function CustomList({ userId, listId, query }: { userId: st
             )
           }
         </div>
-        { query && <SearchResults userId={userId} listId={listId} query={query} /> }
+        {query && isOwnerOrCollaborator && (
+          <SearchResults userId={userId} listId={listId} query={query} />
+        )}
       </div>
     </div>
   );

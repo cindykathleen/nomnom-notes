@@ -150,7 +150,7 @@ export default function RestaurantCard({
               <div className="flex gap-4">
                 <button type="button" data-cy="delete-restaurant-button" className="button-primary"
                   onClick={async () => {
-                    await deleteRestaurant(listId, restaurant._id);
+                    await deleteRestaurant(listId, restaurant._id, userId);
                     onDelete(restaurant._id);
                   }}
                 >
