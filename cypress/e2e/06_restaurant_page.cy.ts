@@ -9,14 +9,14 @@ beforeEach(() => {
   cy.signIn('test@test.com', 'password123')
 
   // Start at the lists page, click into a list, click into a restaurant
-  cy.visit('/')
+  cy.visit('/lists')
   cy.get('[data-cy=list]').click()
   cy.get('[data-cy=restaurant]').click()
 })
 
 describe('Restaurant page', () => {
   it('Confirm restaurant page', () => {
-    cy.get('h2').should('contain.text', 'Dishes')
+    cy.get('h3').should('contain.text', 'Dishes')
   })
 
   it('Create a dish', () => {
@@ -31,7 +31,7 @@ describe('Restaurant page', () => {
     // Submit the form
     cy.get('button[type="submit"]').click()
     cy.get('[data-cy=dish]').should('be.visible')
-    cy.get('[data-cy=dish]').find('h3').should('contain.text', 'Burrito bowl')
+    cy.get('[data-cy=dish]').find('h5').should('contain.text', 'Burrito bowl')
   })
 
   it('Update dish', () => {
@@ -46,7 +46,7 @@ describe('Restaurant page', () => {
 
     // Submit the form
     cy.get('button[data-cy="edit-dish-submit"]').click()
-    cy.get('[data-cy=dish]').find('h3').should('contain.text', 'Edited burrito bowl')
+    cy.get('[data-cy=dish]').find('h5').should('contain.text', 'Edited burrito bowl')
   })
 
   it('Add review', () => {

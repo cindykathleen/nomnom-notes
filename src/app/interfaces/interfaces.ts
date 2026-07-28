@@ -115,3 +115,34 @@ export enum ActivityType {
   DISH_REVIEWED = "DISH_REVIEWED",
   REVIEWS_BATCHED = "REVIEWS_BATCHED",
 }
+
+export interface FeedActorView {
+  _id: string;
+  name: string;
+  photoUrl: string;
+}
+
+export interface FeedListView {
+  _id: string;
+  name: string;
+}
+
+export interface FeedRestaurantView {
+  _id: string;
+  name: string;
+  photoUrl: string;
+}
+
+export interface FeedDishView {
+  _id: string;
+  name: string;
+}
+
+export interface FeedActivityView {
+  activity: ActivityItem;
+  actor: FeedActorView;
+  list?: FeedListView;
+  restaurant?: FeedRestaurantView;
+  dishes?: FeedDishView[];
+  timestampLabel: string;
+}

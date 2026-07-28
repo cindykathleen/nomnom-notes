@@ -7,7 +7,7 @@ export default async function Restaurants({ restaurants, stats }: { restaurants:
     <div className="profile-section">
       <div className="profile-section-heading">
         <h4>Restaurants</h4>
-        <p className="description-sm link">View all ({stats})</p>
+        <p className="description-sm link" data-cy="profile-restaurants-count">View all ({stats})</p>
       </div>
       { // Display restaurants if available
         restaurants.length > 0 && (

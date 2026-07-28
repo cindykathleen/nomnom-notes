@@ -16,7 +16,7 @@ describe('Profile page', () => {
   it('Confirm profile privacy', () => {
     cy.task('addPrivateUser').then((privateUserId) => {
       cy.visit(`/profile/${privateUserId}`)
-      cy.get('h1').should('contain.text', 'Private User')
+      cy.get('h2').should('contain.text', 'Private User')
       cy.get('[data-cy=profile-location]').should('not.exist')
       cy.get('[data-cy=follow-button]').should('be.visible')
       cy.get('[data-cy=profile-privacy-message]').should(
@@ -57,12 +57,12 @@ describe('Profile page', () => {
 
   it('Confirm non-existent user', () => {
     cy.visit('/profile/does-not-exist')
-    cy.get('h1').should('contain.text', 'Uh oh!')
+    cy.get('h2').should('contain.text', 'Uh Oh!')
     cy.get('p').should('contain.text', 'We are not able to find the user you are looking for. Please double-check the user ID and try again.')
   })
   
   it('Confirm profile page', () => {
-    cy.get('h1').should('contain.text', 'Test User')
+    cy.get('h2').should('contain.text', 'Test User')
     cy.get('[data-cy=profile-lists-count]').should('contain.text', '1')
     cy.get('[data-cy=profile-restaurants-count]').should('contain.text', '1')
   })
