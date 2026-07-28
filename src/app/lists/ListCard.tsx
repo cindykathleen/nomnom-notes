@@ -259,10 +259,10 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
               <div className="px-2 py-4 flex flex-col lg:px-4">
                 <h5 className="mb-4">People with access</h5>
                 {users.map((user: User) => (
-                  <div key={user._id} className="w-full mb-2 flex items-center justify-between">
+                  <div key={user._id} className="w-full mb-4 flex items-center justify-between">
                     <p className="description-sm">
-                      <span>{user.name}</span>
-                      {user._id === list.owner && (<span> (you)</span>)}<br />
+                      <span className="font-normal">{user.name}</span>
+                      {user._id === list.owner && (<span className="font-normal"> (you)</span>)}<br />
                       <span>{user.email}</span>
                     </p>
                     {user._id === list.owner && (<p className="opacity-75">Owner</p>)}

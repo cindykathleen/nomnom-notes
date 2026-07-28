@@ -20,16 +20,6 @@ function EntityLink({
   );
 }
 
-function dishPreviewText(item: FeedActivityView): string | null {
-  const dishes = item.dishes ?? [];
-  if (dishes.length === 0) return null;
-
-  const preview = dishes.slice(0, 3).map((d) => d.name);
-  const remaining = dishes.length - preview.length;
-  const names = preview.join(', ');
-  return remaining > 0 ? `${names}, +${remaining} more` : names;
-}
-
 export default function ActivityRenderer({ item }: { item: FeedActivityView }) {
   const { activity, list, restaurant, dishes } = item;
   const listHref = list ? `/list/${list._id}` : undefined;
@@ -80,7 +70,7 @@ export default function ActivityRenderer({ item }: { item: FeedActivityView }) {
       break;
     case ActivityType.REVIEWS_BATCHED: {
       const dishCount = activity.dishIds?.length ?? dishes?.length ?? 0;
-      const preview = dishPreviewText(item);
+      
       if (activity.includesRestaurantReview) {
         body = (
           <>
@@ -90,7 +80,6 @@ export default function ActivityRenderer({ item }: { item: FeedActivityView }) {
                 {' '}and {dishCount} {dishCount === 1 ? 'dish' : 'dishes'}
               </>
             )}
-            {preview && <span className="block mt-1 text-slategray">{preview}</span>}
           </>
         );
       } else {
@@ -98,7 +87,6 @@ export default function ActivityRenderer({ item }: { item: FeedActivityView }) {
           <>
             reviewed {dishCount} {dishCount === 1 ? 'dish' : 'dishes'} at{' '}
             <EntityLink href={restaurantHref}>{restaurantName}</EntityLink>
-            {preview && <span className="block mt-1 text-slategray">{preview}</span>}
           </>
         );
       }

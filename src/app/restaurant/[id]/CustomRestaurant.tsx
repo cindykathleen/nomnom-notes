@@ -1,9 +1,8 @@
 import { isOwnerOrCollaboratorDb, getRestaurant, getDish } from '@/app/lib/dbFunctions';
-import { List, Dish, Review } from '@/app/interfaces/interfaces';
+import { List, Dish } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import getAvgRating from '@/app/lib/getAvgRating';
 import RatingDisplay from '@/app/components/RatingDisplay';
-import ReviewCard from '@/app/components/ReviewCard';
 import RestaurantReview from './RestaurantReview';
 import DishCard from './DishCard';
 import DishAddCard from './DishAddCard';
@@ -70,11 +69,7 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
             <>
               <RatingDisplay rating={getAvgRating(restaurant.reviews)} />
               {restaurant.reviews.length > 0 && (
-                <div className="review-cards">
-                  {restaurant.reviews.map((review: Review, index: number) => (
-                    <ReviewCard key={review._id} index={index} review={review} />
-                  ))}
-                </div>
+                <p className="description-sm whitespace-pre-line">{restaurant.reviews[0].note}</p>
               )}
             </>
           )}

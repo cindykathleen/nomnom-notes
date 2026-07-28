@@ -134,7 +134,7 @@ export default function RestaurantCard({
                 <label htmlFor="restaurant-note">Note</label>
                 <textarea id="restaurant-note" name="restaurant-note" placeholder="Add a note for this restaurant" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="input"></textarea>
-                <button className="button-primary" data-cy="add-review-submit">
+                <button className="button-primary self-start" data-cy="add-review-submit">
                   Update
                 </button>
               </form>
