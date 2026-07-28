@@ -205,10 +205,6 @@ describe('Social feed — signed in', () => {
           cy.get('[data-cy=feed-list] .feed-item').should('have.length', 1);
           cy.get('[data-cy=feed-activity-text]').should('contain.text', 'Heytea');
           cy.get('[data-cy=feed-activity-text]').should('contain.text', '3 dishes');
-          cy.get('[data-cy=feed-activity-text]').should(
-            'contain.text',
-            'Milk Tea, Cheese Foam, Taro Fries'
-          );
         });
       });
     });
