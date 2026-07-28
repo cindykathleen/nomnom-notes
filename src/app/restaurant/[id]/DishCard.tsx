@@ -216,7 +216,7 @@ export default function DishCard({
                 <input id="dish-name" name="dish-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
                   className="w-full input" autoComplete="off" />
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button type="submit" className="button-primary" data-cy="edit-dish-submit">
+                <button type="submit" className="button-primary self-start" data-cy="edit-dish-submit">
                   Update
                 </button>
               </form>

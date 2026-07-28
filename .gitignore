@@ -43,3 +43,6 @@ next-env.d.ts
 # images
 /public/uploads
 certificates
+
+# design docs
+/docs

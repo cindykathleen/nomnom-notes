@@ -31,7 +31,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       {!user && (
         <div className="page-layout">
           <div className="page-layout-inner gap-4 xl:gap-8">
-            <h1>Uh oh!</h1>
+            <h2>Uh Oh!</h2>
             <p className="subheading">We are not able to find the user you are looking for. Please double-check the user ID and try again.</p>
           </div>
         </div>

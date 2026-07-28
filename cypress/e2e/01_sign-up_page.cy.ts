@@ -18,7 +18,7 @@ describe('Sign-up page', () => {
     // Enter an invalid access code
     cy.get('input[name="access-code"]').type('invalid')
     cy.get('button[type="submit"]').click()
-    cy.get('h2').should('contain', 'Access denied')
+    cy.get('h4').should('contain', 'Access denied')
   })
 
   it('Unsuccessfully sign-up with an invalid email', () => {

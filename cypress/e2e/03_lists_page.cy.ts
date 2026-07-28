@@ -6,7 +6,7 @@ beforeEach(() => {
   cy.signIn('test@test.com', 'password123')
 
   // Start at the lists page
-  cy.visit('/')
+  cy.visit('/lists')
 })
 
 describe('Lists page', () => {
@@ -23,7 +23,7 @@ describe('Lists page', () => {
     // Submit the form
     cy.get('button[type="submit"]').click()
     cy.get('[data-cy=list]').should('be.visible')
-    cy.get('[data-cy=list]').find('p').should('contain.text', 'Test List')
+    cy.get('[data-cy=list]').find('h5').should('contain.text', 'Test List')
   })
 
   it('Update list', () => {
@@ -40,7 +40,7 @@ describe('Lists page', () => {
 
     // Submit the form
     cy.get('button[data-cy="edit-list-submit"]').click()
-    cy.get('[data-cy=list]').find('p').should('contain.text', 'Edited Test List')
+    cy.get('[data-cy=list]').find('h5').should('contain.text', 'Edited Test List')
   })
 
   it('Delete list', () => {
