@@ -58,19 +58,9 @@ export default async function Page({
       <Nav userId={userId} />
       <div className="page-layout">
         <div className="page-layout-inner space-y-6 xl:space-y-8">
-          <div className="breadcrumb flex items-center gap-2">
-            <Link href="/">Home</Link>
-            <span>/</span>
-            <p>{section.title}</p>
-          </div>
-          <h1 className="text-4xl font-light xl:text-5xl">
-            {section.title}
-            <span className="ml-2 text-2xl text-slategray font-extralight xl:text-3xl">
-              ({ids.length})
-            </span>
-          </h1>
+          <h2>{section.title} ({ids.length})</h2>
           {users.length === 0 ? (
-            <p className="text-lg" data-cy={section.emptyCy}>
+            <p className="subheading" data-cy={section.emptyCy}>
               {section.emptyMessage}
             </p>
           ) : (

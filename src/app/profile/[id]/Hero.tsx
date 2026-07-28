@@ -12,7 +12,8 @@ interface Props {
 
 export default function Hero({ user, currentUserId, isFollowing, hasPendingRequest }: Props) {
   const showLocation =
-    !user.profilePrivacy || user._id === currentUserId || isFollowing;
+    !!user.location &&
+    (!user.profilePrivacy || user._id === currentUserId || isFollowing);
 
   return (
     <div className="flex flex-col-reverse gap-6 items-center justify-between sm:flex-row sm:gap-2 sm:items-start">

@@ -98,7 +98,7 @@ export default function Profile({ user }: { user: User }) {
             </button>
             { // Display a message if it exists
               message && (
-                <p className="font-semibold">{message}</p>
+                <p className="notification">{message}</p>
               )
             }
           </div>

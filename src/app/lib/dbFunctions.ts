@@ -37,7 +37,7 @@ export async function getListIds(userId: string) {
   return doc?.lists ?? [];
 }
 
-export async function addUserDb(userId: string, name: string, email: string) {
+export async function addUserDb(userId: string, name: string, email: string, location: string = '', profilePrivacy: boolean = true) {
   const database: Db = await db();
 
   await database.collection<User>('users').insertOne({
@@ -48,8 +48,8 @@ export async function addUserDb(userId: string, name: string, email: string) {
     searchRate: [],
     mapRate: [],
     photoUrl: process.env.NEXT_PUBLIC_PLACEHOLDER_IMG_AVATAR!,
-    location: '',
-    profilePrivacy: true,
+    location: location,
+    profilePrivacy: profilePrivacy,
     photos: [],
     following: [],
     followers: [],

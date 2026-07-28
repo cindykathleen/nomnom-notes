@@ -16,13 +16,13 @@ export const getAllUsers = async (listId: string) => {
   }
 }
 
-export const addUser = async () => {
+export const addUser = async (location: string = '', profilePrivacy: boolean = true) => {
   try {
     const session = await auth.api.getSession({
       headers: await headers()
     });
 
-    await addUserDb(session!.user.id, session!.user.name, session!.user.email);
+    await addUserDb(session!.user.id, session!.user.name, session!.user.email, location, profilePrivacy);
     return { success: true };
   } catch (err) {
     return { error: `Error adding user to database: ${err}` };

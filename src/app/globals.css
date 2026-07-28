@@ -107,6 +107,9 @@
   p.review-user {
     @apply mt-6 text-sm font-normal;
   }
+  p.notification {
+    @apply text-sm font-normal;
+  }
 
   /** buttons & links **/ 
   .button-primary {

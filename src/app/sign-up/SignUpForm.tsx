@@ -10,6 +10,8 @@ import { addUser } from '@/app/actions/user';
 
 export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: User | null }) => {
   const [displayName, setDisplayName] = useState<string>('');
+  const [location, setLocation] = useState<string>('');
+  const [isPrivate, setIsPrivate] = useState<boolean>(true);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmation, setConfirmation] = useState<string>('');
@@ -37,7 +39,7 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
     if (result.error) {
       setErrorMessage(result.error);
     } else {
-      await addUser();
+      await addUser(location.trim(), isPrivate);
       router.push(redirect);
     }
   }
@@ -62,6 +64,9 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
         <label htmlFor="display-name">Display name</label>
         <input id="display-name" name="display-name" type="text" required value={displayName} onChange={e => setDisplayName(e.target.value)}
           className="input" autoComplete="off" />
+        <label htmlFor="location">Location</label>
+        <input id="location" name="location" type="text" value={location} onChange={e => setLocation(e.target.value)}
+          className="input" placeholder="City, State/Country" autoComplete="off" />
         <label htmlFor="email">Email</label>
         <input id="email" name="email" type="email" required value={email} onChange={e => setEmail(e.target.value)}
           onInvalid={e => { e.preventDefault(); setErrorMessage('Invalid email address'); }}
@@ -73,6 +78,13 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
         {!passwordMatch && confirmation && (<p className="pb-3 text-sm text-red-600 font-normal">The passwords do not match</p>)}
         <input id="password-confirmation" type="password" required value={confirmation} onChange={e => setConfirmation(e.target.value)}
           className="input" autoComplete="off" />
+        <div className="mb-4 flex gap-4 items-center">
+          <p className="font-normal">Private profile</p>
+          <label className="toggle-switch mb-0">
+            <input type="checkbox" checked={isPrivate} onChange={(e) => setIsPrivate(e.target.checked)} />
+            <span className="slider" />
+          </label>
+        </div>
         <SignUpButton disabled={!formIsValid} />
         { // Alert for errors
         errorMessage && (
