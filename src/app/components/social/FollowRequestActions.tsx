@@ -5,20 +5,27 @@ import { approveFollowRequest, denyFollowRequest } from '@/app/actions/follow';
 
 interface Props {
   requesterId: string;
+  onResolved?: () => void;
 }
 
-export default function FollowRequestActions({ requesterId }: Props) {
+export default function FollowRequestActions({ requesterId, onResolved }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const handleApprove = () => {
     startTransition(async () => {
-      await approveFollowRequest(requesterId);
+      const result = await approveFollowRequest(requesterId);
+      if (result && !('error' in result)) {
+        onResolved?.();
+      }
     });
   };
 
   const handleDeny = () => {
     startTransition(async () => {
-      await denyFollowRequest(requesterId);
+      const result = await denyFollowRequest(requesterId);
+      if (result && !('error' in result)) {
+        onResolved?.();
+      }
     });
   };
 

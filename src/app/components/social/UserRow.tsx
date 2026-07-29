@@ -6,9 +6,10 @@ import FollowRequestActions from './FollowRequestActions';
 interface Props {
   user: User;
   showActions?: boolean;
+  onResolved?: () => void;
 }
 
-export default function UserRow({ user, showActions = false }: Props) {
+export default function UserRow({ user, showActions = false, onResolved }: Props) {
   return (
     <div className="flex items-center justify-between gap-2 py-2.5" data-cy={`social-user-${user._id}`}>
       <Link href={`/profile/${user._id}`} className="flex items-center gap-2.5 min-w-0">
@@ -21,7 +22,9 @@ export default function UserRow({ user, showActions = false }: Props) {
         />
         <span className="link description-sm truncate">{user.name}</span>
       </Link>
-      {showActions && <FollowRequestActions requesterId={user._id} />}
+      {showActions && (
+        <FollowRequestActions requesterId={user._id} onResolved={onResolved} />
+      )}
     </div>
   );
 }

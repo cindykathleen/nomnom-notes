@@ -6,6 +6,7 @@ import LandingPage from '@/app/components/LandingPage';
 import FollowingFeed from '@/app/components/feed/FollowingFeed';
 import FeedLoading from '@/app/components/feed/FeedLoading';
 import SocialSidebar from '@/app/components/social/SocialSidebar';
+import FollowRequestQueue from '@/app/components/social/FollowRequestQueue';
 
 export default async function HomePage() {
   const userId = await getCurrentUser(true);
@@ -23,7 +24,8 @@ export default async function HomePage() {
           <div className="page-layout">
             <div className="page-layout-inner">
               <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-16">
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 flex flex-col gap-6">
+                  <FollowRequestQueue userId={userId} />
                   <Suspense fallback={<FeedLoading />}>
                     <FollowingFeed userId={userId} />
                   </Suspense>
