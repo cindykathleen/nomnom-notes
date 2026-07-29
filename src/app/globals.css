@@ -78,7 +78,7 @@
   }
   
 
-  /** headings **/ 
+  /** headings & text **/ 
   h1 {
     @apply text-5xl/14 font-light xl:text-6xl/18;
   }
@@ -135,11 +135,6 @@
   .cards-outline {
     @apply relative p-4 flex border border-lightgray rounded-3xl;
   }
-
-  .feed-item {
-    @apply pb-6 border-b border-lightgray/80 last:border-b-0 last:pb-0;
-  }
-  
   .review-cards {
     @apply mt-6 grid gap-6 lg:grid-cols-2 lg:gap-8;
   }
@@ -214,26 +209,11 @@
   .checklist li span {
     @apply xl:pt-[2px];
   }
-  .swiper {
-    @apply w-full h-auto;
+  .feed-item {
+    @apply pb-6 border-b border-lightgray/80 last:border-b-0 last:pb-0;
   }
-  .swiper-button-prev, .swiper-button-next {
-    @apply text-darkpink!;
-  }
-  :is(.swiper-button-prev, .swiper-button-next).swiper-button-disabled {
-    @apply text-dustypink! opacity-100!;
-  }
-  .swiper-pagination-bullet {
-    @apply bg-slategray!;
-  }
-  .swiper-pagination-bullet-active {
-    @apply bg-darkpink!;
-  }
-  .swiper-slide img {
-    @apply w-full h-auto;
-  }
-  .swiper-slide p {
-    @apply pt-4 pb-12 text-xl font-extralight text-center md:text-2xl;
+  .fade-in {
+    animation: fade-in 0.25s ease-out;
   }
 
   /** modals & alerts **/ 
@@ -310,4 +290,13 @@
 body {
   background: var(--color-snowwhite);
   color: var(--color-charcoal);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

@@ -22,7 +22,10 @@ export default async function SocialSidebar({ userId }: { userId: string }) {
   const users = await getUsersByIds(allIds);
 
   return (
-    <aside className="w-full max-w-sm shrink-0 lg:sticky" data-cy="social-sidebar-aside">
+    <aside
+      className="hidden w-full max-w-sm shrink-0 lg:sticky lg:block"
+      data-cy="social-sidebar-aside"
+    >
       <Social
         followRequests={orderUsersByIds(users, followRequestIds)}
         followers={orderUsersByIds(users, followerIds)}
