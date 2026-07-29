@@ -9,7 +9,7 @@ export default async function ProfileDetails({ user }: { user: User }) {
   const { stats, lists, restaurants, reviews } = await getProfileData(user._id);
 
   return (
-    <div className="pb-8 flex flex-col gap-6 xl:pb-16 lg:flex-row">
+    <div className="pb-8 flex flex-col-reverse gap-6 xl:pb-16 lg:flex-row">
       <div className="w-full space-y-6 lg:w-2/5">
         <Photos user={user} />
       </div>
