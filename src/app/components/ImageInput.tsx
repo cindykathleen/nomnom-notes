@@ -28,7 +28,7 @@ export default function ImageInput({ currImage, setNewImage }: { currImage: stri
     <div className="flex flex-col gap-2">
       <label>Image</label>
       {previewImage !== '' && (
-        <img src={previewImage} alt="Preview image" className="max-w-36 mb-1 aspect-square object-contain" />
+        <img src={previewImage} alt="Preview image" className="max-w-36 mb-1 aspect-square object-cover" />
       )}
       <div className="flex flex-col gap-2 mb-6">
         <input name="img-file" key="file-input" type="file" accept="image/*" className="input-file" onChange={handleFileChange} />
