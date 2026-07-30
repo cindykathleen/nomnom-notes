@@ -97,7 +97,7 @@ export default function ActivityRenderer({ item }: { item: FeedActivityView }) {
   }
 
   return (
-    <p className="description-sm text-charcoal" data-cy="feed-activity-text">
+    <p className="description" data-cy="feed-activity-text">
       {body}
     </p>
   );

@@ -45,7 +45,7 @@ beforeAll(async () => {
     visibility: 'private',
     name: 'Boba',
     description: '',
-    photoUrl: '',
+    photoUrl: 'https://example.com/boba-list.jpg',
     restaurants: [],
     dateAdded: new Date(),
     dateUpdated: new Date(),
@@ -71,7 +71,7 @@ beforeAll(async () => {
     index: 1,
     name: 'Coconut Mango Boom',
     reviews: [],
-    photoUrl: '',
+    photoUrl: 'https://example.com/coconut-mango.jpg',
     dateAdded: new Date(),
     dateUpdated: new Date(),
   });
@@ -81,7 +81,7 @@ beforeAll(async () => {
     index: 2,
     name: 'Brown Sugar Boba',
     reviews: [],
-    photoUrl: '',
+    photoUrl: 'https://example.com/placeholder.jpg',
     dateAdded: new Date(),
     dateUpdated: new Date(),
   });
@@ -140,13 +140,17 @@ describe('getFollowingFeedPage', () => {
       photoUrl: 'https://example.com/heytea.jpg',
     });
     expect(newest.dishes).toEqual([
-      { _id: 'feed-dish-1', name: 'Coconut Mango Boom' },
-      { _id: 'feed-dish-2', name: 'Brown Sugar Boba' },
+      { _id: 'feed-dish-1', name: 'Coconut Mango Boom', photoUrl: 'https://example.com/coconut-mango.jpg' },
+      { _id: 'feed-dish-2', name: 'Brown Sugar Boba', photoUrl: 'https://example.com/placeholder.jpg' },
     ]);
     expect(newest.timestampLabel).toBe('1 hour ago');
 
     const older = result.items[1];
-    expect(older.list).toEqual({ _id: 'feed-list-1', name: 'Boba' });
+    expect(older.list).toEqual({
+      _id: 'feed-list-1',
+      name: 'Boba',
+      photoUrl: 'https://example.com/boba-list.jpg',
+    });
   });
 
   it('respects limit and hasMore, and supports before cursor', async () => {

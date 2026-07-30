@@ -125,6 +125,7 @@ export interface FeedActorView {
 export interface FeedListView {
   _id: string;
   name: string;
+  photoUrl: string;
 }
 
 export interface FeedRestaurantView {
@@ -136,6 +137,7 @@ export interface FeedRestaurantView {
 export interface FeedDishView {
   _id: string;
   name: string;
+  photoUrl: string;
 }
 
 export interface FeedActivityView {

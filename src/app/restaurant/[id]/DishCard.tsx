@@ -248,7 +248,7 @@ export default function DishCard({
                 <label htmlFor="dish-note">Note</label>
                 <textarea id="dish-note" name="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="input"></textarea>
-                <button type="submit" className="button-primary" data-cy="add-review-submit">
+                <button type="submit" className="button-primary self-start" data-cy="add-review-submit">
                   Update
                 </button>
               </form>

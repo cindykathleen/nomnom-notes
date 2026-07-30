@@ -23,7 +23,7 @@ export default async function SocialSidebar({ userId }: { userId: string }) {
 
   return (
     <aside
-      className="hidden w-full max-w-sm shrink-0 lg:sticky lg:block"
+      className="hidden w-full max-w-sm shrink-0 lg:block lg:sticky lg:top-0"
       data-cy="social-sidebar-aside"
     >
       <Social
