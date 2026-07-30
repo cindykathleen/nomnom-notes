@@ -59,7 +59,7 @@ export default function RestaurantDisplay({
 
   return (
     <div className={`${userId === 'public' || !featureAccessAllowed ? "w-full" : "w-full lg:w-1/2"} flex flex-col gap-2`}>
-      <div className="flex items-center gap-8">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-8">
         <h3 className="whitespace-nowrap" data-cy="number-of-restaurants">
           {`${restaurants.length} ${restaurants.length === 1 ? 'Place' : 'Places'}`}
         </h3>
@@ -75,7 +75,9 @@ export default function RestaurantDisplay({
               </span>
             </div>
           }
-          {isOwnerOrCollaborator && showSearch && <SearchForm />}
+          {isOwnerOrCollaborator && showSearch && (
+            <SearchForm onClose={() => setShowSearch(false)} />
+          )}
         </div>
       </div>
       <form className="flex items-center w-fit my-2">
