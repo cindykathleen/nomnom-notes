@@ -63,7 +63,7 @@ export async function populateFeedActivities(
     if (activity.listId) {
       const found = listsById.get(activity.listId);
       if (found) {
-        list = { _id: found._id, name: found.name };
+        list = { _id: found._id, name: found.name, photoUrl: found.photoUrl };
       }
     }
 
@@ -86,7 +86,7 @@ export async function populateFeedActivities(
     for (const id of orderedDishIds) {
       const found = dishesById.get(id);
       if (found) {
-        populatedDishes.push({ _id: found._id, name: found.name });
+        populatedDishes.push({ _id: found._id, name: found.name, photoUrl: found.photoUrl });
       }
     }
 
