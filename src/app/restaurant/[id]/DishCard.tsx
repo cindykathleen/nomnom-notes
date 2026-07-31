@@ -139,7 +139,8 @@ export default function DishCard({
   return (
     <div key={dish._id} {...(isOwnerOrCollaborator ? { ref, "data-handler-id": handlerId } : {})}
       className="flex flex-col relative bg-snowwhite rounded-sm" data-cy="dish">
-      <Image src={dish.photoUrl} alt={dish.name} width={500} height={500} className="aspect-square object-cover rounded-lg" />
+      <Image src={dish.photoUrl} alt={dish.name} width={500} height={500} className="aspect-square object-cover rounded-lg cursor-pointer"
+        onClick={() => setShowReviewModal(true)} />
       <div className="flex flex-col gap-2 p-4">
         <div className="relative flex items-center justify-between gap-4">
           <h5>{dish.name}</h5>
@@ -195,13 +196,13 @@ export default function DishCard({
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="modal-heading">Edit the dish</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
                   className="modal-close" data-cy="edit-dish-modal-close"
                   onClick={() => setShowEditModal(false)}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
-              <hr className="border-gray-300" />
+              <hr className="border-lightgray" />
               <form action={handleSubmit} className="p-4 flex flex-col">
                 <label htmlFor="dish-name">Name</label>
                 <input id="dish-name" name="dish-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
@@ -221,28 +222,33 @@ export default function DishCard({
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
                 <h2 className="modal-heading">Review the dish</h2>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
                   className="modal-close" data-cy="review-dish-modal-close"
                   onClick={() => setShowReviewModal(false)}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
-              <hr className="border-gray-300" />
-              <form action={handleReviewSubmit} className="p-4 flex flex-col">
-                <label htmlFor="dish-rating">Rating</label>
-                <div id="dish-rating" className="w-fit mb-6" onMouseEnter={() => setRatingHover(true)} onMouseLeave={() => setRatingHover(false)}>
-                  {ratingHover
-                    ? <RatingSystem currRating={rating} setNewRating={newRating => setRating(newRating)} />
-                    : <RatingDisplay rating={rating} />
-                  }
-                </div>
-                <label htmlFor="dish-note">Note</label>
-                <textarea id="dish-note" name="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
-                  className="input"></textarea>
-                <SubmitButton className="self-start" data-cy="add-review-submit">
-                  Update
-                </SubmitButton>
-              </form>
+              <hr className="border-lightgray" />
+              <div className="p-4 flex flex-col gap-4">
+                {!dish.photoUrl?.includes("placeholder") && (
+                  <Image src={dish.photoUrl} alt={dish.name} width={500} height={500} className="aspect-square object-cover rounded-lg" />
+                )}
+                <form action={handleReviewSubmit} className="flex flex-col">
+                  <label htmlFor="dish-rating">Rating</label>
+                  <div id="dish-rating" className="w-fit mb-6" onMouseEnter={() => setRatingHover(true)} onMouseLeave={() => setRatingHover(false)}>
+                    {ratingHover
+                      ? <RatingSystem currRating={rating} setNewRating={newRating => setRating(newRating)} />
+                      : <RatingDisplay rating={rating} />
+                    }
+                  </div>
+                  <label htmlFor="dish-note">Note</label>
+                  <textarea id="dish-note" name="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
+                    className="input"></textarea>
+                  <SubmitButton className="self-start" data-cy="add-review-submit">
+                    Update
+                  </SubmitButton>
+                </form>
+              </div>
             </div>
           </div>
         )
@@ -270,8 +276,8 @@ export default function DishCard({
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between gap-2">
                 <h3 className="modal-heading">Reviews for {dish.name}</h3>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
-                  className="modal-close" 
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+                  className="modal-close"
                   onClick={() => { setShowAllReviews(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>

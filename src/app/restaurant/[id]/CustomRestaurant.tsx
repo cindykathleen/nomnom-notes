@@ -46,6 +46,10 @@ export default async function CustomRestaurant({ userId, list, restaurantId }: {
     <div className="page-layout">
       <div className="page-layout-inner space-y-6 xl:space-y-8">
         <div className="breadcrumb flex flex-wrap gap-2">
+          <Link href="/" className="link">
+            Home
+          </Link>
+          <p>/</p>
           { // Don't display private pages for anyone other than the list owner / collaborator
             isOwnerOrCollaborator && (
               <>
