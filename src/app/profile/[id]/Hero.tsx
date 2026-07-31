@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function Hero({ user, currentUserId, isFollowing, hasPendingRequest }: Props) {
-  const showLocation =
+  const showPrivateUserDetails =
     !!user.location &&
     (!user.profilePrivacy || user._id === currentUserId || isFollowing);
 
@@ -23,14 +23,21 @@ export default function Hero({ user, currentUserId, isFollowing, hasPendingReque
         />
         <div className="flex flex-col gap-4">
           <h2>{user.name}</h2>
-          {showLocation && (
-            <div className="flex items-center justify-center sm:justify-start">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-              </svg>
-              <p className="description" data-cy="profile-location">{user.location}</p>
+          {showPrivateUserDetails && (
+            <div className="flex flex-col gap-4">
+              <div className="flex gap-6">
+                <p>{user.followers.length} follower{user.followers.length !== 1 ? 's' : ''}</p>
+                <p>{user.following.length} following</p>
+              </div>
+              <div className="flex items-center justify-center sm:justify-start">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                </svg>
+                <p className="description" data-cy="profile-location">{user.location}</p>
+              </div>
             </div>
+
           )}
         </div>
       </div>
