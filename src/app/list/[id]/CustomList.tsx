@@ -48,6 +48,10 @@ export default async function CustomList({ userId, listId, query }: { userId: st
         { // Don't display private pages for anyone other than the list owner / collaborator
           isOwnerOrCollaborator && (
             <div className="breadcrumb flex flex-wrap gap-2">
+              <Link href="/" className="link">
+                Home
+              </Link>
+              <p>/</p>
               <Link href="/lists" className="link">
                 Lists
               </Link>
