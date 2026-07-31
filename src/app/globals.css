@@ -76,7 +76,6 @@
   .breadcrumb a, .breadcrumb p {
     @apply text-base font-extralight xl:text-lg;
   }
-  
 
   /** headings & text **/ 
   h1 {
