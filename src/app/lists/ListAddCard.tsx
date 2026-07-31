@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useFormStatus } from 'react-dom';
 import ImageInput from '@/app/components/ImageInput';
+import SubmitButton from '@/app/components/SubmitButton';
 import { addList } from '@/app/actions/list';
 import { uploadImage } from '@/app/lib/uploadImage';
 
@@ -14,15 +14,9 @@ export default function ListAddCard({ userId }: { userId: string }) {
   const [listName, setListName] = useState('');
   const [inputImage, setInputImage] = useState('');
 
-  const { pending } = useFormStatus();
   const formIsValid = listName.trim() !== '';
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
+  const handleSubmit = async (formData: FormData) => {
     let inputPhotoUrl: string | null = '';
 
     // If the image is already uploaded, use the existing URL
@@ -69,7 +63,7 @@ export default function ListAddCard({ userId }: { userId: string }) {
                 </svg>
               </div>
               <hr className="border-lightgray" />
-              <form onSubmit={handleSubmit} className="px-2 py-4 flex flex-col lg:px-4">
+              <form action={handleSubmit} className="px-2 py-4 flex flex-col lg:px-4">
                 <label htmlFor="list-name">Name *</label>
                 <input id="list-name" name="list-name" type="text" required value={listName} onChange={e => setListName(e.target.value)}
                   className="input" autoComplete="off" />
@@ -85,19 +79,9 @@ export default function ListAddCard({ userId }: { userId: string }) {
                 <label htmlFor="list-description">Description</label>
                 <textarea id="list-description" name="list-description" placeholder="Add a description for this list" className="input"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button type="submit" disabled={!formIsValid}
-                  className={`px-4 py-2 self-start text-snowwhite font-bold rounded-lg
-                  ${!formIsValid
-                      ? 'bg-lightgray cursor-not-allowed'
-                      : 'bg-darkpink cursor-pointer hover:bg-mauve transition-colors'
-                    }`}>
-                  {pending
-                    ? (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="block m-auto size-6 animate-spin" >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                    </svg>)
-                    : ("Create")
-                  }
-                </button>
+                <SubmitButton disabled={!formIsValid} className="self-start">
+                  Create
+                </SubmitButton>
                 <p className="required">* Required fields</p>
               </form>
             </div>

@@ -9,6 +9,7 @@ import getAvgRating from '@/app/lib/getAvgRating';
 import RatingDisplay from '@/app/components/RatingDisplay';
 import RatingSystem from '@/app/components/RatingSystem';
 import ReviewCard from '@/app/components/ReviewCard';
+import SubmitButton from '@/app/components/SubmitButton';
 
 export default function RestaurantCard({
   userId,
@@ -42,11 +43,7 @@ export default function RestaurantCard({
   const [ratingHover, setRatingHover] = useState<boolean>(false);
   const [inputNote, setInputNote] = useState<string>(review?.note || '');
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    const formData = new FormData(form);
+  const handleSubmit = async (formData: FormData) => {
     const note = formData.get('restaurant-note') as string;
 
     const updatedReview = await updateReview(note, userId, restaurant._id, rating);
@@ -123,7 +120,7 @@ export default function RestaurantCard({
                 </svg>
               </div>
               <hr className="border-lightgray" />
-              <form className="p-4 flex flex-col" onSubmit={handleSubmit}>
+              <form className="p-4 flex flex-col" action={handleSubmit}>
                 <label htmlFor="restaurant-rating">Rating</label>
                 <div id="restaurant-rating" className="w-fit mb-6" onMouseEnter={() => setRatingHover(true)} onMouseLeave={() => setRatingHover(false)}>
                   {ratingHover
@@ -134,9 +131,9 @@ export default function RestaurantCard({
                 <label htmlFor="restaurant-note">Note</label>
                 <textarea id="restaurant-note" name="restaurant-note" placeholder="Add a note for this restaurant" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="input"></textarea>
-                <button className="button-primary self-start" data-cy="add-review-submit">
+                <SubmitButton className="self-start" data-cy="add-review-submit">
                   Update
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </div>
