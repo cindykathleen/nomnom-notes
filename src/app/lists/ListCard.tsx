@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { User, List } from '@/app/interfaces/interfaces';
 import ImageInput from '@/app/components/ImageInput';
+import SubmitButton from '@/app/components/SubmitButton';
 import { uploadImage } from '@/app/lib/uploadImage';
 import { removeUser } from '@/app/actions/user';
 import { updateList, deleteList, removeList, moveList } from '@/app/actions/list';
@@ -69,12 +70,7 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
     setTimeout(() => dispatch({ type: 'showLinkCopied' }), 3000);
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
+  const handleSubmit = async (formData: FormData) => {
     let inputPhotoUrl: string | null = '';
 
     // If there is no change to the image, don't re-upload it into the database
@@ -216,7 +212,7 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
                 </svg>
               </div>
               <hr className="border-lightgray" />
-              <form onSubmit={handleSubmit} className="px-2 py-4 flex flex-col lg:px-4">
+              <form action={handleSubmit} className="px-2 py-4 flex flex-col lg:px-4">
                 <label htmlFor="list-name">Name</label>
                 <input id="list-name" name="list-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
                   className="w-full input" autoComplete="off" />
@@ -235,9 +231,9 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
                 <textarea id="list-description" name="list-description" placeholder="Add a description for this list" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)}
                   className="input"></textarea>
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button type="submit" className="button-primary self-start" data-cy="edit-list-submit">
+                <SubmitButton className="self-start" data-cy="edit-list-submit">
                   Update
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </div>

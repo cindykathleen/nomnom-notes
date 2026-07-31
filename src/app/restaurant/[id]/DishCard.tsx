@@ -9,6 +9,7 @@ import getAvgRating from '@/app/lib/getAvgRating';
 import RatingDisplay from '@/app/components/RatingDisplay';
 import RatingSystem from '@/app/components/RatingSystem';
 import ImageInput from '@/app/components/ImageInput';
+import SubmitButton from '@/app/components/SubmitButton';
 import { uploadImage } from '@/app/lib/uploadImage';
 import { updateDish, updateReview, deleteDish, moveDish } from '@/app/actions/dish';
 import { addPhotoToUser } from '@/app/actions/user';
@@ -43,12 +44,7 @@ export default function DishCard({
   const [inputNote, setInputNote] = useState<string>(review?.note || '');
   const [inputImage, setInputImage] = useState<string>(dish.photoUrl || '');
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
+  const handleSubmit = async (formData: FormData) => {
     let inputPhotoUrl: string | null = '';
 
     // If there is no change to the image, don't re-upload it into the database
@@ -74,12 +70,7 @@ export default function DishCard({
     setShowEditModal(false);
   }
 
-  const handleReviewSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
+  const handleReviewSubmit = async (formData: FormData) => {
     await updateReview(formData, userId, dish._id, rating, restaurant._id);
     setShowReviewModal(false);
   }
@@ -211,14 +202,14 @@ export default function DishCard({
                 </svg>
               </div>
               <hr className="border-gray-300" />
-              <form onSubmit={handleSubmit} className="p-4 flex flex-col">
+              <form action={handleSubmit} className="p-4 flex flex-col">
                 <label htmlFor="dish-name">Name</label>
                 <input id="dish-name" name="dish-name" type="text" value={inputName} onChange={(e) => setInputName(e.target.value)}
                   className="w-full input" autoComplete="off" />
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button type="submit" className="button-primary self-start" data-cy="edit-dish-submit">
+                <SubmitButton className="self-start" data-cy="edit-dish-submit">
                   Update
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </div>
@@ -237,7 +228,7 @@ export default function DishCard({
                 </svg>
               </div>
               <hr className="border-gray-300" />
-              <form onSubmit={handleReviewSubmit} className="p-4 flex flex-col">
+              <form action={handleReviewSubmit} className="p-4 flex flex-col">
                 <label htmlFor="dish-rating">Rating</label>
                 <div id="dish-rating" className="w-fit mb-6" onMouseEnter={() => setRatingHover(true)} onMouseLeave={() => setRatingHover(false)}>
                   {ratingHover
@@ -248,9 +239,9 @@ export default function DishCard({
                 <label htmlFor="dish-note">Note</label>
                 <textarea id="dish-note" name="dish-note" placeholder="Add a note for this dish" value={inputNote} onChange={(e) => setInputNote(e.target.value)}
                   className="input"></textarea>
-                <button type="submit" className="button-primary self-start" data-cy="add-review-submit">
+                <SubmitButton className="self-start" data-cy="add-review-submit">
                   Update
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </div>

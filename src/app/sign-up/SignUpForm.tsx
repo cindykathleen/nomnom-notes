@@ -30,10 +30,7 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
+  const handleSubmit = async (formData: FormData) => {
     const result = await signUp(formData);
 
     if (result.error) {
@@ -60,7 +57,7 @@ export const SignUpForm = ({ signInUrl, owner }: { signInUrl: string, owner: Use
         to sign in.
       </p>
       <hr className="border-lightgray" />
-      <form onSubmit={handleSubmit} className="p-4 flex flex-col">
+      <form action={handleSubmit} className="p-4 flex flex-col">
         <label htmlFor="display-name">Display name</label>
         <input id="display-name" name="display-name" type="text" required value={displayName} onChange={e => setDisplayName(e.target.value)}
           className="input" autoComplete="off" />

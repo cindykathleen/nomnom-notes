@@ -18,10 +18,7 @@ export const SignInForm = () => {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
+  const handleSubmit = async (formData: FormData) => {
     const result = await signIn(formData);
 
     if (result.error) {
@@ -32,7 +29,7 @@ export const SignInForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 flex flex-col">
+    <form action={handleSubmit} className="p-4 flex flex-col">
       <label htmlFor="email">Email</label>
       <input id="email" name="email" type="email" required value={email} onChange={e => setEmail(e.target.value)}
         className="input" autoComplete="off" />

@@ -9,7 +9,7 @@ export const SignUpAccessForm = ({
   errorMessage,
   clearErrorMessage,
 }: {
-  handleAccessFormSubmit: (accessCode: string) => void;
+  handleAccessFormSubmit: (accessCode: string) => void | Promise<void>;
   errorMessage: string;
   clearErrorMessage: () => void;
 }) => {
@@ -17,11 +17,9 @@ export const SignUpAccessForm = ({
 
   const formIsValid = accessCode.trim() !== '';
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+  const handleSubmit = async (formData: FormData) => {
     const accessCode = formData.get('access-code') as string;
-    handleAccessFormSubmit(accessCode);
+    await handleAccessFormSubmit(accessCode);
   }
 
   // If the user is not allowed, display the modal asking for the access code
@@ -35,7 +33,7 @@ export const SignUpAccessForm = ({
         to sign in.
       </p>
       <hr className="border-lightgray" />
-      <form onSubmit={handleSubmit} className="w-full p-4 flex flex-col">
+      <form action={handleSubmit} className="w-full p-4 flex flex-col">
         <label htmlFor="access-code">Access code</label>
         <input id="access-code" name="access-code" type="access-code" required value={accessCode} onChange={e => setAccessCode(e.target.value)}
           className="input" autoComplete="off" />

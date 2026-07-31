@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useFormStatus } from 'react-dom';
 import { addDish } from '@/app/actions/dish'
 import { addPhotoToUser } from '@/app/actions/user';
 import ImageInput from '@/app/components/ImageInput';
+import SubmitButton from '@/app/components/SubmitButton';
 import { uploadImage } from '@/app/lib/uploadImage';
 
 export default function DishAddCard({ userId, restaurantId }: { userId: string, restaurantId: string }) {
@@ -15,15 +15,9 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
   const [dishName, setDishName] = useState('');
   const [inputImage, setInputImage] = useState('');
 
-  const { pending } = useFormStatus();
   const formIsValid = dishName.trim() !== '';
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
+  const handleSubmit = async (formData: FormData) => {
     let inputPhotoUrl: string | null = '';
 
     // If the image is already uploaded, use the existing URL
@@ -70,24 +64,14 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
                 </svg>
               </div>
               <hr className="border-lightgray" />
-              <form onSubmit={handleSubmit} className="p-4 flex flex-col">
+              <form action={handleSubmit} className="p-4 flex flex-col">
                 <label htmlFor="dish-name">Name *</label>
                 <input id="dish-name" name="dish-name" type="text" required value={dishName} onChange={e => setDishName(e.target.value)}
                   className="input" autoComplete="off" />
                 <ImageInput currImage={inputImage} setNewImage={(newImage) => setInputImage(newImage)} />
-                <button type="submit" disabled={!formIsValid}
-                  className={`px-4 py-2 self-start text-snowwhite font-bold rounded-lg
-                  ${!formIsValid
-                      ? 'bg-lightgray cursor-not-allowed'
-                      : 'bg-darkpink cursor-pointer hover:bg-mauve transition-colors'
-                    }`}>
-                  {pending
-                    ? (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="block m-auto size-6 animate-spin" >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                    </svg>)
-                    : ("Add")
-                  }
-                </button>
+                <SubmitButton disabled={!formIsValid} className="self-start">
+                  Add
+                </SubmitButton>
                 <p className="required">* Required fields</p>
               </form>
             </div>
