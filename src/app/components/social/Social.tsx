@@ -55,7 +55,7 @@ function SocialSection({
       </div>
       <hr className="border-lightgray mb-1" />
       {users.length === 0 ? (
-        <p className="text-sm font-extralight py-2" data-cy={emptyCy}>
+        <p className="py-2 description-sm" data-cy={emptyCy}>
           {emptyMessage}
         </p>
       ) : (

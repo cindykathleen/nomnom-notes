@@ -13,9 +13,9 @@ export default async function Reviews({ reviews, stats }: { reviews: ProfileItem
           <div className="profile-section-highlights">
             {reviews.map(review => (
               <div key={review._id} className="relative p-2 flex flex-col items-center gap-2 border border-lightgray rounded-sm">
-                <p className="description">{review.name}</p>
+                <h5 className="text-center">{review.name}</h5>
                 <RatingDisplay rating={review.rating!} />
-                <p className="description-sm text-center whitespace-pre-line line-clamp-5">{review.note}</p>
+                <p className="description-sm whitespace-pre-line line-clamp-5">{review.note}</p>
               </div>
             ))}
           </div>
