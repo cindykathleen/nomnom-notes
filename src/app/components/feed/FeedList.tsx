@@ -78,12 +78,16 @@ export default function FeedList({
   }, []);
 
   return (
-    <div className="w-full flex flex-col gap-6" data-cy="feed-list">
+    <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-6" data-cy="feed-list">
       {items.map((item) => (
         <FeedItem key={item.activity._id} item={item} />
       ))}
-      <div ref={sentinelRef} className="h-1 w-full" aria-hidden data-cy="feed-scroll-sentinel" />
-      {isLoadingMore && <FeedLoading variant="more" />}
+      <div ref={sentinelRef} className="col-span-full h-1 w-full" aria-hidden data-cy="feed-scroll-sentinel" />
+      {isLoadingMore && (
+        <div className="col-span-full">
+          <FeedLoading variant="more" />
+        </div>
+      )}
     </div>
   );
 }

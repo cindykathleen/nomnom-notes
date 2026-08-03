@@ -209,7 +209,7 @@
     @apply xl:pt-[2px];
   }
   .feed-item {
-    @apply relative px-8 py-6 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/5 rounded-xl;
+    @apply relative flex h-full flex-col px-5 py-4 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/5 rounded-xl;
   }
   .fade-in {
     animation: fade-in 0.25s ease-out;

@@ -16,7 +16,7 @@ export default async function Lists({
       <div className="profile-section-heading">
         <h4>Lists</h4>
         <Link
-          href={`/profile/${userId}/lists`}
+          href={`/profile/${userId}/activity#lists`}
           className="description-sm link"
           data-cy="profile-lists-count"
         >

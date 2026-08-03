@@ -15,7 +15,7 @@ export default async function Reviews({
     <div className="profile-section">
       <div className="profile-section-heading">
         <h4>Reviews</h4>
-        <Link href={`/profile/${userId}/reviews`} className="description-sm link">
+        <Link href={`/profile/${userId}/activity#reviews`} className="description-sm link">
           View all ({stats})
         </Link>
       </div>

@@ -16,7 +16,7 @@ export default async function Restaurants({
       <div className="profile-section-heading">
         <h4>Restaurants</h4>
         <Link
-          href={`/profile/${userId}/restaurants`}
+          href={`/profile/${userId}/activity#restaurants`}
           className="description-sm link"
           data-cy="profile-restaurants-count"
         >
