@@ -2,12 +2,26 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ProfileItem } from '@/app/interfaces/interfaces';
 
-export default async function Restaurants({ restaurants, stats }: { restaurants: ProfileItem[], stats: number }) {
+export default async function Restaurants({
+  restaurants,
+  stats,
+  userId,
+}: {
+  restaurants: ProfileItem[];
+  stats: number;
+  userId: string;
+}) {
   return (
     <div className="profile-section">
       <div className="profile-section-heading">
         <h4>Restaurants</h4>
-        <p className="description-sm link" data-cy="profile-restaurants-count">View all ({stats})</p>
+        <Link
+          href={`/profile/${userId}/restaurants`}
+          className="description-sm link"
+          data-cy="profile-restaurants-count"
+        >
+          View all ({stats})
+        </Link>
       </div>
       { // Display restaurants if available
         restaurants.length > 0 && (
