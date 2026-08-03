@@ -26,8 +26,20 @@ export default function Hero({ user, currentUserId, isFollowing, hasPendingReque
           {showPrivateUserDetails && (
             <div className="flex flex-col gap-4">
               <div className="flex gap-6">
-                <p>{user.followers.length} follower{user.followers.length !== 1 ? 's' : ''}</p>
-                <p>{user.following.length} following</p>
+                <Link
+                  href={`/profile/${user._id}/social#followers`}
+                  className="link"
+                  data-cy="profile-followers-link"
+                >
+                  {user.followers.length} follower{user.followers.length !== 1 ? 's' : ''}
+                </Link>
+                <Link
+                  href={`/profile/${user._id}/social#following`}
+                  className="link"
+                  data-cy="profile-following-link"
+                >
+                  {user.following.length} following
+                </Link>
               </div>
               <div className="flex items-center justify-center sm:justify-start">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">

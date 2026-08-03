@@ -58,17 +58,23 @@ function ActivityPhoto({
   href?: string;
 }) {
   const image = (
-    <div className="relative w-full mt-4 overflow-hidden aspect-[2/1] rounded-xl md:aspect-[3/1]">
-      <Image src={url} alt={alt} fill sizes="100%" className="object-cover" />
+    <div className="relative mt-4 w-full aspect-square overflow-hidden rounded-xl">
+      <Image
+        src={url}
+        alt={alt}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        className="object-cover"
+      />
     </div>
   );
 
   if (!href) {
-    return <div data-cy="feed-activity-photo">{image}</div>;
+    return <div className="mt-auto" data-cy="feed-activity-photo">{image}</div>;
   }
 
   return (
-    <Link href={href} className="block" data-cy="feed-activity-photo">
+    <Link href={href} className="mt-auto block" data-cy="feed-activity-photo">
       {image}
     </Link>
   );
@@ -84,7 +90,7 @@ export default function FeedItem({ item }: { item: FeedActivityView }) {
       <div className="flex gap-3">
         <Link href={`/profile/${actor._id}`} className="shrink-0">
           {photoUrl ? (
-            <Image src={photoUrl} alt={`${actor.name}'s profile picture`} width={60} height={60}
+            <Image src={photoUrl} alt={`${actor.name}'s profile picture`} width={48} height={48}
               className="rounded-full aspect-square object-cover" />
           ) : (
             <div className="h-12 w-12 rounded-full bg-lightgray" />

@@ -105,7 +105,7 @@ export async function getFollowingFeedPage(
   viewerId: string,
   options: { limit?: number; before?: Date; now?: Date } = {}
 ): Promise<{ items: FeedActivityView[]; hasMore: boolean }> {
-  const limit = options.limit ?? 10;
+  const limit = options.limit ?? 12;
   const now = options.now ?? new Date();
 
   const viewer = await getUser(viewerId);
