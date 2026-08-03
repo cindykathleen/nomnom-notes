@@ -14,9 +14,9 @@ export default async function ProfileDetails({ user }: { user: User }) {
         <Photos user={user} />
       </div>
       <div className="w-full space-y-6 lg:w-3/5">
-        <Lists lists={lists} stats={stats.listsCount} />
-        <Restaurants restaurants={restaurants} stats={stats.restaurantsCount} />
-        <Reviews reviews={reviews} stats={stats.reviewsCount} />
+        <Lists lists={lists} stats={stats.listsCount} userId={user._id} />
+        <Restaurants restaurants={restaurants} stats={stats.restaurantsCount} userId={user._id} />
+        <Reviews reviews={reviews} stats={stats.reviewsCount} userId={user._id} />
       </div>
     </div>
   );

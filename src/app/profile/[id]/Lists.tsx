@@ -2,12 +2,26 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ProfileItem } from '@/app/interfaces/interfaces';
 
-export default async function Lists({ lists, stats }: { lists: ProfileItem[], stats: number }) {
+export default async function Lists({
+  lists,
+  stats,
+  userId,
+}: {
+  lists: ProfileItem[];
+  stats: number;
+  userId: string;
+}) {
   return (
     <div className="profile-section">
       <div className="profile-section-heading">
         <h4>Lists</h4>
-        <p className="description-sm link" data-cy="profile-lists-count">View all ({stats})</p>
+        <Link
+          href={`/profile/${userId}/lists`}
+          className="description-sm link"
+          data-cy="profile-lists-count"
+        >
+          View all ({stats})
+        </Link>
       </div>
       { // Display lists if available
         lists.length > 0 && (

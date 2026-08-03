@@ -1,12 +1,23 @@
+import Link from 'next/link';
 import { ProfileItem } from '@/app/interfaces/interfaces';
 import RatingDisplay from '@/app/components/RatingDisplay';
 
-export default async function Reviews({ reviews, stats }: { reviews: ProfileItem[], stats: number }) {
+export default async function Reviews({
+  reviews,
+  stats,
+  userId,
+}: {
+  reviews: ProfileItem[];
+  stats: number;
+  userId: string;
+}) {
   return (
     <div className="profile-section">
       <div className="profile-section-heading">
         <h4>Reviews</h4>
-        <p className="description-sm link">View all ({stats})</p>
+        <Link href={`/profile/${userId}/reviews`} className="description-sm link">
+          View all ({stats})
+        </Link>
       </div>
       { // Display reviews if available
         reviews.length > 0 && (

@@ -743,9 +743,10 @@ export async function getExistingDishReview(userId: string, dishId: string) {
   return doc?.reviews?.[0] || null;
 }
 
-// Profile function
-export async function getProfileData(userId: string) {
+// Profile function — pass limit=null to return all items (no slice)
+export async function getProfileData(userId: string, limit: number | null = 4) {
   const database: Db = await db();
+  const take = <T>(items: T[]) => (limit === null ? items : items.slice(0, limit));
 
   const user = await database.collection<User>('users').findOne({ _id: userId });
 
@@ -766,14 +767,13 @@ export async function getProfileData(userId: string) {
     .project({ _id: 1, name: 1, photoUrl: 1, dateUpdated: 1, restaurants: 1 })
     .toArray();
 
-  const profileLists: ProfileItem[] = lists
-    .sort((a, b) => b.dateUpdated.getTime() - a.dateUpdated.getTime())
-    .slice(0, 4)
-    .map(list => ({
-      _id: list._id.toString(),
-      name: list.name,
-      photoUrl: list.photoUrl,
-    }));
+  const profileLists: ProfileItem[] = take(
+    lists.sort((a, b) => b.dateUpdated.getTime() - a.dateUpdated.getTime())
+  ).map(list => ({
+    _id: list._id.toString(),
+    name: list.name,
+    photoUrl: list.photoUrl,
+  }));
 
   const restaurantIds = lists.flatMap(list => list.restaurants);
   const restaurantsCount = restaurantIds.length;
@@ -793,14 +793,13 @@ export async function getProfileData(userId: string) {
     .project({ _id: 1, name: 1, photoUrl: 1, dateUpdated: 1, dishes: 1 })
     .toArray();
 
-  const profileRestaurants: ProfileItem[] = restaurants
-    .sort((a, b) => b.dateUpdated.getTime() - a.dateUpdated.getTime())
-    .slice(0, 4)
-    .map(r => ({
-      _id: r._id.toString(),
-      name: r.name,
-      photoUrl: r.photoUrl,
-    }));
+  const profileRestaurants: ProfileItem[] = take(
+    restaurants.sort((a, b) => b.dateUpdated.getTime() - a.dateUpdated.getTime())
+  ).map(r => ({
+    _id: r._id.toString(),
+    name: r.name,
+    photoUrl: r.photoUrl,
+  }));
 
   const dishIds = restaurants.flatMap(r => r.dishes);
 
@@ -816,7 +815,7 @@ export async function getProfileData(userId: string) {
   const dishes = await database
     .collection<Dish>('dishes')
     .find({ _id: { $in: dishIds } })
-    .project({ _id: 1, name: 1, dateUpdated: 1, reviews: 1 })
+    .project({ _id: 1, name: 1, photoUrl: 1, dateUpdated: 1, reviews: 1 })
     .toArray();
 
   const reviews: ProfileItem[] = [];
@@ -829,6 +828,7 @@ export async function getProfileData(userId: string) {
         reviews.push({
           _id: review._id.toString(),
           name: dish.name,
+          photoUrl: dish.photoUrl,
           dateUpdated: dish.dateUpdated,
           rating: review.rating,
           note: review.note,
@@ -837,9 +837,9 @@ export async function getProfileData(userId: string) {
     }
   }
 
-  const profileReviews = reviews
-    .sort((a, b) => b.dateUpdated!.getTime() - a.dateUpdated!.getTime())
-    .slice(0, 4);
+  const profileReviews = take(
+    reviews.sort((a, b) => b.dateUpdated!.getTime() - a.dateUpdated!.getTime())
+  );
 
   return {
     stats: {
