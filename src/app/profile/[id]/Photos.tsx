@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { User } from '@/app/interfaces/interfaces';
 
 export default async function Photos({ user }: { user: User }) {
-  const profilePhotos = user.photos
+  const profilePhotos = (user.photos ?? [])
     .slice() // make a copy of the array
     .sort(() => 0.5 - Math.random())
     .slice(0, 15); // choose at most 15 photos
