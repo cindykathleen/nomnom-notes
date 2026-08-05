@@ -1,22 +1,35 @@
 # NomNom Notes
 
-This full-stack web application enables users to create and manage personalized restaurant lists, add reviews for restaurants they’ve visited, and visualize their lists on an interactive map. Users can search for restaurants using the Google Places API and add them to specific lists. Each restaurant entry allows users to log dishes with custom fields for the dish name, reviews, and an image. Users can also collaborate on lists by inviting others to contribute their own reviews of restaurants and dishes. In addition, users have publicly shareable profiles that highlight key statistics and showcase their photos, lists, restaurants, and reviews.
+This full-stack web application enables users to create and manage personalized restaurant lists, add reviews for restaurants they’ve visited, and visualize their lists on an interactive map. Users can search for restaurants using the Google Places API and add them to specific lists. Each restaurant entry allows users to log dishes with custom fields for the dish name, reviews, and an image. Users can also collaborate on lists by inviting others to contribute their own reviews of restaurants and dishes. In addition, users have publicly shareable profiles that showcase their photos, lists, restaurants, and reviews. Signed-in users can follow others and browse an activity feed of the people they follow.
 
 ## Features
+
+### Homepage features
+* Unsigned-in users see a public homepage with product overview and how-it-works sections
+* User can request an access code by submitting their email on the homepage
+* User with an access code can go from the homepage to sign up
+* Signed-in users land on their following activity feed instead of the public homepage
 
 ### Account features
 * User can create an account and sign in
 * User will need an access code to create an account
+* User can request an access code by email from the homepage
 
 ### Profile features
 * Every user has a profile that they can set to private or public
-* The profile will show the user's key statistics (number of lists, restaurants saved, and dishes reviewed)
+* When a profile is private, only the owner and approved followers can see profile details, location, followers/following, and activity
+* Private profiles prompt non-followers to request access
+* The profile will show follower and following counts that link to the user's social page
 * The profile will highlight the user's 4 most recently updated lists
 * The profile will highlight the user's 4 most recently saved restaurants
 * The profile will highlight the user's 4 most recently reviewed dishes
+* User can open "View all" from profile highlights to see every list, restaurant, or review on a dedicated activity page
+* The profile photo collage showcases uploaded dish and list photos
 
 ### List features
+* User can manage all owned and collaborative lists on a dedicated lists page
 * User can create, edit, and delete lists
+* User can drag-and-drop lists to change their display order
 * User can add an image for their list
 * User can add a description for their list
 * User can sort the restaurants in each list by "Recently added" or by "Name"
@@ -46,7 +59,20 @@ This full-stack web application enables users to create and manage personalized 
 * Collaborators can add their own reviews for all restaurants and dishes in the list
 
 ### Social features
-* Users can follow and be followed by other registered users
+* User can follow and unfollow other registered users
+* Following a public profile is immediate; following a private profile sends a follow request
+* User with a pending follow request sees a "Requested" state until it is approved or denied
+* User can approve or deny incoming follow requests from a navigation notifications modal
+* User can view a profile's followers and following on a dedicated social page
+* Followers and following lists are hidden on private profiles for non-followers
+
+### Activity feed features
+* Signed-in homepage shows an activity feed of people the user follows
+* Feed includes list created, list joined (collaboration), restaurant saved, and restaurant/dish reviewed activities
+* Nearby restaurant and dish reviews can be grouped into a single batched feed item
+* Feed items show relative timestamps and a related photo when available
+* User can scroll to load more feed activity
+* Empty feed prompts the user to follow people to see posts
 
 ## Tech Stack
 
@@ -63,17 +89,23 @@ This full-stack web application enables users to create and manage personalized 
 **Hosting platform:** Vercel
 
 ## Screenshots
+![Public homepage](./images/public-homepage.png)
+A public homepage with product overview and how-it-works sections
+
 ![A sign up page](./images/signup-page.png)
 A page where users can sign up for an account.
 
 ![A sign in page](./images/signin-page.png)
 A page where users can sign in to their account.
 
+![Following activity feed homepage](./images/homepage.png)
+A gated homepage with the user's following activity feed 
+
 ![Navigation bar](./images/nav.png)
-The navigation bar has two icons: one for lists and one for profile. The lists icon will take the user to their lists. The profile icon will show a submenu where the user can view their profile, go to their account settings, or sign out.
+The navigation bar has icons for the activity feed (home), lists, follow requests, and profile. The lists icon takes the user to their lists. The follow requests icon opens a modal to approve or deny pending follower requests. The profile icon shows a submenu where the user can view their profile, go to their account settings, or sign out.
 
 ![Profile page](./images/profile.png)
-A profile page that shows the user's basic information, key statistics, photos, lists, restaurants, and reviews. The user can edit their profile by clicking the "Edit profile" button, that will only appear for them, in the hero.
+A profile page that shows the user's basic information, photos, lists, restaurants, and reviews. The user can edit their profile by clicking the "Edit profile" button, that will only appear for them, in the hero.
 
 ![Settings page](./images/settings.png)
 A page where the user can change their settings. In the "Profile" tab, they can change their display name, location, and avatar photo. In the "Email" tab, they can change their email. In the "Password" tab, they can change their password. In the "Privacy" tab, they can set their profile to private or public. 
@@ -81,7 +113,13 @@ A page where the user can change their settings. In the "Profile" tab, they can 
 ![A page with all of the user's lists](./images/lists-page.png)
 A page showing all of the custom lists that the user has created or is a collaborator of. The user can drag-and-drop each list to change the order of how they appear. The user can also create a new list by clicking on the gray tile with the plus icon. This page can also be accessed by clicking on the bookmark icon in the navigation.
 
-![Editing a list](./images/lists-edit.png)
+![A list page with all of the restaurants saved](./images/list-page.png)
+A page for each custom list with the restaurants that were saved into the list. The user can sort the list by "Recently added" or by "Name". The user can edit restaurant description and ratings, or delete them from the list. All of the restaurants' locations on the list are added to an interactive map that the user can scroll and click around.
+
+![A restaurant page with all of the dishes saved](./images/restaurant-page.png)
+A page for each restaurant with the dishes that were added. The user can drag-and-drop each dish to change the order of how they appear. The user can also create a new dish by clicking on the gray tile with the plus icon.
+
+<!-- ![Editing a list](./images/lists-edit.png)
 A pop-up modal that allows the user to make edits to a specific list. When the visibility is set to private, only the list owner and collaborators can view the list. When the visibility is set to public, anybody with the list link can view the list. The user can choose an image file to upload. An image preview will appear for the image file uploaded.
 
 ![Sharing a list](./images/lists-share.png)
@@ -96,17 +134,13 @@ The default search page where a user can search for specific restaurants by ente
 ![Searching for restaurants](./images/search-page-results.png)
 The search page results where related results will appear (maximum of 20), and the user can select on which one to add to their list. The user can also click on the "Google Maps" link to view it there. 
 
-![A list page with all of the restaurants saved](./images/list-page.png)
-A page for each custom list with the restaurants that were saved into the list. The user can sort the list by "Recently added" or by "Name". The user can edit restaurant description and ratings, or delete them from the list. All of the restaurants' locations on the list are added to an interactive map that the user can scroll and click around.
-
-![A restaurant page with all of the dishes saved](./images/restaurant-page.png)
-A page for each restaurant with the dishes that were added. The user can drag-and-drop each dish to change the order of how they appear. The user can also create a new dish by clicking on the gray tile with the plus icon.
-
 ![Adding a dish](./images/dish-add.png)
 A pop-up modal that allows the user to add a dish to a specific restaurant. The user cannot add the dish until all required fields are filled out. If no image is provided, a default placeholder image will be used.
 
 ![Multiple reviews](./images/dish-reviews.png)
-A pop-up modal that shows all of the reviews for a restaurant or dish.
+A pop-up modal that shows all of the reviews for a restaurant or dish. -->
 
 ## Future improvements
+* **Ranking:** Users will be able to rank the restaurants within their lists
+* **Advanced Search:** Users will be able to search through all of their lists, restaurants, dishes, and reviews
 * **Database:** Cron job to periodically clean up unused data in the database
