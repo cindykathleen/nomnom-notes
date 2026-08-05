@@ -26,13 +26,9 @@ export default function FeedList({
   const hasMoreRef = useRef(hasMore);
   const loadingRef = useRef(false);
 
-  useEffect(() => {
-    itemsRef.current = items;
-  }, [items]);
-
-  useEffect(() => {
-    hasMoreRef.current = hasMore;
-  }, [hasMore]);
+  // Keep refs current for the IntersectionObserver callback without Effect sync
+  itemsRef.current = items;
+  hasMoreRef.current = hasMore;
 
   useEffect(() => {
     const node = sentinelRef.current;
