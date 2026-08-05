@@ -12,8 +12,7 @@ interface Props {
 
 export default function Hero({ user, currentUserId, isFollowing, hasPendingRequest }: Props) {
   const showPrivateUserDetails =
-    !!user.location &&
-    (!user.profilePrivacy || user._id === currentUserId || isFollowing);
+    !user.profilePrivacy || user._id === currentUserId || isFollowing;
 
   return (
     <div className="flex flex-col-reverse gap-6 items-center justify-between sm:flex-row sm:gap-2 sm:items-start">
@@ -41,15 +40,16 @@ export default function Hero({ user, currentUserId, isFollowing, hasPendingReque
                   {user.following.length} following
                 </Link>
               </div>
-              <div className="flex items-center justify-center sm:justify-start">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                </svg>
-                <p className="description" data-cy="profile-location">{user.location}</p>
-              </div>
+              {user.location && (
+                <div className="flex items-center justify-center sm:justify-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                  </svg>
+                  <p className="description" data-cy="profile-location">{user.location}</p>
+                </div>
+              )}
             </div>
-
           )}
         </div>
       </div>

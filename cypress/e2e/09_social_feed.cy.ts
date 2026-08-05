@@ -138,7 +138,7 @@ describe('Social feed — signed in', () => {
 
         cy.task('seedActivities', activities);
         cy.visit('/');
-        cy.get('[data-cy=feed-list] .feed-item').should('have.length', 10);
+        cy.get('[data-cy=feed-list] .feed-item').should('have.length', 12);
 
         cy.get('[data-cy=feed-scroll-sentinel]').scrollIntoView();
         cy.get('[data-cy=feed-list] .feed-item', { timeout: 10000 }).should('have.length', 15);
