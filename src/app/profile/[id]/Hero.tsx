@@ -13,6 +13,8 @@ interface Props {
 export default function Hero({ user, currentUserId, isFollowing, hasPendingRequest }: Props) {
   const showPrivateUserDetails =
     !user.profilePrivacy || user._id === currentUserId || isFollowing;
+  const followersCount = user.followers?.length ?? 0;
+  const followingCount = user.following?.length ?? 0;
 
   return (
     <div className="flex flex-col-reverse gap-6 items-center justify-between sm:flex-row sm:gap-2 sm:items-start">
@@ -30,14 +32,14 @@ export default function Hero({ user, currentUserId, isFollowing, hasPendingReque
                   className="link"
                   data-cy="profile-followers-link"
                 >
-                  {user.followers.length} follower{user.followers.length !== 1 ? 's' : ''}
+                  {followersCount} follower{followersCount !== 1 ? 's' : ''}
                 </Link>
                 <Link
                   href={`/profile/${user._id}/social#following`}
                   className="link"
                   data-cy="profile-following-link"
                 >
-                  {user.following.length} following
+                  {followingCount} following
                 </Link>
               </div>
               {user.location && (
