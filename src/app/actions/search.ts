@@ -6,6 +6,7 @@ import checkRate from '@/app/lib/checkRate';
 import { searchPlace } from '@/app/lib/GooglePlacesAPI';
 import { ActivityType, Place, Restaurant, SearchQueryResult } from '@/app/interfaces/interfaces';
 import { getGooglePhoto } from './images';
+import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -85,4 +86,5 @@ export const addPlace = async (listId: string, place: Place, userId: string) => 
     listId,
     restaurantId: newRestaurant._id,
   });
+  revalidatePath('/list');
 }

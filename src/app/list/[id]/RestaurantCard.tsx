@@ -16,15 +16,11 @@ export default function RestaurantCard({
   isOwnerOrCollaborator,
   listId,
   restaurant,
-  onUpdate,
-  onDelete
 }: {
   userId: string,
   isOwnerOrCollaborator: boolean,
   listId: string,
   restaurant: Restaurant,
-  onUpdate: (updated: Restaurant) => void,
-  onDelete: (deletedId: string) => void
 }) {
   // States for modals & alerts
   const [showMenuModal, setShowMenuModal] = useState(false);
@@ -48,13 +44,6 @@ export default function RestaurantCard({
 
     const updatedReview = await updateReview(note, userId, restaurant._id, rating);
     await updateRestaurant(userId, restaurant._id, updatedReview);
-    onUpdate({
-      ...restaurant,
-      reviews: [
-        ...(restaurant.reviews?.filter(r => r.createdBy !== userId) || []),
-        updatedReview
-      ]
-    });
     setShowReviewModal(false);
   }
 
@@ -148,7 +137,6 @@ export default function RestaurantCard({
                 <button type="button" data-cy="delete-restaurant-button" className="button-primary"
                   onClick={async () => {
                     await deleteRestaurant(listId, restaurant._id, userId);
-                    onDelete(restaurant._id);
                   }}
                 >
                   Yes

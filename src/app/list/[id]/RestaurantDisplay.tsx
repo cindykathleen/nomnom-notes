@@ -15,53 +15,34 @@ export default function RestaurantDisplay({
   isOwnerOrCollaborator,
   featureAccessAllowed,
   list,
-  initialRestaurants
+  restaurants
 }: {
   userId: string,
   isOwnerOrCollaborator: boolean,
   featureAccessAllowed: boolean,
   list: List,
-  initialRestaurants: Restaurant[]
+  restaurants: Restaurant[]
 }) {
   const [sort, setSort] = useState<SortType>(SortType.RecentlyAdded);
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(initialRestaurants);
   const [showSearch, setShowSearch] = useState<boolean>(false);
 
-  const sortRestaurants = () => {
+  const sortedRestaurants = useMemo(() => {
+    const sorted = [...restaurants];
+
     if (sort === SortType.RecentlyAdded) {
-      restaurants.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
+      sorted.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
     } else if (sort === SortType.Name) {
-      restaurants.sort((a, b) => a.name.localeCompare(b.name));
+      sorted.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    // Using the spread operator to ensure a new array reference
-    // This is important for React to detect changes and re-render components
-    setRestaurants([...restaurants]);
-  }
-
-  useMemo(() => {
-    sortRestaurants();
-  }, [sort]);
-
-  const onUpdate = (updatedRestaurant: Restaurant) => {
-    const updatedRestaurants = restaurants.map((restaurant) =>
-      restaurant._id === updatedRestaurant._id ? updatedRestaurant : restaurant
-    );
-
-    setRestaurants(updatedRestaurants);
-  }
-
-  const onDelete = (deletedRestaurantId: string) => {
-    const updatedRestaurants = restaurants.filter((restaurant) => restaurant._id !== deletedRestaurantId);
-
-    setRestaurants(updatedRestaurants);
-  }
+    return sorted;
+  }, [restaurants, sort]);
 
   return (
     <div className={`${userId === 'public' || !featureAccessAllowed ? "w-full" : "w-full lg:w-1/2"} flex flex-col gap-2`}>
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-8">
         <h3 className="whitespace-nowrap" data-cy="number-of-restaurants">
-          {`${restaurants.length} ${restaurants.length === 1 ? 'Place' : 'Places'}`}
+          {`${sortedRestaurants.length} ${sortedRestaurants.length === 1 ? 'Place' : 'Places'}`}
         </h3>
         <div className="w-full">
           {isOwnerOrCollaborator && !showSearch &&
@@ -95,15 +76,13 @@ export default function RestaurantDisplay({
         className={`gap-4 lg:max-h-[80vh] lg:overflow-y-auto
         ${userId === 'public' || !featureAccessAllowed ? "grid grid-cols-2" : "flex flex-col"}`}
       >
-        {restaurants.map((restaurant: Restaurant) => (
+        {sortedRestaurants.map((restaurant: Restaurant) => (
           <RestaurantCard
             key={restaurant._id}
             userId={userId}
             isOwnerOrCollaborator={isOwnerOrCollaborator}
             listId={list._id}
             restaurant={restaurant}
-            onUpdate={onUpdate}
-            onDelete={onDelete}
           />
         ))}
       </div>
