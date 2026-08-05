@@ -66,7 +66,7 @@ export default async function CustomList({ userId, listId, query }: { userId: st
             isOwnerOrCollaborator={isOwnerOrCollaborator}
             featureAccessAllowed={featureAccessAllowed}
             list={list}
-            initialRestaurants={restaurants}
+            restaurants={restaurants}
           />
           { // Don't display a map for public users or if the user has passed their rate limit
             (userId !== 'public') && featureAccessAllowed && (
