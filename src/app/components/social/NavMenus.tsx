@@ -19,7 +19,7 @@ export default function NavMenus({
   return (
     <>
       <FollowRequestsNav
-        initialRequests={followRequestUsers}
+        requests={followRequestUsers}
         open={openMenu === 'follow-requests'}
         onOpenChange={(open) => setOpenMenu(open ? 'follow-requests' : null)}
       />

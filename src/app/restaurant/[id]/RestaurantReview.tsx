@@ -28,17 +28,10 @@ export default function RestaurantReview({ userId, restaurant }: { userId: strin
   const committedRef = useRef(committed);
   const noteDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    ratingRef.current = rating;
-  }, [rating]);
-
-  useEffect(() => {
-    noteRef.current = inputNote;
-  }, [inputNote]);
-
-  useEffect(() => {
-    committedRef.current = committed;
-  }, [committed]);
+  // Keep refs current for timers/async callbacks without Effect sync
+  ratingRef.current = rating;
+  noteRef.current = inputNote;
+  committedRef.current = committed;
 
   const persist = (nextRating: number, nextNote: string) => {
     const current = committedRef.current;
@@ -51,36 +44,42 @@ export default function RestaurantReview({ userId, restaurant }: { userId: strin
     });
   };
 
-  const handleRatingChange = (newRating: number) => {
-    setRating(newRating);
-
+  const clearNoteDebounce = () => {
     if (noteDebounceRef.current) {
       clearTimeout(noteDebounceRef.current);
       noteDebounceRef.current = null;
     }
+  };
 
+  const handleRatingChange = (newRating: number) => {
+    setRating(newRating);
+    clearNoteDebounce();
     persist(newRating, noteRef.current);
   };
 
-  useEffect(() => {
-    if (inputNote === committedRef.current.note) return;
+  const handleNoteChange = (value: string) => {
+    setInputNote(value);
 
-    if (noteDebounceRef.current) {
-      clearTimeout(noteDebounceRef.current);
+    if (value === committedRef.current.note) {
+      clearNoteDebounce();
+      return;
     }
 
+    clearNoteDebounce();
     noteDebounceRef.current = setTimeout(() => {
       noteDebounceRef.current = null;
-      persist(ratingRef.current, inputNote);
+      persist(ratingRef.current, value);
     }, NOTE_DEBOUNCE_MS);
+  };
 
+  // Clear pending debounce on unmount
+  useEffect(() => {
     return () => {
       if (noteDebounceRef.current) {
         clearTimeout(noteDebounceRef.current);
-        noteDebounceRef.current = null;
       }
     };
-  }, [inputNote]);
+  }, []);
 
   return (
     <div className="flex flex-col gap-2">
@@ -100,7 +99,7 @@ export default function RestaurantReview({ userId, restaurant }: { userId: strin
         name="restaurant-note"
         placeholder="Add a note for this restaurant"
         value={inputNote}
-        onChange={(e) => setInputNote(e.target.value)}
+        onChange={(e) => handleNoteChange(e.target.value)}
         className="w-full h-auto field-sizing-content focus:outline-none"
       />
     </div>

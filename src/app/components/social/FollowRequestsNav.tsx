@@ -5,20 +5,27 @@ import { User } from '@/app/interfaces/interfaces';
 import UserRow from './UserRow';
 
 export default function FollowRequestsNav({
-  initialRequests,
+  requests: serverRequests,
   open,
   onOpenChange,
 }: {
-  initialRequests: User[];
+  requests: User[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const [requests, setRequests] = useState(initialRequests);
+  const [resolvedIds, setResolvedIds] = useState<ReadonlySet<string>>(() => new Set());
   const containerRef = useRef<HTMLLIElement | null>(null);
 
-  useEffect(() => {
-    setRequests(initialRequests);
-  }, [initialRequests]);
+  // Drop resolved ids the server has already removed, so a later re-request can show again
+  const serverIds = new Set(serverRequests.map((user) => user._id));
+  let activeResolvedIds = resolvedIds;
+  if ([...resolvedIds].some((id) => !serverIds.has(id))) {
+    activeResolvedIds = new Set([...resolvedIds].filter((id) => serverIds.has(id)));
+    setResolvedIds(activeResolvedIds);
+  }
+
+  // Hide requests resolved locally until the server list catches up via revalidation
+  const requests = serverRequests.filter((user) => !activeResolvedIds.has(user._id));
 
   useEffect(() => {
     if (!open) return;
@@ -37,7 +44,7 @@ export default function FollowRequestsNav({
   }, [open, onOpenChange]);
 
   const handleResolved = (requesterId: string) => {
-    setRequests((prev) => prev.filter((user) => user._id !== requesterId));
+    setResolvedIds((prev) => new Set(prev).add(requesterId));
   };
 
   return (
