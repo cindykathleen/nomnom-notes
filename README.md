@@ -32,7 +32,7 @@ This full-stack web application enables users to create and manage personalized 
 * User can drag-and-drop lists to change their display order
 * User can add an image for their list
 * User can add a description for their list
-* User can sort the restaurants in each list by "Recently added" or by "Name"
+* User can sort the restaurants in each list by "Rating", "Recently Added", or "Name" 
 * User can remove restaurants from their list
 * User can set the list visibility to private or public
 
@@ -114,7 +114,7 @@ A page where the user can change their settings. In the "Profile" tab, they can 
 A page showing all of the custom lists that the user has created or is a collaborator of. The user can drag-and-drop each list to change the order of how they appear. The user can also create a new list by clicking on the gray tile with the plus icon. This page can also be accessed by clicking on the bookmark icon in the navigation.
 
 ![A list page with all of the restaurants saved](./images/list-page.png)
-A page for each custom list with the restaurants that were saved into the list. The user can sort the list by "Recently added" or by "Name". The user can edit restaurant description and ratings, or delete them from the list. All of the restaurants' locations on the list are added to an interactive map that the user can scroll and click around.
+A page for each custom list with the restaurants that were saved into the list. The user can sort the list by "Rating", "Recently Added", or "Name". The user can edit restaurant description and ratings, or delete them from the list. All of the restaurants' locations on the list are added to an interactive map that the user can scroll and click around.
 
 ![A restaurant page with all of the dishes saved](./images/restaurant-page.png)
 A page for each restaurant with the dishes that were added. The user can drag-and-drop each dish to change the order of how they appear. The user can also create a new dish by clicking on the gray tile with the plus icon.
