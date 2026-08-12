@@ -96,7 +96,7 @@ export default function FeedItem({ item }: { item: FeedActivityView }) {
             <div className="h-12 w-12 rounded-full bg-lightgray" />
           )}
         </Link>
-        <div className="min-w-0 flex-1 flex flex-col gap-1">
+        <div className="min-w-0 flex flex-col flex-1">
           <div className="flex items-baseline justify-between gap-3">
             <Link href={`/profile/${actor._id}`}>
               <h5 className="link truncate">{actor.name}</h5>
