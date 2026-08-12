@@ -4,10 +4,12 @@ import { useState, useMemo } from 'react';
 import { List, Restaurant } from '@/app/interfaces/interfaces';
 import SearchForm from './SearchForm';
 import RestaurantCard from "./RestaurantCard";
+import getAvgRating from '@/app/lib/getAvgRating';
 
 enum SortType {
+  Rating = 'rating',
   RecentlyAdded = 'recently-added',
-  Name = 'name'
+  Name = 'name',
 }
 
 export default function RestaurantDisplay({
@@ -23,13 +25,20 @@ export default function RestaurantDisplay({
   list: List,
   restaurants: Restaurant[]
 }) {
-  const [sort, setSort] = useState<SortType>(SortType.RecentlyAdded);
+  const [sort, setSort] = useState<SortType>(SortType.Rating);
   const [showSearch, setShowSearch] = useState<boolean>(false);
 
   const sortedRestaurants = useMemo(() => {
     const sorted = [...restaurants];
 
-    if (sort === SortType.RecentlyAdded) {
+    if (sort === SortType.Rating) {
+      sorted.sort((a, b) => {
+        const aRated = a.reviews.length > 0;
+        const bRated = b.reviews.length > 0;
+        if (aRated !== bRated) return aRated ? -1 : 1;
+        return getAvgRating(b.reviews) - getAvgRating(a.reviews);
+      });
+    } else if (sort === SortType.RecentlyAdded) {
       sorted.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
     } else if (sort === SortType.Name) {
       sorted.sort((a, b) => a.name.localeCompare(b.name));
@@ -64,8 +73,10 @@ export default function RestaurantDisplay({
       <form className="flex items-center w-fit my-2">
         <p className="description text-nowrap mr-2">Sort by</p>
         <select className="w-full bg-transparent text-lg font-normal appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer xl:text-xl"
+          value={sort}
           onChange={(e) => setSort(e.target.value as SortType)}>
-          <option value={SortType.RecentlyAdded}>Recently added</option>
+          <option value={SortType.Rating}>Rating</option>
+          <option value={SortType.RecentlyAdded}>Recently Added</option>
           <option value={SortType.Name}>Name</option>
         </select>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="shrink-0 size-4 ml-2">
