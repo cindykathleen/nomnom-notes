@@ -45,6 +45,7 @@ export async function addUserDb(userId: string, name: string, email: string, loc
     name: name,
     email: email,
     lists: [],
+    rankingLists: [],
     searchRate: [],
     mapRate: [],
     photoUrl: process.env.NEXT_PUBLIC_PLACEHOLDER_IMG_AVATAR!,
