@@ -1,6 +1,6 @@
 import getDb from './db';
 import { Db } from 'mongodb';
-import { User, List, Restaurant, Dish, Place, SearchResult, Invitation, ProfileItem, ActivityItem, ActivityType } from '@/app/interfaces/interfaces';
+import { User, List, RankingList, Restaurant, Dish, Place, SearchResult, Invitation, ProfileItem, ActivityItem, ActivityType } from '@/app/interfaces/interfaces';
 
 async function db() {
   return await getDb();
@@ -413,6 +413,160 @@ export async function moveListDb(userId: string, dragIndex: number, hoverIndex: 
   );
 }
 
+// Ranking functions
+export async function getRanking(rankingId: string) {
+  const database: Db = await db();
+
+  return await database.collection<RankingList>('rankings').findOne({ _id: rankingId });
+}
+
+export async function getRankingsByIds(rankingIds: string[]): Promise<RankingList[]> {
+  if (rankingIds.length === 0) {
+    return [];
+  }
+
+  const database: Db = await db();
+
+  return await database
+    .collection<RankingList>('rankings')
+    .find({ _id: { $in: rankingIds } })
+    .toArray();
+}
+
+export async function getRankingIds(userId: string) {
+  const database: Db = await db();
+
+  const doc = await database.collection<User>('users').findOne({ _id: userId });
+  return doc?.rankingLists ?? [];
+}
+
+export async function isRankingOwnerDb(userId: string, rankingId: string) {
+  const database: Db = await db();
+
+  const doc = await database.collection<RankingList>('rankings').findOne({ _id: rankingId });
+
+  return doc?.owner === userId;
+}
+
+export async function addRankingDb(userId: string, ranking: RankingList) {
+  const database: Db = await db();
+
+  await database.collection<RankingList>('rankings').insertOne(ranking);
+
+  await database.collection<User>('users').updateOne(
+    { _id: userId },
+    { $push: { rankingLists: ranking._id } }
+  );
+}
+
+export async function updateRankingDb(ranking: RankingList) {
+  const database: Db = await db();
+
+  await database.collection<RankingList>('rankings').updateOne(
+    { _id: ranking._id },
+    {
+      $set: {
+        name: ranking.name,
+        description: ranking.description,
+        photoUrl: ranking.photoUrl,
+        dateUpdated: ranking.dateUpdated,
+      }
+    }
+  );
+}
+
+export async function deleteRankingDb(rankingId: string) {
+  const database: Db = await db();
+
+  await database.collection<RankingList>('rankings').deleteOne({ _id: rankingId });
+
+  await database.collection<User>('users').updateMany(
+    {},
+    { $pull: { rankingLists: rankingId } }
+  );
+}
+
+export async function addRestaurantToRankingDb(rankingId: string, restaurantId: string) {
+  const database: Db = await db();
+
+  const ranking = await database.collection<RankingList>('rankings').findOne({ _id: rankingId });
+
+  if (!ranking) {
+    return { error: 'Ranking not found' };
+  }
+
+  if (ranking.restaurants.includes(restaurantId)) {
+    return { error: 'Restaurant already in ranking' };
+  }
+
+  const restaurants = [restaurantId, ...ranking.restaurants];
+  if (restaurants.length > 10) {
+    restaurants.pop();
+  }
+
+  await database.collection<RankingList>('rankings').updateOne(
+    { _id: rankingId },
+    {
+      $set: {
+        restaurants,
+        dateUpdated: new Date(),
+      }
+    }
+  );
+
+  return { message: 'Restaurant added to ranking' };
+}
+
+export async function removeRestaurantFromRankingDb(rankingId: string, restaurantId: string) {
+  const database: Db = await db();
+
+  const ranking = await database.collection<RankingList>('rankings').findOne({ _id: rankingId });
+
+  if (!ranking) {
+    return { error: 'Ranking not found' };
+  }
+
+  const restaurants = ranking.restaurants.filter(id => id !== restaurantId);
+
+  await database.collection<RankingList>('rankings').updateOne(
+    { _id: rankingId },
+    {
+      $set: {
+        restaurants,
+        dateUpdated: new Date(),
+      }
+    }
+  );
+
+  return { message: 'Restaurant removed from ranking' };
+}
+
+export async function moveRestaurantInRankingDb(
+  rankingId: string,
+  dragIndex: number,
+  hoverIndex: number
+) {
+  const database: Db = await db();
+
+  const ranking = await database.collection<RankingList>('rankings').findOne({ _id: rankingId });
+
+  if (!ranking) return null;
+
+  const restaurants = [...ranking.restaurants];
+  const [dragItem] = restaurants.splice(dragIndex, 1);
+  restaurants.splice(hoverIndex, 0, dragItem);
+
+  await database.collection<RankingList>('rankings').updateOne(
+    { _id: rankingId },
+    {
+      $set: {
+        restaurants,
+        dateUpdated: new Date(),
+      }
+    }
+  );
+}
+
 // Restaurant functions
 export async function getRestaurant(restaurantId: string) {
   const database: Db = await db();
@@ -459,6 +613,33 @@ export async function updateRestaurantDb(restaurant: Restaurant) {
   );
 }
 
+export async function removeRestaurantFromAllRankingsDb(restaurantId: string) {
+  const database: Db = await db();
+
+  const rankings = await database
+    .collection<RankingList>('rankings')
+    .find({ restaurants: restaurantId })
+    .toArray();
+
+  if (rankings.length === 0) return;
+
+  const now = new Date();
+
+  await Promise.all(
+    rankings.map((ranking) =>
+      database.collection<RankingList>('rankings').updateOne(
+        { _id: ranking._id },
+        {
+          $set: {
+            restaurants: ranking.restaurants.filter((id) => id !== restaurantId),
+            dateUpdated: now,
+          },
+        }
+      )
+    )
+  );
+}
+
 export async function deleteRestaurantDb(listId: string, restaurantId: string) {
   const database: Db = await db();
 
@@ -469,6 +650,8 @@ export async function deleteRestaurantDb(listId: string, restaurantId: string) {
     { _id: listId },
     { $pull: { restaurants: restaurantId } }
   );
+
+  await removeRestaurantFromAllRankingsDb(restaurantId);
 }
 
 // Dish functions
