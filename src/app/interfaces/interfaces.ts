@@ -3,6 +3,7 @@ export interface User {
   name: string;
   email: string;
   lists: string[];
+  rankingLists: string[];
   searchRate: Date[];
   mapRate: Date[];
   photoUrl: string;
@@ -25,6 +26,18 @@ export interface List {
   dateAdded: Date;
   dateUpdated: Date;
 }
+
+export interface RankingList {
+  _id: string;
+  owner: string;
+  name: string;
+  description: string;
+  photoUrl: string;
+  restaurants: string[];
+  dateAdded: Date;
+  dateUpdated: Date;
+}
+
 export interface Place {
   _id: string;
   name: string;
