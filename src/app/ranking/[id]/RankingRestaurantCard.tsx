@@ -131,7 +131,7 @@ export default function RankingRestaurantCard({
       <div data-cy="ranked-restaurant-placeholder">
         <div className="w-full p-4 flex border-b border-b-lightgray">
           <div className="min-w-0 flex items-center gap-4">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+            {/* <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
               className="shrink-0 size-6 opacity-0 lg:size-8"
             >
               <circle cx="9" cy="5" r="2" />
@@ -140,7 +140,7 @@ export default function RankingRestaurantCard({
               <circle cx="15" cy="5" r="2" />
               <circle cx="15" cy="12" r="2" />
               <circle cx="15" cy="19" r="2" />
-            </svg>
+            </svg> */}
             <div className="flex flex-col gap-1 min-w-0">
               <h5 className="opacity-40">{rank}. Empty</h5>
               <p className="description-sm"></p>
@@ -161,11 +161,11 @@ export default function RankingRestaurantCard({
     >
       <div className="border-b border-b-lightgray">
         <div className="group w-full px-4 py-2 my-2 flex items-start justify-between gap-4
-          border-l-4 border-l-transparent hover:border-l-dustypink transition-colors"
+          border-l-4 border-l-lightgray hover:border-l-dustypink transition-colors"
         >
           <div className="min-w-0 flex items-center gap-4">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
-              className="shrink-0 size-6 opacity-0 transition-opacity group-hover:opacity-100 lg:size-8"
+            {/* <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+              className="shrink-0 size-6 opacity-40 transition-opacity group-hover:opacity-100 lg:size-8"
               data-cy="ranked-restaurant-drag-handle"
             >
               <circle cx="9" cy="5" r="2" />
@@ -174,7 +174,7 @@ export default function RankingRestaurantCard({
               <circle cx="15" cy="5" r="2" />
               <circle cx="15" cy="12" r="2" />
               <circle cx="15" cy="19" r="2" />
-            </svg>
+            </svg> */}
             <Link
               href={`/restaurant/${restaurant._id}`}
               className="flex flex-col gap-1 min-w-0 cursor-grab active:cursor-grabbing"
