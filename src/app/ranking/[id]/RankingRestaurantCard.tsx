@@ -130,7 +130,7 @@ export default function RankingRestaurantCard({
     return (
       <div data-cy="ranked-restaurant-placeholder">
         <div className="w-full p-4 flex border-b border-b-lightgray">
-          <div className="min-w-0 flex items-center gap-4">
+          <div className="min-w-0 ml-2 flex items-center gap-4">
             {/* <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
               className="shrink-0 size-6 opacity-0 lg:size-8"
             >
@@ -163,7 +163,7 @@ export default function RankingRestaurantCard({
         <div className="group w-full px-4 py-2 my-2 flex items-start justify-between gap-4
           border-l-4 border-l-lightgray hover:border-l-dustypink transition-colors"
         >
-          <div className="min-w-0 flex items-center gap-4">
+          <div className="min-w-0 ml-2 flex items-center gap-4">
             {/* <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
               className="shrink-0 size-6 opacity-40 transition-opacity group-hover:opacity-100 lg:size-8"
               data-cy="ranked-restaurant-drag-handle"

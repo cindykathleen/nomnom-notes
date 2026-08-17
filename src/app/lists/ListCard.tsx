@@ -206,7 +206,7 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
           <div className="modal" data-cy="edit-list-modal">
             <div className="modal-inner">
               <div className="p-2 flex items-center justify-between lg:p-4">
-                <h2 className="modal-heading">Edit {list.name}</h2>
+                <h4 className="modal-heading">Edit {list.name}</h4>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="modal-close" onClick={() => { dispatch({ type: 'showEditModal' }) }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
@@ -244,7 +244,7 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
           <div className="modal">
             <div className="modal-inner">
               <div className="p-2 flex items-center justify-between lg:p-4">
-                <h2 className="modal-heading">Share {list.name}</h2>
+                <h4 className="modal-heading">Share {list.name}</h4>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
                   className="modal-close" data-cy="share-list-modal-close"
                   onClick={() => { dispatch({ type: 'showShareModal' }) }}>

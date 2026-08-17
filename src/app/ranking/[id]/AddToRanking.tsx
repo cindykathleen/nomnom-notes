@@ -68,7 +68,7 @@ export default function AddToRanking({
       <div className="modal" data-cy="add-to-ranking-modal">
         <div className="modal-inner">
           <div className="p-2 flex items-center justify-between lg:p-4">
-            <h3 className="modal-heading">Add to {ranking.name}</h3>
+            <h4 className="modal-heading">Add to {ranking.name}</h4>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

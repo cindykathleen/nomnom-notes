@@ -103,7 +103,7 @@ export default function RestaurantCard({
           <div className="modal" data-cy="review-restaurant-modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h2 className="modal-heading">Review {restaurant.name}</h2>
+                <h4 className="modal-heading">Review {restaurant.name}</h4>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="modal-close" onClick={() => { setShowReviewModal(false); }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
@@ -154,7 +154,7 @@ export default function RestaurantCard({
           <div className="modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h3 className="modal-heading">Reviews for {restaurant.name}</h3>
+                <h4 className="modal-heading">Reviews for {restaurant.name}</h4>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
                   className="modal-close"
                   onClick={() => { setShowAllReviews(false); }}>
