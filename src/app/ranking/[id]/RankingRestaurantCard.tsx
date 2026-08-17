@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
+import type { Identifier, XYCoord } from 'dnd-core';
 import Link from 'next/link';
 import { Restaurant } from '@/app/interfaces/interfaces';
 import { removeRestaurantFromRanking } from '@/app/actions/ranking';
@@ -44,18 +46,85 @@ function formatRestaurantLocation(address: string): string {
   return `${city}, ${country}`;
 }
 
+interface DragItem {
+  id: string;
+  index: number;
+}
+
 export default function RankingRestaurantCard({
   userId,
   rankingId,
   rank,
+  index,
   restaurant,
+  onMove,
 }: {
   userId: string;
   rankingId: string;
   rank: number;
+  index: number;
   restaurant: Restaurant | null;
+  onMove: (dragIndex: number, hoverIndex: number) => void;
 }) {
   const [showRemoveAlert, setShowRemoveAlert] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const didDragRef = useRef(false);
+
+  const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
+    accept: 'ranked-restaurant',
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId(),
+      };
+    },
+    hover(item: DragItem, monitor) {
+      if (!restaurant || !ref.current) {
+        return;
+      }
+
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      const hoverBoundingRect = ref.current.getBoundingClientRect();
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
+
+      // Dragging downward past the midpoint
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+      // Dragging upward past the midpoint
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+
+      onMove(dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    },
+  });
+
+  const [{ isDragging }, drag] = useDrag({
+    type: 'ranked-restaurant',
+    item: () => {
+      didDragRef.current = false;
+      return { id: restaurant?._id ?? '', index };
+    },
+    canDrag: !!restaurant,
+    end: () => {
+      didDragRef.current = true;
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  drag(drop(ref));
+
 
   if (!restaurant) {
     return (
@@ -83,37 +152,51 @@ export default function RankingRestaurantCard({
   }
 
   return (
-    <div data-cy="ranked-restaurant">
-      <Link href={`/restaurant/${restaurant._id}`}>
-        <div className="border-b border-b-lightgray">
-          <div className="group w-full px-4 py-2 my-2 flex items-start justify-between gap-4 cursor-pointer
+    <div
+      ref={ref}
+      data-handler-id={handlerId}
+      data-cy="ranked-restaurant"
+      style={{ opacity: isDragging ? 0.4 : 1 }}
+      className="cursor-grab active:cursor-grabbing"
+    >
+      <div className="border-b border-b-lightgray">
+        <div className="group w-full px-4 py-2 my-2 flex items-start justify-between gap-4
           border-l-4 border-l-transparent hover:border-l-dustypink transition-colors"
-          >
-            <div className="min-w-0 flex items-center gap-4">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
-                className="shrink-0 size-6 opacity-0 transition-opacity group-hover:opacity-100 lg:size-8"
-              >
-                <circle cx="9" cy="5" r="2" />
-                <circle cx="9" cy="12" r="2" />
-                <circle cx="9" cy="19" r="2" />
-                <circle cx="15" cy="5" r="2" />
-                <circle cx="15" cy="12" r="2" />
-                <circle cx="15" cy="19" r="2" />
-              </svg>
-              <div className="flex flex-col gap-1 min-w-0">
-                <h5>{rank}. {restaurant.name}</h5>
-                <p className="description-sm">{formatRestaurantLocation(restaurant.address)}</p>
-              </div>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
-              className="shrink-0 size-6" data-cy="remove-ranked-restaurant-trigger"
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowRemoveAlert(true); }}
+        >
+          <div className="min-w-0 flex items-center gap-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+              className="shrink-0 size-6 opacity-0 transition-opacity group-hover:opacity-100 lg:size-8"
+              data-cy="ranked-restaurant-drag-handle"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              <circle cx="9" cy="5" r="2" />
+              <circle cx="9" cy="12" r="2" />
+              <circle cx="9" cy="19" r="2" />
+              <circle cx="15" cy="5" r="2" />
+              <circle cx="15" cy="12" r="2" />
+              <circle cx="15" cy="19" r="2" />
             </svg>
+            <Link
+              href={`/restaurant/${restaurant._id}`}
+              className="flex flex-col gap-1 min-w-0 cursor-grab active:cursor-grabbing"
+              onClick={(e) => {
+                if (didDragRef.current || isDragging) {
+                  e.preventDefault();
+                  didDragRef.current = false;
+                }
+              }}
+            >
+              <h5>{rank}. {restaurant.name}</h5>
+              <p className="description-sm">{formatRestaurantLocation(restaurant.address)}</p>
+            </Link>
           </div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
+            className="shrink-0 size-6 cursor-pointer" data-cy="remove-ranked-restaurant-trigger"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowRemoveAlert(true); }}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
         </div>
-      </Link>
+      </div>
       {showRemoveAlert && (
         <div className="modal" data-cy="remove-ranked-restaurant-modal">
           <div role="alert" className="modal-alert-inner">
