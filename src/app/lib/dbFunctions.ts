@@ -440,6 +440,19 @@ export async function getRankingIds(userId: string) {
   return doc?.rankingLists ?? [];
 }
 
+export async function getSavedRestaurantsForUser(userId: string): Promise<Restaurant[]> {
+  const listIds = await getListIds(userId);
+  if (listIds.length === 0) {
+    return [];
+  }
+
+  const lists = await getListsByIds(listIds);
+  const restaurantIds = [...new Set(lists.flatMap((list) => list.restaurants))];
+  const restaurants = await getRestaurantsByIds(restaurantIds);
+
+  return restaurants.sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export async function isRankingOwnerDb(userId: string, rankingId: string) {
   const database: Db = await db();
 

@@ -3,7 +3,7 @@ import { Restaurant } from '@/app/interfaces/interfaces';
 import Link from 'next/link';
 import RestaurantDisplay from './RestaurantDisplay';
 import checkRate from '@/app/lib/checkRate';
-import GoogleMap from './GoogleMap';
+import GoogleMap from '@/app/components/GoogleMap';
 import SearchResults from './SearchResults';
 
 export default async function CustomList({ userId, listId, query }: { userId: string, listId: string, query?: string }) {
