@@ -81,7 +81,7 @@ export const updateRankingList = async (
 
     await updateRankingDb(updatedRanking);
     revalidatePath('/rankings');
-    revalidatePath(`/rankings/${rankingId}`);
+    revalidatePath(`/ranking/${rankingId}`);
     revalidatePath('/');
     return { message: 'Ranking updated successfully' };
   } catch (err) {
@@ -121,7 +121,7 @@ export const addRestaurantToRanking = async (
     }
 
     revalidatePath('/rankings');
-    revalidatePath(`/rankings/${rankingId}`);
+    revalidatePath(`/ranking/${rankingId}`);
     revalidatePath('/');
     return { message: result.message };
   } catch (err) {
@@ -146,7 +146,7 @@ export const removeRestaurantFromRanking = async (
     }
 
     revalidatePath('/rankings');
-    revalidatePath(`/rankings/${rankingId}`);
+    revalidatePath(`/ranking/${rankingId}`);
     revalidatePath('/');
     return { message: result.message };
   } catch (err) {
@@ -166,7 +166,7 @@ export const moveRestaurantInRanking = async (
     }
 
     await moveRestaurantInRankingDb(rankingId, dragIndex, hoverIndex);
-    revalidatePath(`/rankings/${rankingId}`);
+    revalidatePath(`/ranking/${rankingId}`);
     revalidatePath('/');
     return { message: 'Restaurant ranking updated successfully' };
   } catch (err) {
