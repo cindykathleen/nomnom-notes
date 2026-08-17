@@ -127,7 +127,7 @@ export default function RankingCard({ userId, ranking }: RankingCardProps) {
         <div className="modal" data-cy="edit-ranking-modal">
           <div className="modal-inner">
             <div className="p-2 flex items-center justify-between lg:p-4">
-              <h2 className="modal-heading">Edit {ranking.name}</h2>
+              <h4 className="modal-heading">Edit {ranking.name}</h4>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

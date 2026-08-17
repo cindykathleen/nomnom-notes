@@ -58,7 +58,7 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
           <div className="modal" data-cy="add-dish-modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h3 className="modal-heading">Add a Dish</h3>
+                <h4 className="modal-heading">Add a Dish</h4>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="modal-close" onClick={() => { setShowAddModal(false) }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>

@@ -195,7 +195,7 @@ export default function DishCard({
           <div className="modal" data-cy="edit-dish-modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h2 className="modal-heading">Edit the dish</h2>
+                <h4 className="modal-heading">Edit the dish</h4>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
                   className="modal-close" data-cy="edit-dish-modal-close"
                   onClick={() => setShowEditModal(false)}>
@@ -221,7 +221,7 @@ export default function DishCard({
           <div className="modal" data-cy="review-dish-modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between">
-                <h2 className="modal-heading">Review the dish</h2>
+                <h4 className="modal-heading">Review the dish</h4>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
                   className="modal-close" data-cy="review-dish-modal-close"
                   onClick={() => setShowReviewModal(false)}>
@@ -275,7 +275,7 @@ export default function DishCard({
           <div className="modal">
             <div className="modal-inner">
               <div className="p-4 flex items-center justify-between gap-2">
-                <h3 className="modal-heading">Reviews for {dish.name}</h3>
+                <h4 className="modal-heading">Reviews for {dish.name}</h4>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
                   className="modal-close"
                   onClick={() => { setShowAllReviews(false); }}>
