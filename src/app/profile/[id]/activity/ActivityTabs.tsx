@@ -29,6 +29,29 @@ function ListsGrid({ items }: { items: ProfileItem[] }) {
   );
 }
 
+function RankingsGrid({ items }: { items: ProfileItem[] }) {
+  if (items.length === 0) {
+    return <p className="subheading">The user does not have any rankings.</p>;
+  }
+
+  return (
+    <div className="cards">
+      {items.map((ranking) => (
+        <Link href={`/ranking/${ranking._id}`} key={ranking._id} className="flex flex-col items-center gap-2">
+          <Image
+            src={ranking.photoUrl!}
+            alt={ranking.name}
+            width={300}
+            height={300}
+            className="aspect-square object-cover rounded-sm"
+          />
+          <h5>{ranking.name}</h5>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
 function RestaurantsGrid({ items }: { items: ProfileItem[] }) {
   if (items.length === 0) {
     return <p className="subheading">The user does not have any restaurants saved.</p>;
@@ -79,21 +102,52 @@ function ReviewsGrid({ items }: { items: ProfileItem[] }) {
   );
 }
 
+function PhotosGrid({ photos, userName }: { photos: string[]; userName: string }) {
+  if (photos.length === 0) {
+    return <p className="subheading">The user has not uploaded any photos.</p>;
+  }
+
+  return (
+    <div className="cards">
+      {photos.map((photo, index) => (
+        <Image
+          key={`${photo}-${index}`}
+          src={photo}
+          alt={`${userName}'s photo`}
+          width={300}
+          height={300}
+          className="aspect-square object-cover rounded-sm"
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function ActivityTabs({
   lists,
+  rankings,
   restaurants,
   reviews,
+  photos,
+  userName,
 }: {
   lists: ProfileItem[];
+  rankings: ProfileItem[];
   restaurants: ProfileItem[];
   reviews: ProfileItem[];
+  photos: string[];
+  userName: string;
 }) {
-  const hashes = ['lists', 'restaurants', 'reviews'];
+  const hashes = ['lists', 'rankings', 'restaurants', 'reviews', 'photos'];
 
   const tabs = [
     {
       title: `Lists`,
       content: <ListsGrid items={lists} />,
+    },
+    {
+      title: `Rankings`,
+      content: <RankingsGrid items={rankings} />,
     },
     {
       title: `Restaurants`,
@@ -102,6 +156,10 @@ export default function ActivityTabs({
     {
       title: `Reviews`,
       content: <ReviewsGrid items={reviews} />,
+    },
+    {
+      title: `Photos`,
+      content: <PhotosGrid photos={photos} userName={userName} />,
     },
   ];
 

@@ -944,17 +944,38 @@ export async function getExistingDishReview(userId: string, dishId: string) {
 export async function getProfileData(userId: string, limit: number | null = 4) {
   const database: Db = await db();
   const take = <T>(items: T[]) => (limit === null ? items : items.slice(0, limit));
+  const takeRankings = <T>(items: T[]) => (limit === null ? items : items.slice(0, 3));
 
   const user = await database.collection<User>('users').findOne({ _id: userId });
 
   if (!user) {
     return {
-      stats: { listsCount: 0, restaurantsCount: 0, reviewsCount: 0 },
+      stats: { listsCount: 0, rankingsCount: 0, restaurantsCount: 0, reviewsCount: 0 },
       lists: [],
+      rankings: [],
       restaurants: [],
       reviews: [],
     };
   }
+
+  const rankingIds = user.rankingLists ?? [];
+  const rankingsCount = rankingIds.length;
+
+  const rankings = rankingIds.length === 0
+    ? []
+    : await database
+      .collection<RankingList>('rankings')
+      .find({ _id: { $in: rankingIds } })
+      .project({ _id: 1, name: 1, photoUrl: 1, dateUpdated: 1 })
+      .toArray();
+
+  const profileRankings: ProfileItem[] = takeRankings(
+    rankings.sort((a, b) => b.dateUpdated.getTime() - a.dateUpdated.getTime())
+  ).map((ranking) => ({
+    _id: ranking._id.toString(),
+    name: ranking.name,
+    photoUrl: ranking.photoUrl,
+  }));
 
   const listsCount = user.lists.length;
 
@@ -977,8 +998,9 @@ export async function getProfileData(userId: string, limit: number | null = 4) {
 
   if (restaurantIds.length === 0) {
     return {
-      stats: { listsCount, restaurantsCount: 0, reviewsCount: 0 },
+      stats: { listsCount, rankingsCount, restaurantsCount: 0, reviewsCount: 0 },
       lists: profileLists,
+      rankings: profileRankings,
       restaurants: [],
       reviews: [],
     };
@@ -1002,8 +1024,9 @@ export async function getProfileData(userId: string, limit: number | null = 4) {
 
   if (dishIds.length === 0) {
     return {
-      stats: { listsCount, restaurantsCount, reviewsCount: 0 },
+      stats: { listsCount, rankingsCount, restaurantsCount, reviewsCount: 0 },
       lists: profileLists,
+      rankings: profileRankings,
       restaurants: profileRestaurants,
       reviews: [],
     };
@@ -1041,10 +1064,12 @@ export async function getProfileData(userId: string, limit: number | null = 4) {
   return {
     stats: {
       listsCount,
+      rankingsCount,
       restaurantsCount,
       reviewsCount,
     },
     lists: profileLists,
+    rankings: profileRankings,
     restaurants: profileRestaurants,
     reviews: profileReviews,
   };
