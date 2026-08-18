@@ -71,9 +71,10 @@ export default defineConfig({
 
           await db.collection('users').updateMany(
             {},
-            { $set: { lists: [], searchRate: [], mapRate: [] } }
+            { $set: { lists: [], rankingLists: [], searchRate: [], mapRate: [] } }
           );
           await db.collection('lists').deleteMany({});
+          await db.collection('rankings').deleteMany({});
           await db.collection('restaurants').deleteMany({});
           await db.collection('dishes').deleteMany({});
           await db.collection('activities').deleteMany({});
@@ -153,6 +154,7 @@ export default defineConfig({
             name: 'Private User',
             email: 'private@test.com',
             lists: [],
+            rankingLists: [],
             searchRate: [],
             mapRate: [],
             photoUrl: PLACEHOLDER_IMG,
@@ -252,6 +254,7 @@ export default defineConfig({
             name,
             email: email || `feed-actor-${uuidv4()}@test.com`,
             lists: [],
+            rankingLists: [],
             searchRate: [],
             mapRate: [],
             photoUrl: PLACEHOLDER_IMG,
