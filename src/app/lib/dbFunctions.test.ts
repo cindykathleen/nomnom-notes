@@ -14,6 +14,9 @@ import {
   updateRestaurantDb, getExistingRestaurantReview,
   updateDishDb, getExistingDishReview, moveDishDb,
   removeListDb, removeUserDb, deleteDishDb, deleteRestaurantDb, deleteListDb,
+  addRankingDb, getRanking, getRankingIds, updateRankingDb, deleteRankingDb,
+  addRestaurantToRankingDb, removeRestaurantFromRankingDb, moveRestaurantInRankingDb,
+  isRankingOwnerDb,
   isFollowingDb, followUserDb, unfollowUserDb,
   hasPendingFollowRequestDb, requestFollowDb, approveFollowRequestDb, denyFollowRequestDb,
   getUsersByIds,
@@ -351,6 +354,142 @@ describe('Update database', async () => {
     await removeUserDb('user-2-test', 'list-2-test');
     expect(await isOwnerOrCollaboratorDb('user-2-test', 'list-2-test')).toBe(false);
   })
+})
+
+describe('Rankings', () => {
+  it('creates a ranking and updates user.rankingLists', async () => {
+    await addRankingDb('user-1-test', {
+      _id: 'ranking-1-test',
+      owner: 'user-1-test',
+      name: 'Top Spots',
+      description: 'My favorite places',
+      photoUrl: '',
+      restaurants: [],
+      dateAdded: new Date(),
+      dateUpdated: new Date(),
+    });
+
+    const ranking = await getRanking('ranking-1-test');
+    expect(ranking).not.toBeNull();
+    expect(ranking?.name).toBe('Top Spots');
+
+    const rankingIds = await getRankingIds('user-1-test');
+    expect(rankingIds).toContain('ranking-1-test');
+    expect(await isRankingOwnerDb('user-1-test', 'ranking-1-test')).toBe(true);
+    expect(await isRankingOwnerDb('user-2-test', 'ranking-1-test')).toBe(false);
+  });
+
+  it('adds a restaurant at #1 and shifts existing entries down', async () => {
+    await addRestaurantToRankingDb('ranking-1-test', 'ranked-r2');
+    await addRestaurantToRankingDb('ranking-1-test', 'ranked-r1');
+
+    const ranking = await getRanking('ranking-1-test');
+    expect(ranking?.restaurants).toEqual(['ranked-r1', 'ranked-r2']);
+  });
+
+  it('rejects adding a restaurant that is already in the ranking', async () => {
+    const result = await addRestaurantToRankingDb('ranking-1-test', 'ranked-r1');
+    expect(result.error).toBe('Restaurant already in ranking');
+
+    const ranking = await getRanking('ranking-1-test');
+    expect(ranking?.restaurants).toEqual(['ranked-r1', 'ranked-r2']);
+  });
+
+  it('drops #10 when adding to a full ranking', async () => {
+    for (let i = 3; i <= 10; i++) {
+      await addRestaurantToRankingDb('ranking-1-test', `ranked-r${i}`);
+    }
+
+    let ranking = await getRanking('ranking-1-test');
+    expect(ranking?.restaurants).toHaveLength(10);
+    expect(ranking?.restaurants[0]).toBe('ranked-r10');
+    expect(ranking?.restaurants[9]).toBe('ranked-r2');
+
+    await addRestaurantToRankingDb('ranking-1-test', 'ranked-r11');
+
+    ranking = await getRanking('ranking-1-test');
+    expect(ranking?.restaurants).toHaveLength(10);
+    expect(ranking?.restaurants[0]).toBe('ranked-r11');
+    expect(ranking?.restaurants).not.toContain('ranked-r2');
+    expect(ranking?.restaurants[9]).toBe('ranked-r1');
+  });
+
+  it('reorders restaurants with moveRestaurantInRankingDb', async () => {
+    // Current order: [r11, r10, r9, r8, r7, r6, r5, r4, r3, r1]
+    await moveRestaurantInRankingDb('ranking-1-test', 0, 2);
+
+    const ranking = await getRanking('ranking-1-test');
+    expect(ranking?.restaurants[0]).toBe('ranked-r10');
+    expect(ranking?.restaurants[1]).toBe('ranked-r9');
+    expect(ranking?.restaurants[2]).toBe('ranked-r11');
+  });
+
+  it('removes a restaurant and compacts remaining ranks', async () => {
+    const before = await getRanking('ranking-1-test');
+    const removedId = before!.restaurants[1];
+
+    const result = await removeRestaurantFromRankingDb('ranking-1-test', removedId);
+    expect(result.message).toBe('Restaurant removed from ranking');
+
+    const ranking = await getRanking('ranking-1-test');
+    expect(ranking?.restaurants).not.toContain(removedId);
+    expect(ranking?.restaurants).toHaveLength(9);
+  });
+
+  it('updates ranking metadata', async () => {
+    const ranking = await getRanking('ranking-1-test');
+    if (!ranking) return;
+
+    ranking.name = 'Updated Top Spots';
+    ranking.description = 'Updated description';
+    ranking.dateUpdated = new Date();
+    await updateRankingDb(ranking);
+
+    const updated = await getRanking('ranking-1-test');
+    expect(updated?.name).toBe('Updated Top Spots');
+    expect(updated?.description).toBe('Updated description');
+  });
+
+  it('cascades restaurant delete into rankings', async () => {
+    const cascadeRestaurant = {
+      _id: 'restaurant-ranking-cascade-test',
+      name: 'Cascade Cafe',
+      type: 'Cafe',
+      rating: 4,
+      address: '1 Test St, Cupertino, CA 95014, USA',
+      location: {
+        latitude: 37.3,
+        longitude: -122.0,
+      },
+      mapsUrl: '',
+      photoUrl: '',
+      reviews: [],
+      dishes: [],
+      dateAdded: new Date(),
+      dateUpdated: new Date(),
+    };
+
+    await addRestaurant('list-2-test', cascadeRestaurant);
+    await addRestaurantToRankingDb('ranking-1-test', cascadeRestaurant._id);
+
+    let ranking = await getRanking('ranking-1-test');
+    expect(ranking?.restaurants).toContain(cascadeRestaurant._id);
+
+    await deleteRestaurantDb('list-2-test', cascadeRestaurant._id);
+
+    ranking = await getRanking('ranking-1-test');
+    expect(ranking?.restaurants).not.toContain(cascadeRestaurant._id);
+    expect(await getRestaurant(cascadeRestaurant._id)).toBeNull();
+  });
+
+  it('deletes a ranking and updates user.rankingLists', async () => {
+    await deleteRankingDb('ranking-1-test');
+
+    expect(await getRanking('ranking-1-test')).toBeNull();
+
+    const rankingIds = await getRankingIds('user-1-test');
+    expect(rankingIds).not.toContain('ranking-1-test');
+  });
 })
 
 describe('Delete from database', async () => {
