@@ -21,7 +21,7 @@ export default async function Reviews({
       </div>
       { // Display reviews if available
         reviews.length > 0 && (
-          <div className="profile-section-highlights">
+          <div className="profile-section-right-cols">
             {reviews.map(review => (
               <div key={review._id} className="relative p-2 flex flex-col items-center gap-2 border border-lightgray rounded-sm">
                 <h5 className="text-center">{review.name}</h5>

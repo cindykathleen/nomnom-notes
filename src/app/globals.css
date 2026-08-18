@@ -278,10 +278,10 @@
   .profile-section-heading {
     @apply pb-1 flex items-end justify-between xl:pb-2;
   }
-  .profile-section-photos {
+  .profile-section-left-cols {
     @apply grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3;
   }
-  .profile-section-highlights {
+  .profile-section-right-cols {
     @apply grid grid-cols-2 gap-2 sm:grid-cols-4;
   }
 }

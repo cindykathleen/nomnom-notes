@@ -73,8 +73,11 @@ export default async function Page({
           </Link>
           <ActivityTabs
             lists={profileData.lists}
+            rankings={profileData.rankings}
             restaurants={profileData.restaurants}
             reviews={profileData.reviews}
+            photos={user.photos ?? []}
+            userName={user.name}
           />
         </div>
       </div>

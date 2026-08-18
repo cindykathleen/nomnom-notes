@@ -25,7 +25,7 @@ export default async function Lists({
       </div>
       { // Display lists if available
         lists.length > 0 && (
-          <div className="profile-section-highlights">
+          <div className="profile-section-right-cols">
             {lists.map(list => (
               <Link href={`/list/${list._id}`} key={list._id} className="text-center">
                 <Image src={list.photoUrl!} alt={list.name} width='300' height='300'

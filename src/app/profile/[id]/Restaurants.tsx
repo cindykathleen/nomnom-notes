@@ -25,7 +25,7 @@ export default async function Restaurants({
       </div>
       { // Display restaurants if available
         restaurants.length > 0 && (
-          <div className="profile-section-highlights">
+          <div className="profile-section-right-cols">
             {restaurants.map(restaurant => (
               <Link key={restaurant._id} href={`/restaurant/${restaurant._id}`} className="text-center">
                 <Image src={restaurant.photoUrl!} alt={restaurant.name} width='300' height='300'
