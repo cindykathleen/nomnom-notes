@@ -17,6 +17,7 @@
   --color-slategray: #6C6F7D;
   --color-charcoal: #3B3B3B;
   --color-snowwhite: #FAFAFA;
+  --color-highlight: #F5F5F5;
 }
 
 @theme inline {
@@ -71,7 +72,7 @@
     @apply absolute p-2 w-[225px] top-[45px] right-0 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-black/5 rounded-xl md:w-[250px] md:top-[55px];
   }
   .nav-submenu li {
-    @apply p-2 flex gap-2 font-light rounded-xl hover:bg-[#F5F5F5];
+    @apply p-2 flex gap-2 font-light rounded-xl hover:bg-highlight;
   }
   .breadcrumb a, .breadcrumb p {
     @apply text-base font-extralight xl:text-lg;
@@ -158,13 +159,13 @@
     @apply hidden w-full md:flex md:gap-6 xl:w-1/5 xl:flex-col xl:gap-0;
   }
   .tab-title button {
-    @apply p-4 text-lg font-normal text-center border-b-2 border-b-lightgray border-l-4 border-l-transparent cursor-pointer xl:text-left xl:border-b-1 xl:hover:bg-[#F5F5F5] transition-colors;
+    @apply p-4 text-lg font-normal text-center border-b-2 border-b-lightgray border-l-4 border-l-transparent cursor-pointer xl:text-left xl:border-b-1 xl:hover:bg-highlight transition-colors;
   }
   .tab-title button:first-of-type {
     @apply xl:border-t xl:border-t-lightgray;
   }
   .tab-title button.active {
-    @apply border-b-dustypink xl:bg-[#F5F5F5] xl:border-b-lightgray xl:border-l-dustypink;
+    @apply border-b-dustypink xl:bg-highlight xl:border-b-lightgray xl:border-l-dustypink;
   }
   .tab-title-select {
     @apply block py-4 text-lg font-semibold border-b-2 border-b-dustypink md:hidden;
