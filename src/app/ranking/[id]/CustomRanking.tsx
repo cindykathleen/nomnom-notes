@@ -6,6 +6,7 @@ import {
 } from '@/app/lib/dbFunctions';
 import { Restaurant } from '@/app/interfaces/interfaces';
 import RankingDisplay from './RankingDisplay';
+import AddPlaceToRanking from './AddPlaceToRanking';
 import checkRate from '@/app/lib/checkRate';
 import GoogleMap from '@/app/components/GoogleMap';
 
@@ -59,17 +60,26 @@ export default async function CustomRanking({
           <p>/</p>
           <p>{ranking.name}</p>
         </div>
-        <h2>{ranking.name}</h2>
-        {ranking.description && (
-          <p className="description">{ranking.description}</p>
-        )}
+        <div className="flex gap-8">
+          <div className="w-full flex items-end justify-between gap-4 lg:w-1/2">
+            <h2>{ranking.name}</h2>
+            <AddPlaceToRanking
+              userId={userId}
+              ranking={ranking}
+              rankedRestaurants={restaurants}
+              savedRestaurants={savedRestaurants}
+            />
+          </div>
+          <div className="hidden w-full lg:block lg:w-1/2">
+
+          </div>
+        </div>
         <div className="min-h-0 flex flex-1 gap-8 lg:overflow-y-auto">
           <RankingDisplay
             userId={userId}
             featureAccessAllowed={featureAccessAllowed}
             ranking={ranking}
             restaurants={restaurants}
-            savedRestaurants={savedRestaurants}
           />
           {featureAccessAllowed && (
             <GoogleMap restaurants={restaurants} />
