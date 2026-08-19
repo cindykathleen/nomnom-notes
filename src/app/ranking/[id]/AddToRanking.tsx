@@ -31,13 +31,15 @@ export default function AddToRanking({
 
   const filteredRestaurants = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    return savedRestaurants.filter((restaurant) => {
+    const available = savedRestaurants.filter((restaurant) => {
+      if (rankedIds.has(restaurant._id)) return false;
       if (normalized && !restaurant.name.toLowerCase().includes(normalized)) {
         return false;
       }
       return true;
     });
-  }, [savedRestaurants, query]);
+    return available.slice(0, 10);
+  }, [savedRestaurants, query, rankedIds]);
 
   const handleSelect = async (restaurant: Restaurant) => {
     if (rankedIds.has(restaurant._id) || isSubmitting) return;
@@ -69,43 +71,28 @@ export default function AddToRanking({
         <div className="modal-inner">
           <div className="p-2 flex items-center justify-between lg:p-4">
             <h4 className="modal-heading">Add to {ranking.name}</h4>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="modal-close"
-              onClick={onClose}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+              className="modal-close" onClick={onClose}
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </div>
           <hr className="border-lightgray" />
           <div className="px-2 py-4 flex flex-col gap-4 lg:px-4">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search your saved restaurants"
-              className="input"
-              autoComplete="off"
-              data-cy="add-to-ranking-search"
+            <input type="text" autoComplete="off" placeholder="Search your saved restaurants" className="input" 
+              data-cy="add-to-ranking-search" value={query} onChange={(e) => setQuery(e.target.value)}
             />
-            <div className="max-h-[50vh] overflow-y-auto flex flex-col gap-2">
+            <div className="h-[50vh] overflow-y-auto flex flex-col gap-2">
               {filteredRestaurants.length === 0 && (
-                <p className="description-sm">No saved restaurants found.</p>
+                <p className="description">No saved restaurants found.</p>
               )}
-              {filteredRestaurants.map((restaurant) => {
-                const alreadyRanked = rankedIds.has(restaurant._id);
-                return (
+              {filteredRestaurants.map((restaurant) => (
                   <button
                     key={restaurant._id}
                     type="button"
-                    disabled={alreadyRanked || isSubmitting}
+                    disabled={isSubmitting}
                     onClick={() => handleSelect(restaurant)}
-                    className={`w-full flex items-center gap-4 p-2 rounded-lg text-left transition-colors
-                      ${alreadyRanked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-lightgray cursor-pointer'}`}
+                    className="w-full p-2 flex items-center gap-4 text-lef trounded-lg cursor-pointer transition-colors hover:bg-highlight"
                     data-cy="add-to-ranking-option"
                   >
                     <Image
@@ -117,13 +104,9 @@ export default function AddToRanking({
                     />
                     <div className="flex flex-col min-w-0">
                       <h5 className="truncate">{restaurant.name}</h5>
-                      {alreadyRanked && (
-                        <p className="description-sm">Already in this ranking</p>
-                      )}
                     </div>
                   </button>
-                );
-              })}
+                ))}
             </div>
           </div>
         </div>
