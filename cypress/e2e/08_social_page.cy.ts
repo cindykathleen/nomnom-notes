@@ -111,6 +111,7 @@ describe('Profile social pages', () => {
         cy.visit('/')
         cy.get('[data-cy=follow-requests-nav-button]').click()
         cy.get('[data-cy=follow-requests-modal] [data-cy=approve-follow-request]').click()
+        cy.get('[data-cy=follow-requests-modal] [data-cy=no-follow-requests]').should('be.visible')
 
         cy.visit(`/profile/${testUserId}`)
         cy.get('[data-cy=profile-followers-link]').should('contain.text', '1 follower').click()
