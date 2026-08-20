@@ -45,7 +45,7 @@ export default function DishAddCard({ userId, restaurantId }: { userId: string, 
 
   return (
     <div className="h-full flex items-start">
-      <div className="w-full flex items-center justify-center bg-lightgray aspect-square rounded-lg cursor-pointer"
+      <div className="add-cards"
         onClick={() => { setShowAddModal(true) }} data-cy="add-dish-modal-trigger">
         <p className="text-2xl text-slategray">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12">

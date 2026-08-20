@@ -34,7 +34,7 @@ export default function RankingAddCard({ userId }: { userId: string }) {
   return (
     <div className="h-full flex items-start">
       <div
-        className="w-full flex items-center justify-center bg-lightgray aspect-square rounded-lg cursor-pointer"
+        className="add-cards"
         onClick={() => setShowAddModal(true)}
         data-cy="add-ranking-modal-trigger"
       >

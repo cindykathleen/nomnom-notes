@@ -160,7 +160,7 @@ export default function ListCard({ userId, role, list, lists, users }: ListCardP
     <div key={list._id} ref={ref} data-handler-id={handlerId} data-cy="list"
       className="relative flex flex-col bg-snowwhite rounded-sm">
       <Link href={`/list/${list._id}`}>
-        <Image src={list.photoUrl} alt={list.name} width={500} height={500} className="aspect-square object-cover rounded-lg" />
+        <Image src={list.photoUrl} alt={list.name} width={800} height={800} className="cards-image" />
       </Link>
       <div className="flex flex-col py-4">
         <div className="relative flex items-center justify-between gap-4">

@@ -36,7 +36,7 @@ export default function RankingDisplay({
   return (
     <DndWrapper>
       <div className={`${!featureAccessAllowed ? "w-full" : "w-full lg:w-1/2"} flex flex-col gap-2`}>
-        <div className="flex flex-col lg:max-h-[80vh] lg:overflow-y-auto">
+        <div className="pb-8 flex flex-col lg:max-h-[80vh] lg:pb-0 lg:overflow-y-auto">
           {Array.from({ length: 10 }, (_, index) => {
             const restaurant = orderedRestaurants[index] ?? null;
             return (

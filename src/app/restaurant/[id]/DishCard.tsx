@@ -139,7 +139,7 @@ export default function DishCard({
   return (
     <div key={dish._id} {...(isOwnerOrCollaborator ? { ref, "data-handler-id": handlerId } : {})}
       className="flex flex-col relative bg-snowwhite rounded-sm" data-cy="dish">
-      <Image src={dish.photoUrl} alt={dish.name} width={500} height={500} className="aspect-square object-cover rounded-lg cursor-pointer"
+      <Image src={dish.photoUrl} alt={dish.name} width={800} height={800} className="cards-image cursor-pointer"
         onClick={() => setShowReviewModal(true)} />
       <div className="flex flex-col gap-2 p-4">
         <div className="relative flex items-center justify-between gap-4">
@@ -231,7 +231,7 @@ export default function DishCard({
               <hr className="border-lightgray" />
               <div className="p-4 flex flex-col gap-4">
                 {!dish.photoUrl?.includes("placeholder") && (
-                  <Image src={dish.photoUrl} alt={dish.name} width={500} height={500} className="aspect-square object-cover rounded-lg" />
+                  <Image src={dish.photoUrl} alt={dish.name} width={800} height={800} className="cards-image" />
                 )}
                 <form action={handleReviewSubmit} className="flex flex-col">
                   <label htmlFor="dish-rating">Rating</label>
