@@ -52,7 +52,7 @@ export default function RestaurantCard({
       <Link key={restaurant._id} href={`/restaurant/${restaurant._id}`} data-cy="restaurant">
         <div className="cards-outline gap-4 cursor-pointer md:p-4">
           <Image src={restaurant.photoUrl} alt={restaurant.name} width={250} height={250} 
-            className="h-[100px] w-[100px] self-center aspect-square object-cover rounded-lg"
+            className="cards-image h-[100px] w-[100px] self-center"
           />
           <div className="flex flex-col flex-1 gap-1">
             <h5>{restaurant.name}</h5>

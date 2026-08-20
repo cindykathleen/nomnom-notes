@@ -95,12 +95,7 @@ export default function AddToRanking({
                     className="w-full p-2 flex items-center gap-4 text-lef trounded-lg cursor-pointer transition-colors hover:bg-highlight"
                     data-cy="add-to-ranking-option"
                   >
-                    <Image
-                      src={restaurant.photoUrl}
-                      alt={restaurant.name}
-                      width={64}
-                      height={64}
-                      className="h-16 w-16 aspect-square object-cover rounded-lg"
+                    <Image src={restaurant.photoUrl} alt={restaurant.name} width={64} height={64} className="cards-image"
                     />
                     <div className="flex flex-col min-w-0">
                       <h5 className="truncate">{restaurant.name}</h5>

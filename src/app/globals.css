@@ -135,6 +135,12 @@
   .cards-outline {
     @apply relative p-4 flex border border-lightgray rounded-3xl;
   }
+  .cards-image {
+    @apply aspect-square object-cover rounded-lg;
+  }
+  .add-cards {
+    @apply w-full flex items-center justify-center bg-lightgray aspect-square rounded-lg cursor-pointer;
+  }
   .review-cards {
     @apply mt-6 grid gap-6 lg:grid-cols-2 lg:gap-8;
   }

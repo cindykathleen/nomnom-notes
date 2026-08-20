@@ -63,12 +63,7 @@ export default function RankingCard({ userId, ranking }: RankingCardProps) {
   return (
     <div key={ranking._id} data-cy="ranking" className="relative flex flex-col bg-snowwhite rounded-sm">
       <Link href={`/ranking/${ranking._id}`}>
-        <Image
-          src={ranking.photoUrl}
-          alt={ranking.name}
-          width={500}
-          height={500}
-          className="aspect-square object-cover rounded-lg"
+        <Image src={ranking.photoUrl} alt={ranking.name} width={800} height={800} className="cards-image"
         />
       </Link>
       <div className="flex flex-col py-4">
