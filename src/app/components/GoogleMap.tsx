@@ -9,7 +9,8 @@ console.log('node env:', process.env.NEXT_PUBLIC_IS_TEST);
 
 type Poi = {
   key: string,
-  location: google.maps.LatLngLiteral
+  location: google.maps.LatLngLiteral,
+  rank?: number,
 }
 
 const PoiMarkers = ({ pois }: { pois: Poi[] }) => {
@@ -17,7 +18,9 @@ const PoiMarkers = ({ pois }: { pois: Poi[] }) => {
     <>
       {pois.map((poi: Poi) => (
         <AdvancedMarker key={poi.key} position={poi.location}>
-          <Pin />
+          <Pin glyph={poi.rank !== undefined ? String(poi.rank) : undefined}
+            background="#B35A72" borderColor="#B35A72" glyphColor="#FAFAFA"
+          />
         </AdvancedMarker>
       ))}
     </>
@@ -39,15 +42,22 @@ const FitBoundsHandler = ({ locations }: { locations: Poi[] }) => {
   return null;
 };
 
-export default function GoogleMap({ restaurants }: { restaurants: Restaurant[] }) {
+export default function GoogleMap({
+  restaurants,
+  showRanks = false,
+}: {
+  restaurants: Restaurant[];
+  showRanks?: boolean;
+}) {
   if (restaurants.length === 0) return null;
 
-  const locations: Poi[] = restaurants.map((restaurant) => ({
+  const locations: Poi[] = restaurants.map((restaurant, index) => ({
     key: restaurant._id,
     location: {
       lat: restaurant.location.latitude,
       lng: restaurant.location.longitude,
     },
+    ...(showRanks && { rank: index + 1 }),
   }));
 
   return (
