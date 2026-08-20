@@ -19,7 +19,7 @@ const PoiMarkers = ({ pois }: { pois: Poi[] }) => {
       {pois.map((poi: Poi) => (
         <AdvancedMarker key={poi.key} position={poi.location}>
           <Pin glyph={poi.rank !== undefined ? String(poi.rank) : undefined}
-            background="#B35A72" borderColor="#B35A72" glyphColor="#FAFAFA"
+            background="#B35A72" borderColor="#8A4257" glyphColor="#FAFAFA"
           />
         </AdvancedMarker>
       ))}
