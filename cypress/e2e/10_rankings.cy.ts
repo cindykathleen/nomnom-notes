@@ -77,8 +77,8 @@ describe('Rankings navigation and profile', () => {
     cy.get('[data-cy=view-profile-button]').click()
 
     cy.get('[data-cy=profile-rankings-count]').should('contain.text', '1')
-    cy.contains('h4', 'Rankings').should('be.visible')
-    cy.contains('Edited Test Ranking').should('be.visible')
+    cy.contains('h4', 'Rankings').scrollIntoView().should('be.visible')
+    cy.contains('Edited Test Ranking').scrollIntoView().should('be.visible')
   })
 
   it('View all rankings opens the activity rankings tab', () => {
