@@ -82,7 +82,7 @@ export default async function CustomRanking({
             restaurants={restaurants}
           />
           {featureAccessAllowed && (
-            <GoogleMap restaurants={restaurants} />
+            <GoogleMap restaurants={restaurants} showRanks />
           )}
         </div>
       </div>
